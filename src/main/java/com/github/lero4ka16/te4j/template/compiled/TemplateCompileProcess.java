@@ -347,8 +347,15 @@ public class TemplateCompileProcess<BoundType> {
 
                 for (Object o : values) {
                     switchCase.setValue(o);
+                    sb.append("case ");
 
-                    sb.append("case ").append(o).append(": {");
+                    boolean string = o instanceof String;
+
+                    if (string) sb.append('"');
+                    sb.append(o);
+                    if (string) sb.append('"');
+
+                    sb.append(": {");
                     writeTemplate(sb, SwitchCaseMethod.getBlock());
                     sb.append("break;}");
                 }

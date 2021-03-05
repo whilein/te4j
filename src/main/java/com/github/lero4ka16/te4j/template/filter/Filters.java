@@ -27,7 +27,7 @@ public class Filters {
     private static final String FILTERS_CLASS = Filters.class.getName();
     private static final String UTILS_CLASS = Utils.class.getName();
 
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = Utils.isJUnitTest() ? new Random(1) : new Random();
 
     private final Map<String, Filter> filters = new ConcurrentHashMap<>();
 

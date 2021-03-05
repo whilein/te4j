@@ -55,7 +55,7 @@ public class ExpList extends Exp {
             }
 
             if (element instanceof ExpString) {
-                result[i] = "\"" + Text.of(((ExpString) element).getValue()).computeAsString() + "\"";
+                result[i] = Text.of(((ExpString) element).getValue()).computeAsString();
             } else {
                 throw new UnsupportedOperationException(element.getClass().getSimpleName() + " is unsupported, sorry");
             }

@@ -17,6 +17,7 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.template.filter.Filters;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
