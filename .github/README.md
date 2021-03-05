@@ -173,7 +173,7 @@ provider = Te4j.custom()
 нужно указать класс, который будет использован, для генерации страницы.
 
 ```java
-Class<?> cls = ...;
+Class<?> cls = /* ... */;
 
 Template template;
 // Файл будет взят из папки, указанной в аргументах 
@@ -185,7 +185,7 @@ template = provider.load(cls, "<file name / resource name>");
 нужный объект.
 
 ```java
-Object object = ...;
+Object object = /* ... */;
 String output = template.renderAsString(object);
 ```
 
@@ -200,7 +200,8 @@ String output = template.renderAsString(object);
 - Больше тестов
 
 ## Связь
-[ВК](https://vk.com/id623151994), [ТГ](https://t.me/lero4ka85)
+[ВК](https://vk.com/id623151994), 
+[ТГ](https://t.me/lero4ka85)
 
 ### Post Scriptum
 В данный момент проект активно разрабатывается, так что
