@@ -40,9 +40,20 @@ public class ExpressionTest {
                     return new PathAccessor(GenericInfo.STRING, "getMessage()", false);
                 }
 
+                if (value.equals("condition")) {
+                    return new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "isCondition()", false);
+                }
+
                 return null;
             }
     );
+
+    @Test
+    public void expBooleanNegate() {
+        Expression exp = parser.parseExpression("!condition");
+        assertEquals(ExpressionParentheses.class, exp.getClass());
+        assertEquals("(!isCondition())", exp.compile());
+    }
 
     @Test
     public void expList() {

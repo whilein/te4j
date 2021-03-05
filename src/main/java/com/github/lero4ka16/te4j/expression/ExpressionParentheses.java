@@ -75,7 +75,14 @@ public class ExpressionParentheses extends Expression {
                         throw new IllegalStateException("Apply numerical operator to " + prev.getReturnType() + " and " + next.getReturnType());
                     }
                 }
+
+                ExpressionReturnType returnType = exp.getReturnType();
+
+                if (returnType != null) {
+                    possibleTypes.add(returnType);
+                }
             }
+
             this.returnType = ExpressionReturnType.getPriorityType(possibleTypes);
 
             if (returnType == null) {

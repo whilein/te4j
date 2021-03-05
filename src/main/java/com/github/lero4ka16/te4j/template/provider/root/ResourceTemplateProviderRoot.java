@@ -34,6 +34,10 @@ public class ResourceTemplateProviderRoot extends TemplateProviderRoot {
             root += "/";
         }
 
+        if (root.equals("./")) {
+            root = "";
+        }
+
         this.root = root;
     }
 

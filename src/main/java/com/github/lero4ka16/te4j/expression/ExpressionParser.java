@@ -234,6 +234,10 @@ public final class ExpressionParser {
 
         String op = reader.substring(startPos, reader.position());
 
+        if (op.equals("!")) {
+            return new ExpressionLogicalNegation();
+        }
+
         Operator type = Operator.get(types, op)
                 .orElseThrow(() -> new IllegalStateException("Unknown operator: " + op));
 
