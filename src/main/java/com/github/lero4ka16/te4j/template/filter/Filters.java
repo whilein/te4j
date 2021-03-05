@@ -19,9 +19,19 @@ package com.github.lero4ka16.te4j.template.filter;
 import com.github.lero4ka16.te4j.util.Utils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author lero4ka16
+ */
 public class Filters {
 
     private static final String FILTERS_CLASS = Filters.class.getName();

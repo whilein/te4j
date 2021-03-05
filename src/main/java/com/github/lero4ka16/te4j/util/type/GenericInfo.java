@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type.info;
+package com.github.lero4ka16.te4j.util.type;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +22,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
+/**
+ * @author lero4ka16
+ */
 @RequiredArgsConstructor
 public class GenericInfo implements TypeInfo {
 

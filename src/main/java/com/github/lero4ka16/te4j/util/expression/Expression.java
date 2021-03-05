@@ -16,22 +16,27 @@
 
 package com.github.lero4ka16.te4j.util.expression;
 
-import java.util.Set;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.Setter;
 
-public enum ExpReturnType {
+@Setter
+public abstract class Expression {
 
-    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
+    protected String filter;
 
-    public static final ExpReturnType[] VALUES = values();
+    public abstract ExpressionReturnType getReturnType();
 
-    public static ExpReturnType getPriorityType(Set<ExpReturnType> types) {
-        for (ExpReturnType type : VALUES) {
-            if (types.contains(type)) {
-                return type;
-            }
-        }
-
-        return null;
+    public void addFilter(String filter) {
+        if (this.filter == null) this.filter = filter;
+        else this.filter += ":" + filter;
     }
+
+    public String compile() {
+        return ExpCompile.singleton(this);
+    }
+
+    public abstract TypeInfo getObjectType();
+
+    protected abstract void compile(ExpCompile compile);
 
 }

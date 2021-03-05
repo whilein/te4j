@@ -30,9 +30,9 @@ public final class ExpParser {
 
     private final Function<String, PathAccessor> mapper;
 
-    public Exp parseExpression(String value) {
+    public Expression parseExpression(String value) {
         DataReader reader = new CharsReader("(" + value + ")");
-        Exp exp = parseNext(null, reader, 0);
+        Expression exp = parseNext(null, reader, 0);
 
         if (exp instanceof ExpParentheses) {
             ExpParentheses parentheses = (ExpParentheses) exp;
@@ -45,13 +45,13 @@ public final class ExpParser {
         return exp;
     }
 
-    private Exp parseNext(Exp prev, DataReader reader, int eof){
+    private Expression parseNext(Expression prev, DataReader reader, int eof) {
         boolean closed = false;
 
         while (reader.isReadable()) {
             int ch = reader.read();
 
-            Exp token = null;
+            Expression token = null;
 
             if (ch == eof) {
                 closed = true;
@@ -75,7 +75,7 @@ public final class ExpParser {
 
                 reader.roll();
 
-                if (ExpOpType.isOperator(ch) && !(prev instanceof ExpOp) && !nextDigit) {
+                if (Operator.isOperator(ch) && !(prev instanceof ExpressionOperator) && !nextDigit) {
                     token = parseOperator(reader);
                 } else {
                     token = parseValue(parseText(reader, eof));
@@ -89,7 +89,7 @@ public final class ExpParser {
                     while (ch == ':') {
                         String filter = parseText(reader, eof);
 
-                        if (token instanceof ExpOp) {
+                        if (token instanceof ExpressionOperator) {
                             throw new IllegalStateException("Unexpected filter");
                         }
 
@@ -111,17 +111,17 @@ public final class ExpParser {
         return null;
     }
 
-    private Exp parseParentheses(DataReader reader) {
-        List<Exp> tokens = new ArrayList<>();
-        Exp prev = null;
-        Exp token;
+    private Expression parseParentheses(DataReader reader) {
+        List<Expression> tokens = new ArrayList<>();
+        Expression prev = null;
+        Expression token;
 
         while ((token = parseNext(prev, reader, ')')) != null) {
             tokens.add(token);
             prev = token;
         }
 
-        return tokens.size() == 1 ? tokens.get(0) : new ExpParentheses(tokens.toArray(new Exp[0]));
+        return tokens.size() == 1 ? tokens.get(0) : new ExpParentheses(tokens.toArray(new Expression[0]));
     }
 
     private Class<?> getClass(String name) {
@@ -151,7 +151,7 @@ public final class ExpParser {
         }
     }
 
-    private Exp parseList(DataReader reader) {
+    private Expression parseList(DataReader reader) {
         Class<?> type = Object.class;
 
         int pos = reader.position();
@@ -165,7 +165,7 @@ public final class ExpParser {
                     type = getClass(reader.substring(pos + 1, reader.position() - 1).trim());
 
                     if (ch == ']') {
-                        return new ExpList(type, new Exp[0]);
+                        return new ExpressionList(type, new Expression[0]);
                     }
 
                     break;
@@ -175,9 +175,9 @@ public final class ExpParser {
             reader.roll();
         }
 
-        List<Exp> tokens = new ArrayList<>();
-        Exp prev = null;
-        Exp token;
+        List<Expression> tokens = new ArrayList<>();
+        Expression prev = null;
+        Expression token;
 
         while ((token = parseNext(prev, reader, ']')) != null) {
             tokens.add(token);
@@ -189,10 +189,10 @@ public final class ExpParser {
             if (ch != ',') throw new IllegalStateException("Unexpected char: " + (char) ch);
         }
 
-        return new ExpList(type, tokens.toArray(new Exp[0]));
+        return new ExpressionList(type, tokens.toArray(new Expression[0]));
     }
 
-    private Exp parseString(DataReader reader, int quote) {
+    private Expression parseString(DataReader reader, int quote) {
         int start = reader.position();
 
         while (reader.isReadable()) {
@@ -200,17 +200,17 @@ public final class ExpParser {
             if (ch == quote) break;
         }
 
-        return new ExpString(reader.substring(start, reader.position() - 1));
+        return new ExpressionString(reader.substring(start, reader.position() - 1));
     }
 
-    private Exp parseEnum(String text) {
-        return new ExpEnum(text);
+    private Expression parseEnum(String text) {
+        return new ExpressionEnum(text);
     }
 
-    private Exp parseOperator(DataReader reader) {
+    private Expression parseOperator(DataReader reader) {
         int startPos = reader.position();
 
-        ExpOpType[] types = ExpOpType.VALUES;
+        Operator[] types = Operator.VALUES;
         int pos = 0;
 
         for (; ; ) {
@@ -222,7 +222,7 @@ public final class ExpParser {
                 break;
             }
 
-            ExpOpType[] newTypes = ExpOpType.filter(types, pos++, ch);
+            Operator[] newTypes = Operator.filter(types, pos++, ch);
 
             if (newTypes.length == 0) {
                 reader.roll();
@@ -234,10 +234,10 @@ public final class ExpParser {
 
         String op = reader.substring(startPos, reader.position());
 
-        ExpOpType type = ExpOpType.get(types, op)
+        Operator type = Operator.get(types, op)
                 .orElseThrow(() -> new IllegalStateException("Unknown operator: " + op));
 
-        return new ExpOp(type);
+        return new ExpressionOperator(type);
     }
 
     private String parseText(DataReader reader, int eof) {
@@ -256,7 +256,7 @@ public final class ExpParser {
                 continue;
             }
 
-            if (ExpOpType.isOperator(ch)) {
+            if (Operator.isOperator(ch)) {
                 reader.roll();
                 break;
             }
@@ -265,7 +265,7 @@ public final class ExpParser {
         return reader.substring(start, reader.position());
     }
 
-    private Exp parseValue(String value) {
+    private Expression parseValue(String value) {
         int idx = 0;
         int ch = value.charAt(idx);
         boolean negate = false;
@@ -276,7 +276,7 @@ public final class ExpParser {
         }
 
         if (ch >= '0' && ch <= '9') {
-            return new ExpNumber(value);
+            return new ExpressionNumber(value);
         }
 
         String text = value.substring(idx);
@@ -286,7 +286,7 @@ public final class ExpParser {
             throw new IllegalStateException("Accessor not found: " + text);
         }
 
-        return new ExpValue(accessor, negate);
+        return new ExpressionValue(accessor, negate);
     }
 
 }

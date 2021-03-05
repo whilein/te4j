@@ -25,6 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author lero4ka16
+ */
 public final class PlainParsedTemplate extends ParsedTemplate {
 
     public PlainParsedTemplate(TemplateProvider provider,

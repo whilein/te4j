@@ -14,38 +14,39 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type.ref;
+package com.github.lero4ka16.te4j.util.type;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
-public abstract class TypeRef<T> {
+public class NullTypeInfo implements TypeInfo {
 
-    private final Type type;
-    private final Class<T> cls;
+    public static final NullTypeInfo INSTANCE = new NullTypeInfo();
 
-    @SuppressWarnings("unchecked")
-    public TypeRef() {
-        this.type = ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0];
-
-        if (type instanceof Class) {
-            cls = (Class<T>) type;
-        } else {
-            ParameterizedType genericType = (ParameterizedType) type;
-            cls = (Class<T>) genericType.getRawType();
-        }
+    @Override
+    public boolean isArray() {
+        return false;
     }
 
+    @Override
+    public String getName() {
+        return "null";
+    }
+
+    @Override
     public Type getType() {
-        return type;
+        return Object.class;
     }
 
-    public Class<T> getTypeClass() {
-        return cls;
+    @Override
+    public Class<?> getComponentType() {
+        return null;
     }
 
+    @Override
+    public boolean isEnum() {
+        return false;
+    }
 }

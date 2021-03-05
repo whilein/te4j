@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.util.text;
 
 import java.io.IOException;
 
+/**
+ * @author lero4ka16
+ */
 public class StringText extends Text {
 
     private final String value;

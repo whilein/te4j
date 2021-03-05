@@ -16,11 +16,14 @@
 
 package com.github.lero4ka16.te4j.template.compiled.path;
 
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.NullTypeInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.Data;
 
+/**
+ * @author lero4ka16
+ */
 @Data
 public class PathAccessor {
 

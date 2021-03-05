@@ -18,24 +18,27 @@ package com.github.lero4ka16.te4j.template.include;
 
 import lombok.Data;
 
+/**
+ * @author lero4ka16
+ */
 @Data
 public class IncludeParam {
 
-    private final Include include;
+    private final IncludeFile file;
 
     private final int begin;
     private final int end;
 
     public boolean isExpression() {
-        return include.charAt(begin) == '[' && include.charAt(end - 1) == ']';
+        return file.charAt(begin) == '[' && file.charAt(end - 1) == ']';
     }
 
     public String getExpression() {
-        return include.substring(begin + 1, end - 1);
+        return file.substring(begin + 1, end - 1);
     }
 
     public String getValue() {
-        return include.substring(begin, end);
+        return file.substring(begin, end);
     }
 
 }

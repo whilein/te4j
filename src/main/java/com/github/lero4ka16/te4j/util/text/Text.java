@@ -18,7 +18,11 @@ package com.github.lero4ka16.te4j.util.text;
 
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 public abstract class Text {
 

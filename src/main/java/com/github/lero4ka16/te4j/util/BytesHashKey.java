@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.util;
 
 import java.util.Arrays;
 
+/**
+ * @author lero4ka16
+ */
 public final class BytesHashKey {
 
     private final byte[] value;

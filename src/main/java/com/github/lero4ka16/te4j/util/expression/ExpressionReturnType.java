@@ -14,19 +14,24 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type.info;
+package com.github.lero4ka16.te4j.util.expression;
 
-import java.lang.reflect.Type;
+import java.util.Set;
 
-public interface TypeInfo {
+public enum ExpressionReturnType {
 
-    boolean isArray();
+    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
 
-    String getName();
+    public static final ExpressionReturnType[] VALUES = values();
 
-    Type getType();
-    Class<?> getComponentType();
+    public static ExpressionReturnType getPriorityType(Set<ExpressionReturnType> types) {
+        for (ExpressionReturnType type : VALUES) {
+            if (types.contains(type)) {
+                return type;
+            }
+        }
 
-    boolean isEnum();
+        return null;
+    }
 
 }

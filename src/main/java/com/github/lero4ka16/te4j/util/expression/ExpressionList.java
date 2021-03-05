@@ -17,17 +17,17 @@
 package com.github.lero4ka16.te4j.util.expression;
 
 import com.github.lero4ka16.te4j.util.text.Text;
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
 import java.lang.reflect.Array;
 
-public class ExpList extends Exp {
+public class ExpressionList extends Expression {
 
     private final TypeInfo type;
-    private final Exp[] inner;
+    private final Expression[] inner;
 
-    public ExpList(Class<?> type, Exp[] inner) {
+    public ExpressionList(Class<?> type, Expression[] inner) {
         Class<?> arrayType;
 
         if (type == Object.class) {
@@ -44,7 +44,7 @@ public class ExpList extends Exp {
         Object[] result = new Object[inner.length];
 
         for (int i = 0; i < result.length; i++) {
-            Exp element = inner[i];
+            Expression element = inner[i];
 
             if (element instanceof ExpParentheses) {
                 ExpParentheses parentheses = (ExpParentheses) element;
@@ -54,8 +54,8 @@ public class ExpList extends Exp {
                 }
             }
 
-            if (element instanceof ExpString) {
-                result[i] = Text.of(((ExpString) element).getValue()).computeAsString();
+            if (element instanceof ExpressionString) {
+                result[i] = Text.of(((ExpressionString) element).getValue()).computeAsString();
             } else {
                 throw new UnsupportedOperationException(element.getClass().getSimpleName() + " is unsupported, sorry");
             }
@@ -65,8 +65,8 @@ public class ExpList extends Exp {
     }
 
     @Override
-    public ExpReturnType getReturnType() {
-        return ExpReturnType.OBJECT;
+    public ExpressionReturnType getReturnType() {
+        return ExpressionReturnType.OBJECT;
     }
 
     @Override

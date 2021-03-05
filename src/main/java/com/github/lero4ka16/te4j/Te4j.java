@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 @UtilityClass
 public class Te4j {

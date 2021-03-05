@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.filter;
 
+/**
+ * @author lero4ka16
+ */
 public interface Filter {
 
     String wrap(String value);

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 @RequiredArgsConstructor
 public final class StringConcatenation {

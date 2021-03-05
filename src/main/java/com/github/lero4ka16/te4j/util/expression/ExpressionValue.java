@@ -17,39 +17,39 @@
 package com.github.lero4ka16.te4j.util.expression;
 
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
-import com.github.lero4ka16.te4j.util.type.info.NullTypeInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public class ExpValue extends Exp {
+public class ExpressionValue extends Expression {
 
     private final PathAccessor accessor;
 
     private final String value;
     private final TypeInfo objectType;
 
-    private final ExpReturnType type;
+    private final ExpressionReturnType type;
 
-    public ExpValue(PathAccessor accessor, boolean negate) {
+    public ExpressionValue(PathAccessor accessor, boolean negate) {
         this.accessor = accessor;
         this.value = (negate ? "-" : "") + accessor.getAccessor();
         this.objectType = accessor.getReturnType();
 
         if (objectType instanceof NullTypeInfo) {
-            this.type = ExpReturnType.NULL;
+            this.type = ExpressionReturnType.NULL;
         } else if (objectType.getType() instanceof Class) {
             Class<?> cls = (Class<?>) objectType.getType();
 
             if (cls == String.class) {
-                this.type = ExpReturnType.STRING;
+                this.type = ExpressionReturnType.STRING;
             } else if (cls == boolean.class || cls == Boolean.class) {
-                this.type = ExpReturnType.LOGICAL;
+                this.type = ExpressionReturnType.LOGICAL;
             } else if (!cls.isArray() && (cls.isPrimitive() || Number.class.isAssignableFrom(cls))) {
-                this.type = ExpReturnType.NUMERICAL;
+                this.type = ExpressionReturnType.NUMERICAL;
             } else {
-                this.type = ExpReturnType.OBJECT;
+                this.type = ExpressionReturnType.OBJECT;
             }
         } else {
-            this.type = ExpReturnType.OBJECT;
+            this.type = ExpressionReturnType.OBJECT;
         }
     }
 
@@ -58,7 +58,7 @@ public class ExpValue extends Exp {
     }
 
     @Override
-    public ExpReturnType getReturnType() {
+    public ExpressionReturnType getReturnType() {
         return type;
     }
 

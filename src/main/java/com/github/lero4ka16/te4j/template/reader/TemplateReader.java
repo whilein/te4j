@@ -21,10 +21,14 @@ import com.github.lero4ka16.te4j.template.PlainParsedTemplate;
 import com.github.lero4ka16.te4j.template.StandardParsedTemplate;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
-import com.github.lero4ka16.te4j.template.include.Include;
+import com.github.lero4ka16.te4j.template.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import com.github.lero4ka16.te4j.template.method.impl.*;
+import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
+import com.github.lero4ka16.te4j.template.method.impl.ForeachMethod;
+import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
+import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
+import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
@@ -185,7 +189,7 @@ public final class TemplateReader {
         switch (methodType) {
             default:
             case INCLUDE: {
-                method = new IncludeMethod(new Include(path));
+                method = new IncludeMethod(new IncludeFile(path));
                 break;
             }
             case FOR: {

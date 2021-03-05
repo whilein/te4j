@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.util.replace;
 
 import lombok.Data;
 
+/**
+ * @author lero4ka16
+ */
 @Data
 public final class ReplaceStrategy {
 

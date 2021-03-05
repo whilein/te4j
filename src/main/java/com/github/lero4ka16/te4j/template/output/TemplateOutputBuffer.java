@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.template.output;
 
 import java.util.Arrays;
 
+/**
+ * @author lero4ka16
+ */
 public class TemplateOutputBuffer extends TemplateOutput {
 
     private byte[] value;

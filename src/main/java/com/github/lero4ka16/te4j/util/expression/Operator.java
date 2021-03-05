@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
-public enum ExpOpType {
+public enum Operator {
     MULTIPLY("*"),
     PLUS("+"),
     MINUS("-"),
@@ -41,7 +41,7 @@ public enum ExpOpType {
 
     private final String operator;
 
-    public static final ExpOpType[] VALUES = values();
+    public static final Operator[] VALUES = values();
 
     public boolean isComparison() {
         return this == EQUAL || this == NOT_EQUAL;
@@ -69,16 +69,16 @@ public enum ExpOpType {
         return filter(VALUES, 0, i).length != 0;
     }
 
-    public static Optional<ExpOpType> get(ExpOpType[] types, String value) {
+    public static Optional<Operator> get(Operator[] types, String value) {
         return Arrays.stream(types)
                 .filter(element -> element.getOperator().equals(value))
                 .findAny();
     }
 
-    public static ExpOpType[] filter(ExpOpType[] type, int position, int value) {
+    public static Operator[] filter(Operator[] type, int position, int value) {
         return Arrays.stream(type)
                 .filter(element -> element.getOperator().length() > position
                         && element.getOperator().charAt(position) == value)
-                .toArray(ExpOpType[]::new);
+                .toArray(Operator[]::new);
     }
 }

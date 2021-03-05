@@ -19,6 +19,9 @@ package com.github.lero4ka16.te4j.template.compiled.accessor;
 import com.github.lero4ka16.te4j.util.StringConcatenation;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @author lero4ka16
+ */
 @RequiredArgsConstructor
 public class BytesAccessor implements Accessor {
 

@@ -21,6 +21,9 @@ import com.github.lero4ka16.te4j.util.Utils;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * @author lero4ka16
+ */
 public class FileTemplateProviderRoot extends TemplateProviderRoot {
 
     private final File root;

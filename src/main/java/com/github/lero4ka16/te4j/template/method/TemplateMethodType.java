@@ -27,7 +27,7 @@ package com.github.lero4ka16.te4j.template.method;
  *     <li>INCLUDE - добавляет данные из другого файла, специально оформатированные под текущий объект</li>
  * </ul>
  *
- * @author Лера
+ * @author lero4ka16
  */
 public enum TemplateMethodType {
 

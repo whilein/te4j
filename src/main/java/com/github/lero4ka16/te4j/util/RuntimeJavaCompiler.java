@@ -30,6 +30,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author lero4ka16
+ */
 @RequiredArgsConstructor
 public final class RuntimeJavaCompiler {
 

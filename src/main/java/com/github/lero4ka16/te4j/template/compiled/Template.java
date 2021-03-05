@@ -22,6 +22,9 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
 
 import java.io.OutputStream;
 
+/**
+ * @author lero4ka16
+ */
 public abstract class Template<BoundType> {
 
     private final TemplateOutputBuffer buffer = new TemplateOutputBuffer();

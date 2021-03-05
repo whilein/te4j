@@ -24,6 +24,9 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author lero4ka16
+ */
 public abstract class ParsedTemplate {
 
     protected final TemplateProvider provider;
@@ -41,11 +44,13 @@ public abstract class ParsedTemplate {
     public ParsedTemplate(TemplateProvider provider, byte[] content,
                           int offset, int length) {
         if (offset < 0 || offset >= content.length) {
-            throw new IllegalArgumentException("offset");
+            throw new IllegalArgumentException("offset must be between 0 and "
+                    + content.length + " inclusive, but " + offset);
         }
 
         if (length < 0 || offset + length > content.length) {
-            throw new IllegalArgumentException("length");
+            throw new IllegalArgumentException("length must be between 0 and "
+                    + (content.length - offset) + ", but " + length);
         }
 
         this.provider = provider;
@@ -71,7 +76,7 @@ public abstract class ParsedTemplate {
         }
 
         while (length != 0 && newline(content[offset + length - 1] & 0xFF)) {
-             length--;
+            length--;
         }
 
         _content = null;
@@ -94,6 +99,7 @@ public abstract class ParsedTemplate {
     public abstract <BoundType> Template<BoundType> compile(Class<BoundType> type);
 
     public abstract boolean hasPaths();
+
     public abstract List<TemplatePath> getPaths();
 
 }

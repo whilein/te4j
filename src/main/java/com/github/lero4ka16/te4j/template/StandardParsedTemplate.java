@@ -25,6 +25,9 @@ import lombok.Getter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * @author lero4ka16
+ */
 @Getter
 public final class StandardParsedTemplate extends ParsedTemplate {
 

@@ -16,32 +16,28 @@
 
 package com.github.lero4ka16.te4j.util.expression;
 
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
-import lombok.Getter;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-public class ExpNumber extends Exp {
+@RequiredArgsConstructor
+public class ExpressionEnum extends Expression {
 
-    private final String number;
-
-    public ExpNumber(String number) {
-        this.number = number;
-    }
+    private final String value;
 
     @Override
-    public ExpReturnType getReturnType() {
-        return ExpReturnType.NUMERICAL;
+    public ExpressionReturnType getReturnType() {
+        return ExpressionReturnType.ENUM;
     }
 
     @Override
     public TypeInfo getObjectType() {
-        return GenericInfo.NUMBER;
+        return GenericInfo.STRING;
     }
 
     @Override
     protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, number);
+        compile.appendFiltered(filter, value);
     }
 
 }

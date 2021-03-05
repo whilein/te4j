@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.reader.token;
 
+/**
+ * @author lero4ka16
+ */
 public enum TemplateTokenType {
 
     BEGIN, END_FOR, ELSE, END_IF, END_CASE, CASE_DEFAULT;

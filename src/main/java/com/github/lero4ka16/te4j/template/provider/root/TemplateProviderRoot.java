@@ -18,9 +18,13 @@ package com.github.lero4ka16.te4j.template.provider.root;
 
 import java.io.IOException;
 
+/**
+ * @author lero4ka16
+ */
 public abstract class TemplateProviderRoot {
 
     public abstract byte[] read(String relative) throws IOException;
+
     public abstract String resolve(String relative);
 
 }

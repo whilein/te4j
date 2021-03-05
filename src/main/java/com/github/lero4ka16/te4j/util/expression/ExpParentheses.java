@@ -16,37 +16,37 @@
 
 package com.github.lero4ka16.te4j.util.expression;
 
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
 import java.util.EnumSet;
 import java.util.Set;
 
-public class ExpParentheses extends Exp {
+public class ExpParentheses extends Expression {
 
-    private final Exp[] inner;
+    private final Expression[] inner;
 
     private final TypeInfo objectType;
-    private final ExpReturnType returnType;
+    private final ExpressionReturnType returnType;
 
-    public ExpParentheses(Exp[] inner) {
+    public ExpParentheses(Expression[] inner) {
         this.inner = inner;
 
         if (inner.length != 1) {
-            Set<ExpReturnType> possibleTypes = EnumSet.noneOf(ExpReturnType.class);
+            Set<ExpressionReturnType> possibleTypes = EnumSet.noneOf(ExpressionReturnType.class);
 
             for (int i = 0; i < inner.length; i++) {
-                Exp exp = inner[i];
+                Expression exp = inner[i];
 
-                Exp next = i == inner.length - 1 ? null : inner[i + 1];
-                Exp prev = i == 0 ? null : inner[i - 1];
+                Expression next = i == inner.length - 1 ? null : inner[i + 1];
+                Expression prev = i == 0 ? null : inner[i - 1];
 
-                if (exp instanceof ExpOp) {
-                    ExpOp op = (ExpOp) exp;
-                    ExpOpType opType = op.getType();
+                if (exp instanceof ExpressionOperator) {
+                    ExpressionOperator op = (ExpressionOperator) exp;
+                    Operator opType = op.getOperator();
 
                     if (opType.isComparison()) {
-                        possibleTypes.add(ExpReturnType.LOGICAL);
+                        possibleTypes.add(ExpressionReturnType.LOGICAL);
                         continue;
                     }
 
@@ -54,11 +54,11 @@ public class ExpParentheses extends Exp {
                         continue;
                     }
 
-                    if (opType == ExpOpType.PLUS) {
+                    if (opType == Operator.PLUS) {
                         // concat with object
-                        if (prev.getReturnType() == ExpReturnType.STRING
-                                || next.getReturnType() == ExpReturnType.STRING) {
-                            possibleTypes.add(ExpReturnType.STRING);
+                        if (prev.getReturnType() == ExpressionReturnType.STRING
+                                || next.getReturnType() == ExpressionReturnType.STRING) {
+                            possibleTypes.add(ExpressionReturnType.STRING);
 
                             continue;
                         }
@@ -66,9 +66,9 @@ public class ExpParentheses extends Exp {
 
                     if (opType.isNumerical()) {
                         // number sum
-                        if (prev.getReturnType() == ExpReturnType.NUMERICAL
-                                && next.getReturnType() == ExpReturnType.NUMERICAL) {
-                            possibleTypes.add(ExpReturnType.NUMERICAL);
+                        if (prev.getReturnType() == ExpressionReturnType.NUMERICAL
+                                && next.getReturnType() == ExpressionReturnType.NUMERICAL) {
+                            possibleTypes.add(ExpressionReturnType.NUMERICAL);
                             continue;
                         }
 
@@ -76,7 +76,7 @@ public class ExpParentheses extends Exp {
                     }
                 }
             }
-            this.returnType = ExpReturnType.getPriorityType(possibleTypes);
+            this.returnType = ExpressionReturnType.getPriorityType(possibleTypes);
 
             if (returnType == null) {
                 throw new IllegalStateException();
@@ -96,7 +96,7 @@ public class ExpParentheses extends Exp {
                     break;
             }
         } else {
-            Exp exp = inner[0];
+            Expression exp = inner[0];
             returnType = exp.getReturnType();
             objectType = exp.getObjectType();
         }
@@ -106,8 +106,8 @@ public class ExpParentheses extends Exp {
         return inner.length == 1;
     }
 
-    public Exp openParentheses() {
-        Exp result = inner[0];
+    public Expression openParentheses() {
+        Expression result = inner[0];
 
         if (result instanceof ExpParentheses) {
             ExpParentheses parentheses = (ExpParentheses) result;
@@ -121,7 +121,7 @@ public class ExpParentheses extends Exp {
     }
 
     @Override
-    public ExpReturnType getReturnType() {
+    public ExpressionReturnType getReturnType() {
         return returnType;
     }
 

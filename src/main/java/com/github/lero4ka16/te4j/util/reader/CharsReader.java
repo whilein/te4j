@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.util.reader;
 
+/**
+ * @author lero4ka16
+ */
 public final class CharsReader extends DataReader {
 
     private final String value;

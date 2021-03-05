@@ -19,12 +19,12 @@ package com.github.lero4ka16.te4j.template.compiled.path;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 @Data
 @RequiredArgsConstructor

@@ -22,6 +22,9 @@ import lombok.Getter;
 
 import java.util.Arrays;
 
+/**
+ * @author lero4ka16
+ */
 @Getter
 public class TemplateUnexpectedTokenException extends RuntimeException {
 

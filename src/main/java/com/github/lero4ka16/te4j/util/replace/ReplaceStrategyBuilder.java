@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.util.replace;
 
+/**
+ * @author lero4ka16
+ */
 public class ReplaceStrategyBuilder {
     private boolean removeCarriageReturn;
     private boolean removeLineFeed;

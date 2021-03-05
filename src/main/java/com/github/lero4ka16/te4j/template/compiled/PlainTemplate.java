@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.template.compiled;
 
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 
+/**
+ * @author lero4ka16
+ */
 public class PlainTemplate<BoundType> extends Template<BoundType> {
 
     private final byte[] value;

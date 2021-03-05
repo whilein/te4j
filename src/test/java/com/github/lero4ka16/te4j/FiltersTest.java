@@ -17,16 +17,18 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.template.filter.Filters;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 public class FiltersTest {
 

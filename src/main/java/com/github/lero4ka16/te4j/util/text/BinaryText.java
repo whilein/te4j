@@ -19,6 +19,9 @@ package com.github.lero4ka16.te4j.util.text;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @author lero4ka16
+ */
 public class BinaryText extends Text {
 
     private final byte[] value;

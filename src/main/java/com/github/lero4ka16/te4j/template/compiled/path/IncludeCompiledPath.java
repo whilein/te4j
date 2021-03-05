@@ -16,24 +16,24 @@
 
 package com.github.lero4ka16.te4j.template.compiled.path;
 
-import com.github.lero4ka16.te4j.template.include.Include;
+import com.github.lero4ka16.te4j.template.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.Getter;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 @Getter
 public class IncludeCompiledPath extends AbstractCompiledPath {
 
-    private final Include value;
+    private final IncludeFile file;
 
-    public IncludeCompiledPath(String id, Include value, TemplatePath path) {
+    public IncludeCompiledPath(String id, IncludeFile file, TemplatePath path) {
         super(id, path);
 
-        this.value = value;
+        this.file = file;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class IncludeCompiledPath extends AbstractCompiledPath {
 
     @Override
     public String getAccessorValue() {
-        return value.getPath();
+        return file.getPath();
     }
 
 }

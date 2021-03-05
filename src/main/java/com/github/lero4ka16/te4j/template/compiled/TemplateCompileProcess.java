@@ -17,7 +17,11 @@
 package com.github.lero4ka16.te4j.template.compiled;
 
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.compiled.accessor.*;
+import com.github.lero4ka16.te4j.template.compiled.accessor.Accessor;
+import com.github.lero4ka16.te4j.template.compiled.accessor.ArrayAccessor;
+import com.github.lero4ka16.te4j.template.compiled.accessor.BytesAccessor;
+import com.github.lero4ka16.te4j.template.compiled.accessor.MethodAccessor;
+import com.github.lero4ka16.te4j.template.compiled.accessor.RawAccessor;
 import com.github.lero4ka16.te4j.template.compiled.feature.Namespace;
 import com.github.lero4ka16.te4j.template.compiled.feature.SwitchCase;
 import com.github.lero4ka16.te4j.template.compiled.path.AbstractCompiledPath;
@@ -25,9 +29,13 @@ import com.github.lero4ka16.te4j.template.compiled.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.IncludeCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
-import com.github.lero4ka16.te4j.template.include.Include;
+import com.github.lero4ka16.te4j.template.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import com.github.lero4ka16.te4j.template.method.impl.*;
+import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
+import com.github.lero4ka16.te4j.template.method.impl.ForeachMethod;
+import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
+import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
+import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
@@ -35,13 +43,13 @@ import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.BytesHashKey;
 import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
 import com.github.lero4ka16.te4j.util.StringConcatenation;
-import com.github.lero4ka16.te4j.util.expression.Exp;
-import com.github.lero4ka16.te4j.util.expression.ExpList;
 import com.github.lero4ka16.te4j.util.expression.ExpParser;
-import com.github.lero4ka16.te4j.util.expression.ExpValue;
+import com.github.lero4ka16.te4j.util.expression.Expression;
+import com.github.lero4ka16.te4j.util.expression.ExpressionList;
+import com.github.lero4ka16.te4j.util.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.util.text.Text;
-import com.github.lero4ka16.te4j.util.type.info.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,13 +57,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.github.lero4ka16.te4j.util.Utils.getMethod;
 import static com.github.lero4ka16.te4j.util.Utils.toCamelCase;
 
+/**
+ * @author lero4ka16
+ */
 public class TemplateCompileProcess<BoundType> {
 
     private static final String COMPILED_TEMPLATE_CLASS
@@ -81,15 +97,10 @@ public class TemplateCompileProcess<BoundType> {
     private final TemplateProvider provider;
     private final AtomicInteger nameCounter;
 
-    /**
-     * Type of template
-     */
     private final Class<BoundType> type;
 
-    // Класс, который компилируется в данный момент
     private final RuntimeJavaCompiler javaCompiler;
 
-    // Пути к полям
     private final List<TemplatePath> paths;
 
     private final Map<String, Accessor> accessors;
@@ -124,7 +135,6 @@ public class TemplateCompileProcess<BoundType> {
             if (path.getMethodType() == TemplateMethodType.INCLUDE) {
                 IncludeMethod includeMethod = path.getMethod();
 
-                // мы добавим позже эти инклуды
                 if (includeMethod.getFile().hasValues()) {
                     continue;
                 }
@@ -165,13 +175,13 @@ public class TemplateCompileProcess<BoundType> {
                         ? path.<ValueMethod>getMethod().getValue()
                         : path.<ConditionMethod>getMethod().getCondition();
 
-                Exp exp = expParser.parseExpression(value);
+                Expression exp = expParser.parseExpression(value);
                 String result = exp.compile();
 
                 PathAccessor newAccessor;
 
-                if (exp instanceof ExpValue) {
-                    ExpValue expValue = (ExpValue) exp;
+                if (exp instanceof ExpressionValue) {
+                    ExpressionValue expValue = (ExpressionValue) exp;
                     PathAccessor oldAccessor = expValue.getAccessor();
 
                     if (oldAccessor.getAccessor().equals(result)) {
@@ -188,7 +198,7 @@ public class TemplateCompileProcess<BoundType> {
             default:
                 String value = path.<ForeachMethod>getMethod().getPath();
 
-                Exp exp = expParser.parseExpression(value);
+                Expression exp = expParser.parseExpression(value);
                 String result = exp.compile();
 
                 return new DefaultCompiledPath(id, new PathAccessor(exp.getObjectType(), result, false), path);
@@ -326,13 +336,13 @@ public class TemplateCompileProcess<BoundType> {
                     type = (Class<?>) info.getType();
                     values = type.getEnumConstants();
                 } else {
-                    Exp exp = expParser.parseExpression(from);
+                    Expression exp = expParser.parseExpression(from);
 
-                    if (!(exp instanceof ExpList)) {
+                    if (!(exp instanceof ExpressionList)) {
                         throw new UnsupportedOperationException();
                     }
 
-                    ExpList expList = (ExpList) exp;
+                    ExpressionList expList = (ExpressionList) exp;
                     values = expList.toArray();
                     type = expList.getObjectType().getComponentType();
                 }
@@ -376,20 +386,20 @@ public class TemplateCompileProcess<BoundType> {
                 IncludeMethod method = path.getMethod();
 
                 String fileName;
-                Include include = method.getFile();
+                IncludeFile file = method.getFile();
 
-                if (include.hasValues()) {
+                if (file.hasValues()) {
                     SwitchCase switchCase = currentSwitchCase;
 
                     if (switchCase != null) {
-                        fileName = include.format(switchCase.getValue());
+                        fileName = file.format(switchCase.getValue());
                     } else {
-                        fileName = include.format();
+                        fileName = file.format();
                     }
 
                     includes.add(fileName);
                 } else {
-                    fileName = include.format();
+                    fileName = file.format();
                 }
 
                 ParsedTemplate template = provider.parse(fileName);

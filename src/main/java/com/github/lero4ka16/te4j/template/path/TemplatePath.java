@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import lombok.Data;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 @Data
 public class TemplatePath {

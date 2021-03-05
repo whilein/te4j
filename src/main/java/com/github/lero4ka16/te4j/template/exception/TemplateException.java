@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.exception;
 
+/**
+ * @author lero4ka16
+ */
 public class TemplateException extends RuntimeException {
 
     public TemplateException(String message) {

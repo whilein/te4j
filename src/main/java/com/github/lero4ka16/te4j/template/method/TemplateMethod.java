@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.method;
 
+/**
+ * @author lero4ka16
+ */
 public interface TemplateMethod {
 
     TemplateMethodType getType();

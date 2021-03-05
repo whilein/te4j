@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * @author lero4ka16
+ */
 public class PathTemplateProviderRoot extends TemplateProviderRoot {
 
     private final Path root;

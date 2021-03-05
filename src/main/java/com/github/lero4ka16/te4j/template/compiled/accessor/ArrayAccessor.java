@@ -18,6 +18,9 @@ package com.github.lero4ka16.te4j.template.compiled.accessor;
 
 import com.github.lero4ka16.te4j.util.StringConcatenation;
 
+/**
+ * @author lero4ka16
+ */
 public class ArrayAccessor implements Accessor {
 
     private final Accessor[] value;

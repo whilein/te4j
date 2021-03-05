@@ -19,6 +19,9 @@ package com.github.lero4ka16.te4j.template.path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * @author lero4ka16
+ */
 public class TemplatePathIterator implements Iterator<String> {
 
     private final String text;

@@ -23,7 +23,7 @@ import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import java.util.List;
 
 /**
- * @author Лера
+ * @author lero4ka16
  */
 public class TemplateCompiler {
 

@@ -14,15 +14,23 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.accessor;
+package com.github.lero4ka16.te4j.util.type;
 
-import com.github.lero4ka16.te4j.util.StringConcatenation;
+import java.lang.reflect.Type;
 
-public class EmptyAccessor implements Accessor {
+/**
+ * @author lero4ka16
+ */
+public interface TypeInfo {
 
-    public static final EmptyAccessor INSTANCE = new EmptyAccessor();
+    boolean isArray();
 
-    @Override
-    public void insert(StringConcatenation concatenation) {
-    }
+    String getName();
+
+    Type getType();
+
+    Class<?> getComponentType();
+
+    boolean isEnum();
+
 }

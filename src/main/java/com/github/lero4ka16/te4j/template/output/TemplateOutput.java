@@ -21,6 +21,9 @@ import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+/**
+ * @author lero4ka16
+ */
 public abstract class TemplateOutput extends OutputStream {
 
     private static final byte[] ARRAY_DELIMITER = ", ".getBytes(StandardCharsets.UTF_8);
@@ -181,9 +184,11 @@ public abstract class TemplateOutput extends OutputStream {
     }
 
     public abstract void write(byte[] bytes);
+
     public abstract void write(byte[] bytes, int off, int len);
 
     public abstract void flush();
+
     public abstract void close();
 
     public abstract void write(int ch);

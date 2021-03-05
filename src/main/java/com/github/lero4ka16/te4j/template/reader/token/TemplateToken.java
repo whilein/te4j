@@ -19,6 +19,9 @@ package com.github.lero4ka16.te4j.template.reader.token;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
 import lombok.Data;
 
+/**
+ * @author lero4ka16
+ */
 @Data
 public class TemplateToken {
 

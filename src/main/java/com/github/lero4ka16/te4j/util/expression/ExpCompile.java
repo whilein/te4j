@@ -26,7 +26,7 @@ import java.util.LinkedList;
 @RequiredArgsConstructor
 public class ExpCompile {
 
-    private final Exp[] expression;
+    private final Expression[] expression;
     private final LinkedList<String> tokens;
 
     private int position;
@@ -35,12 +35,12 @@ public class ExpCompile {
         position++;
     }
 
-    public Exp getPrevious() {
+    public Expression getPrevious() {
         return expression[position - 1];
     }
 
-    public static String singleton(Exp exp) {
-        ExpCompile compile = new ExpCompile(new Exp[] { exp }, new LinkedList<>());
+    public static String singleton(Expression exp) {
+        ExpCompile compile = new ExpCompile(new Expression[]{exp}, new LinkedList<>());
         exp.compile(compile);
 
         return compile.toString();
@@ -53,7 +53,7 @@ public class ExpCompile {
         }
     }
 
-    public Exp getNext() {
+    public Expression getNext() {
         return expression[position + 1];
     }
 

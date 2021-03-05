@@ -21,6 +21,9 @@ import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @author lero4ka16
+ */
 public class TemplateOutputStream extends TemplateOutput {
 
     private final OutputStream os;

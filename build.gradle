@@ -29,5 +29,5 @@ compileJava {
 
 jar {
     destinationDirectory = file("$rootDir/output")
-    archiveFileName = "Te4j.jar"
+    archiveFileName = "te4j.jar"
 }

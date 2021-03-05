@@ -16,6 +16,9 @@
 
 package com.github.lero4ka16.te4j.util.reader;
 
+/**
+ * @author lero4ka16
+ */
 public abstract class DataReader {
 
     protected int position;
@@ -27,6 +30,7 @@ public abstract class DataReader {
     public abstract String substring(int start, int end);
 
     public abstract int get(int position);
+
     public abstract int getLength();
 
     public boolean isReadable() {

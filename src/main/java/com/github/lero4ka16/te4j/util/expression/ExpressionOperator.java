@@ -16,18 +16,18 @@
 
 package com.github.lero4ka16.te4j.util.expression;
 
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ExpOp extends Exp {
+public class ExpressionOperator extends Expression {
 
-    private final ExpOpType type;
+    private final Operator operator;
 
     @Override
-    public ExpReturnType getReturnType() {
+    public ExpressionReturnType getReturnType() {
         return null;
     }
 
@@ -38,15 +38,15 @@ public class ExpOp extends Exp {
 
     @Override
     public void compile(ExpCompile compile) {
-        Exp prev = compile.getPrevious();
-        Exp next = compile.getNext();
+        Expression prev = compile.getPrevious();
+        Expression next = compile.getNext();
 
-        if (type.isComparison() && prev != null && next != null) {
-            if ((prev.getReturnType() == ExpReturnType.OBJECT || prev.getReturnType() == ExpReturnType.STRING)
-                    && (next.getReturnType() == ExpReturnType.OBJECT || next.getReturnType() == ExpReturnType.STRING)) {
+        if (operator.isComparison() && prev != null && next != null) {
+            if ((prev.getReturnType() == ExpressionReturnType.OBJECT || prev.getReturnType() == ExpressionReturnType.STRING)
+                    && (next.getReturnType() == ExpressionReturnType.OBJECT || next.getReturnType() == ExpressionReturnType.STRING)) {
                 StringBuilder token = new StringBuilder();
 
-                if (type == ExpOpType.NOT_EQUAL) {
+                if (operator == Operator.NOT_EQUAL) {
                     compile.appendBeforePrevious("!");
                 }
 
@@ -60,12 +60,12 @@ public class ExpOp extends Exp {
                 return;
             }
 
-            if (prev.getReturnType() == ExpReturnType.ENUM || next.getReturnType() == ExpReturnType.ENUM) {
+            if (prev.getReturnType() == ExpressionReturnType.ENUM || next.getReturnType() == ExpressionReturnType.ENUM) {
                 TypeInfo prevType = prev.getObjectType();
                 TypeInfo nextType = next.getObjectType();
 
                 if (prevType.isEnum()) {
-                    compile.append(type.getOperator());
+                    compile.append(operator.getOperator());
                     compile.append(prevType.getName() + ".");
                     compile.append(next.compile());
                     compile.skipNext();
@@ -74,13 +74,13 @@ public class ExpOp extends Exp {
 
                 if (nextType.isEnum()) {
                     compile.appendBeforePrevious(nextType.getName() + ".");
-                    compile.append(type.getOperator());
+                    compile.append(operator.getOperator());
                     return;
                 }
             }
         }
 
-        compile.append(type.getOperator());
+        compile.append(operator.getOperator());
     }
 
 }

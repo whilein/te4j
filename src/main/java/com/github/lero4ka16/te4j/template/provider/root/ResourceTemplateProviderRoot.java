@@ -22,6 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * @author lero4ka16
+ */
 public class ResourceTemplateProviderRoot extends TemplateProviderRoot {
 
     private final String root;

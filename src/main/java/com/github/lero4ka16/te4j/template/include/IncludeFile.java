@@ -24,13 +24,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author lero4ka16
+ */
 @Data
-public class Include {
+public class IncludeFile {
 
     private final String path;
     private final List<IncludeParam> values;
 
-    public Include(String path) {
+    public IncludeFile(String path) {
         this.path = path;
         this.values = new ArrayList<>();
 

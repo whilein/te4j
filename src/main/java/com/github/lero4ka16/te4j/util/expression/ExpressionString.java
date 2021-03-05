@@ -16,27 +16,30 @@
 
 package com.github.lero4ka16.te4j.util.expression;
 
-import com.github.lero4ka16.te4j.util.type.info.TypeInfo;
-import lombok.Setter;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Setter
-public abstract class Exp {
+@Getter
+@RequiredArgsConstructor
+public class ExpressionString extends Expression {
 
-    protected String filter;
+    private final String value;
 
-    public abstract ExpReturnType getReturnType();
-
-    public void addFilter(String filter) {
-        if (this.filter == null) this.filter = filter;
-        else this.filter += ":" + filter;
+    @Override
+    public ExpressionReturnType getReturnType() {
+        return ExpressionReturnType.STRING;
     }
 
-    public String compile() {
-        return ExpCompile.singleton(this);
+    @Override
+    public TypeInfo getObjectType() {
+        return GenericInfo.STRING;
     }
 
-    public abstract TypeInfo getObjectType();
-
-    protected abstract void compile(ExpCompile compile);
+    @Override
+    protected void compile(ExpCompile compile) {
+        compile.appendFiltered(filter, "\"" + value + "\"");
+    }
 
 }
