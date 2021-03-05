@@ -14,34 +14,30 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-public class ExpressionNumber extends Expression {
+@RequiredArgsConstructor
+public class ExpressionEnum extends Expression {
 
-    private final String number;
-
-    public ExpressionNumber(String number) {
-        this.number = number;
-    }
+    private final String value;
 
     @Override
     public ExpressionReturnType getReturnType() {
-        return ExpressionReturnType.NUMERICAL;
+        return ExpressionReturnType.ENUM;
     }
 
     @Override
     public TypeInfo getObjectType() {
-        return GenericInfo.NUMBER;
+        return GenericInfo.STRING;
     }
 
     @Override
     protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, number);
+        compile.appendFiltered(filter, value);
     }
 
 }

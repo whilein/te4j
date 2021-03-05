@@ -14,31 +14,32 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.include;
+package com.github.lero4ka16.te4j.expression;
 
-import lombok.Data;
+import com.github.lero4ka16.te4j.util.type.GenericInfo;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-/**
- * @author lero4ka16
- */
-@Data
-public class IncludeParam {
+@Getter
+@RequiredArgsConstructor
+public class ExpressionString extends Expression {
 
-    private final IncludeFile file;
+    private final String value;
 
-    private final int begin;
-    private final int end;
-
-    public boolean isExpression() {
-        return file.charAt(begin) == '[' && file.charAt(end - 1) == ']';
+    @Override
+    public ExpressionReturnType getReturnType() {
+        return ExpressionReturnType.STRING;
     }
 
-    public String getExpression() {
-        return file.substring(begin + 1, end - 1);
+    @Override
+    public TypeInfo getObjectType() {
+        return GenericInfo.STRING;
     }
 
-    public String getValue() {
-        return file.substring(begin, end);
+    @Override
+    protected void compile(ExpCompile compile) {
+        compile.appendFiltered(filter, "\"" + value + "\"");
     }
 
 }

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

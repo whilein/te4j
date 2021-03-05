@@ -14,24 +14,31 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.include;
 
-import java.util.Set;
+import lombok.Data;
 
-public enum ExpressionReturnType {
+/**
+ * @author lero4ka16
+ */
+@Data
+public class IncludeParam {
 
-    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
+    private final IncludeFile file;
 
-    public static final ExpressionReturnType[] VALUES = values();
+    private final int begin;
+    private final int end;
 
-    public static ExpressionReturnType getPriorityType(Set<ExpressionReturnType> types) {
-        for (ExpressionReturnType type : VALUES) {
-            if (types.contains(type)) {
-                return type;
-            }
-        }
+    public boolean isExpression() {
+        return file.charAt(begin) == '[' && file.charAt(end - 1) == ']';
+    }
 
-        return null;
+    public String getExpression() {
+        return file.substring(begin + 1, end - 1);
+    }
+
+    public String getValue() {
+        return file.substring(begin, end);
     }
 
 }

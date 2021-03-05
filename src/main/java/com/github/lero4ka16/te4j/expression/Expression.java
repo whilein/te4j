@@ -14,28 +14,29 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.path;
+package com.github.lero4ka16.te4j.expression;
 
-import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.Setter;
 
-/**
- * @author lero4ka16
- */
-public class EmptyCompiledPath extends AbstractCompiledPath {
+@Setter
+public abstract class Expression {
 
-    public EmptyCompiledPath(String id, TemplatePath path) {
-        super(id, path);
+    protected String filter;
+
+    public abstract ExpressionReturnType getReturnType();
+
+    public void addFilter(String filter) {
+        if (this.filter == null) this.filter = filter;
+        else this.filter += ":" + filter;
     }
 
-    @Override
-    public TypeInfo getReturnType() {
-        return null;
+    public String compile() {
+        return ExpCompile.singleton(this);
     }
 
-    @Override
-    public String getAccessorValue() {
-        return null;
-    }
+    public abstract TypeInfo getObjectType();
+
+    protected abstract void compile(ExpCompile compile);
 
 }

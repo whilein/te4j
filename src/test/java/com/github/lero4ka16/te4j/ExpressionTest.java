@@ -16,14 +16,14 @@
 
 package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.expression.Expression;
+import com.github.lero4ka16.te4j.expression.ExpressionList;
+import com.github.lero4ka16.te4j.expression.ExpressionNumber;
+import com.github.lero4ka16.te4j.expression.ExpressionParentheses;
+import com.github.lero4ka16.te4j.expression.ExpressionParser;
+import com.github.lero4ka16.te4j.expression.ExpressionString;
+import com.github.lero4ka16.te4j.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
-import com.github.lero4ka16.te4j.util.expression.ExpParentheses;
-import com.github.lero4ka16.te4j.util.expression.ExpParser;
-import com.github.lero4ka16.te4j.util.expression.Expression;
-import com.github.lero4ka16.te4j.util.expression.ExpressionList;
-import com.github.lero4ka16.te4j.util.expression.ExpressionNumber;
-import com.github.lero4ka16.te4j.util.expression.ExpressionString;
-import com.github.lero4ka16.te4j.util.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class ExpressionTest {
 
-    private final ExpParser parser = new ExpParser(
+    private final ExpressionParser parser = new ExpressionParser(
             value -> {
                 if (value.equals("message")) {
                     return new PathAccessor(GenericInfo.STRING, "getMessage()", false);
@@ -54,14 +54,14 @@ public class ExpressionTest {
     @Test
     public void testIntEquals() {
         Expression equals = parser.parseExpression("1 == 5");
-        assertEquals(ExpParentheses.class, equals.getClass());
+        assertEquals(ExpressionParentheses.class, equals.getClass());
         assertEquals("(1==5)", equals.compile());
     }
 
     @Test
     public void testObjectEquals() {
         Expression equals = parser.parseExpression("message == \"Hello world!\"");
-        assertEquals(ExpParentheses.class, equals.getClass());
+        assertEquals(ExpressionParentheses.class, equals.getClass());
         assertEquals("(getMessage().equals(\"Hello world!\"))", equals.compile());
     }
 

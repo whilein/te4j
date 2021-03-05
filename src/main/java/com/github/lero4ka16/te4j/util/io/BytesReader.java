@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.reader;
+package com.github.lero4ka16.te4j.util.io;
 
 /**
  * @author lero4ka16

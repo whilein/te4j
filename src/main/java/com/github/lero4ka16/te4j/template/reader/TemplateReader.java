@@ -16,12 +16,12 @@
 
 package com.github.lero4ka16.te4j.template.reader;
 
+import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.PlainParsedTemplate;
 import com.github.lero4ka16.te4j.template.StandardParsedTemplate;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
-import com.github.lero4ka16.te4j.template.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
@@ -33,8 +33,8 @@ import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;
-import com.github.lero4ka16.te4j.util.reader.BytesReader;
-import com.github.lero4ka16.te4j.util.reader.DataReader;
+import com.github.lero4ka16.te4j.util.io.BytesReader;
+import com.github.lero4ka16.te4j.util.io.DataReader;
 import com.github.lero4ka16.te4j.util.text.Text;
 import lombok.RequiredArgsConstructor;
 

@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.method.impl;
 
-import com.github.lero4ka16.te4j.template.include.IncludeFile;
+import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import lombok.Data;

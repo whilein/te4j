@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.filter;
+package com.github.lero4ka16.te4j.filter;
 
 import com.github.lero4ka16.te4j.util.Utils;
 

@@ -14,32 +14,31 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.util.io;
 
-import com.github.lero4ka16.te4j.util.type.GenericInfo;
-import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
-public class ExpressionString extends Expression {
+/**
+ * @author lero4ka16
+ */
+public final class CharsReader extends DataReader {
 
     private final String value;
 
-    @Override
-    public ExpressionReturnType getReturnType() {
-        return ExpressionReturnType.STRING;
+    public CharsReader(String value) {
+        this.value = value;
+    }
+
+    public String substring(int start, int end) {
+        return value.substring(start, end);
     }
 
     @Override
-    public TypeInfo getObjectType() {
-        return GenericInfo.STRING;
+    public int get(int position) {
+        return value.charAt(position);
     }
 
     @Override
-    protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, "\"" + value + "\"");
+    public int getLength() {
+        return value.length();
     }
 
 }

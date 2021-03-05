@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.compiled.path;
 
-import com.github.lero4ka16.te4j.template.include.IncludeFile;
+import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;

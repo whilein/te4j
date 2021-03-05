@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j;
 
-import com.github.lero4ka16.te4j.template.filter.Filters;
+import com.github.lero4ka16.te4j.filter.Filters;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.template.provider.TemplateProviderBuilder;
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
@@ -37,10 +37,16 @@ public class Te4j {
             .replaceStrategy(ReplaceStrategy.NONE)
             .build();
 
+    /**
+     * @return Default template provider
+     */
     public TemplateProvider defaults() {
         return DEFAULTS;
     }
 
+    /**
+     * @return New custom template provider builder
+     */
     public TemplateProviderBuilder custom() {
         return new TemplateProviderBuilder();
     }

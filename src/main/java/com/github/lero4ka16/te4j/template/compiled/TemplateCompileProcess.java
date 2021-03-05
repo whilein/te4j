@@ -16,6 +16,11 @@
 
 package com.github.lero4ka16.te4j.template.compiled;
 
+import com.github.lero4ka16.te4j.expression.Expression;
+import com.github.lero4ka16.te4j.expression.ExpressionList;
+import com.github.lero4ka16.te4j.expression.ExpressionParser;
+import com.github.lero4ka16.te4j.expression.ExpressionValue;
+import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.compiled.accessor.Accessor;
 import com.github.lero4ka16.te4j.template.compiled.accessor.ArrayAccessor;
@@ -29,7 +34,6 @@ import com.github.lero4ka16.te4j.template.compiled.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.IncludeCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
-import com.github.lero4ka16.te4j.template.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ForeachMethod;
@@ -43,10 +47,6 @@ import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.BytesHashKey;
 import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
 import com.github.lero4ka16.te4j.util.StringConcatenation;
-import com.github.lero4ka16.te4j.util.expression.ExpParser;
-import com.github.lero4ka16.te4j.util.expression.Expression;
-import com.github.lero4ka16.te4j.util.expression.ExpressionList;
-import com.github.lero4ka16.te4j.util.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.util.text.Text;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
@@ -108,7 +108,7 @@ public class TemplateCompileProcess<BoundType> {
     private final Set<String> includes;
     private final Map<String, Namespace> namespaces = new HashMap<>();
 
-    private final ExpParser expParser;
+    private final ExpressionParser expressionParser;
 
     private SwitchCase currentSwitchCase;
 
@@ -121,7 +121,7 @@ public class TemplateCompileProcess<BoundType> {
         this.len = len;
 
         this.template = template;
-        this.expParser = new ExpParser(this::compilePathAccessor);
+        this.expressionParser = new ExpressionParser(this::compilePathAccessor);
 
         this.nameCounter = new AtomicInteger();
         this.accessors = new HashMap<>();
@@ -158,7 +158,6 @@ public class TemplateCompileProcess<BoundType> {
         namespaces.remove(name);
     }
 
-
     private AbstractCompiledPath compilePaths(TemplatePath path) {
         String id = "_" + nameCounter.incrementAndGet();
 
@@ -175,7 +174,7 @@ public class TemplateCompileProcess<BoundType> {
                         ? path.<ValueMethod>getMethod().getValue()
                         : path.<ConditionMethod>getMethod().getCondition();
 
-                Expression exp = expParser.parseExpression(value);
+                Expression exp = expressionParser.parseExpression(value);
                 String result = exp.compile();
 
                 PathAccessor newAccessor;
@@ -198,7 +197,7 @@ public class TemplateCompileProcess<BoundType> {
             default:
                 String value = path.<ForeachMethod>getMethod().getPath();
 
-                Expression exp = expParser.parseExpression(value);
+                Expression exp = expressionParser.parseExpression(value);
                 String result = exp.compile();
 
                 return new DefaultCompiledPath(id, new PathAccessor(exp.getObjectType(), result, false), path);
@@ -336,7 +335,7 @@ public class TemplateCompileProcess<BoundType> {
                     type = (Class<?>) info.getType();
                     values = type.getEnumConstants();
                 } else {
-                    Expression exp = expParser.parseExpression(from);
+                    Expression exp = expressionParser.parseExpression(from);
 
                     if (!(exp instanceof ExpressionList)) {
                         throw new UnsupportedOperationException();

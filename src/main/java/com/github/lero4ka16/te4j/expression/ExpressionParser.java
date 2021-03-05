@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
-import com.github.lero4ka16.te4j.util.reader.CharsReader;
-import com.github.lero4ka16.te4j.util.reader.DataReader;
+import com.github.lero4ka16.te4j.util.io.CharsReader;
+import com.github.lero4ka16.te4j.util.io.DataReader;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public final class ExpParser {
+public final class ExpressionParser {
 
     private final Function<String, PathAccessor> mapper;
 
@@ -34,8 +34,8 @@ public final class ExpParser {
         DataReader reader = new CharsReader("(" + value + ")");
         Expression exp = parseNext(null, reader, 0);
 
-        if (exp instanceof ExpParentheses) {
-            ExpParentheses parentheses = (ExpParentheses) exp;
+        if (exp instanceof ExpressionParentheses) {
+            ExpressionParentheses parentheses = (ExpressionParentheses) exp;
 
             if (parentheses.canOpenParentheses()) {
                 return parentheses.openParentheses();
@@ -121,7 +121,7 @@ public final class ExpParser {
             prev = token;
         }
 
-        return tokens.size() == 1 ? tokens.get(0) : new ExpParentheses(tokens.toArray(new Expression[0]));
+        return tokens.size() == 1 ? tokens.get(0) : new ExpressionParentheses(tokens.toArray(new Expression[0]));
     }
 
     private Class<?> getClass(String name) {

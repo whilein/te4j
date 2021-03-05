@@ -14,29 +14,24 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
-import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Setter;
+import java.util.Set;
 
-@Setter
-public abstract class Expression {
+public enum ExpressionReturnType {
 
-    protected String filter;
+    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
 
-    public abstract ExpressionReturnType getReturnType();
+    public static final ExpressionReturnType[] VALUES = values();
 
-    public void addFilter(String filter) {
-        if (this.filter == null) this.filter = filter;
-        else this.filter += ":" + filter;
+    public static ExpressionReturnType getPriorityType(Set<ExpressionReturnType> types) {
+        for (ExpressionReturnType type : VALUES) {
+            if (types.contains(type)) {
+                return type;
+            }
+        }
+
+        return null;
     }
-
-    public String compile() {
-        return ExpCompile.singleton(this);
-    }
-
-    public abstract TypeInfo getObjectType();
-
-    protected abstract void compile(ExpCompile compile);
 
 }

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.text.Text;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
@@ -46,8 +46,8 @@ public class ExpressionList extends Expression {
         for (int i = 0; i < result.length; i++) {
             Expression element = inner[i];
 
-            if (element instanceof ExpParentheses) {
-                ExpParentheses parentheses = (ExpParentheses) element;
+            if (element instanceof ExpressionParentheses) {
+                ExpressionParentheses parentheses = (ExpressionParentheses) element;
 
                 if (parentheses.canOpenParentheses()) {
                     element = parentheses.openParentheses();

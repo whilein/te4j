@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.expression;
+package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
@@ -22,14 +22,14 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class ExpParentheses extends Expression {
+public class ExpressionParentheses extends Expression {
 
     private final Expression[] inner;
 
     private final TypeInfo objectType;
     private final ExpressionReturnType returnType;
 
-    public ExpParentheses(Expression[] inner) {
+    public ExpressionParentheses(Expression[] inner) {
         this.inner = inner;
 
         if (inner.length != 1) {
@@ -109,8 +109,8 @@ public class ExpParentheses extends Expression {
     public Expression openParentheses() {
         Expression result = inner[0];
 
-        if (result instanceof ExpParentheses) {
-            ExpParentheses parentheses = (ExpParentheses) result;
+        if (result instanceof ExpressionParentheses) {
+            ExpressionParentheses parentheses = (ExpressionParentheses) result;
 
             if (parentheses.canOpenParentheses()) {
                 return parentheses.openParentheses();
