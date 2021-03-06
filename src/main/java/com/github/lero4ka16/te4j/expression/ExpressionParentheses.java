@@ -22,7 +22,7 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class ExpressionParentheses extends Expression {
+public final class ExpressionParentheses extends Expression {
 
     private final Expression[] inner;
 

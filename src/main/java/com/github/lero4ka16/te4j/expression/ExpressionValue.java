@@ -20,7 +20,7 @@ import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public class ExpressionValue extends Expression {
+public final class ExpressionValue extends Expression {
 
     private final PathAccessor accessor;
 

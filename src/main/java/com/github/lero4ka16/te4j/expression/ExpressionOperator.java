@@ -17,14 +17,18 @@
 package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
 public final class ExpressionOperator extends Expression {
 
     private final Operator operator;
+
+    public ExpressionOperator(Operator operator) {
+        this.operator = operator;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
 
     @Override
     public ExpressionReturnType getReturnType() {

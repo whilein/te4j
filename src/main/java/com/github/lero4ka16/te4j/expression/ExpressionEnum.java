@@ -18,12 +18,14 @@ package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public final class ExpressionEnum extends Expression {
 
     private final String value;
+
+    public ExpressionEnum(String value) {
+        this.value = value;
+    }
 
     @Override
     public ExpressionReturnType getReturnType() {

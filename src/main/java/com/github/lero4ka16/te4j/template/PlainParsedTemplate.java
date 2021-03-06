@@ -20,6 +20,7 @@ import com.github.lero4ka16.te4j.template.compiled.PlainTemplate;
 import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public final class PlainParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(Class<BoundType> type) {
+    public <BoundType> Template<BoundType> compile(TypeRef<BoundType> type) {
         return new PlainTemplate<>(content, offset, length);
     }
 

@@ -16,18 +16,33 @@
 
 package com.github.lero4ka16.te4j.include;
 
-import lombok.Data;
-
 /**
  * @author lero4ka16
  */
-@Data
 public class IncludeParam {
 
     private final IncludeFile file;
 
     private final int begin;
     private final int end;
+
+    public IncludeParam(IncludeFile file, int begin, int end) {
+        this.file = file;
+        this.begin = begin;
+        this.end = end;
+    }
+
+    public IncludeFile getFile() {
+        return file;
+    }
+
+    public int getBegin() {
+        return begin;
+    }
+
+    public int getEnd() {
+        return end;
+    }
 
     public boolean isExpression() {
         return file.charAt(begin) == '[' && file.charAt(end - 1) == ']';

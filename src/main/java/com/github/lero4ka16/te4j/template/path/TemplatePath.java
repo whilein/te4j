@@ -18,18 +18,30 @@ package com.github.lero4ka16.te4j.template.path;
 
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class TemplatePath {
 
     private final int offset;
     private final int length;
 
     private final TemplateMethod method;
+
+    public TemplatePath(int offset, int length, TemplateMethod method) {
+        this.offset = offset;
+        this.length = length;
+        this.method = method;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getLength() {
+        return length;
+    }
 
     public TemplateMethodType getMethodType() {
         return method.getType();

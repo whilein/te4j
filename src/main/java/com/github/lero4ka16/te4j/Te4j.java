@@ -20,34 +20,38 @@ import com.github.lero4ka16.te4j.filter.Filters;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.template.provider.TemplateProviderBuilder;
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
-import lombok.Getter;
-import lombok.experimental.UtilityClass;
 
 /**
  * @author lero4ka16
  */
-@UtilityClass
-public class Te4j {
+public final class Te4j {
 
-    @Getter
-    private final Filters filters = new Filters();
+    private Te4j() {
+        throw new UnsupportedOperationException();
+    }
+
+    private static final Filters FILTERS = new Filters();
 
     private static final TemplateProvider DEFAULTS = custom()
             .useFiles()
             .replaceStrategy(ReplaceStrategy.NONE)
             .build();
 
+    public static Filters getFilters() {
+        return FILTERS;
+    }
+
     /**
      * @return Default template provider
      */
-    public TemplateProvider defaults() {
+    public static TemplateProvider defaults() {
         return DEFAULTS;
     }
 
     /**
      * @return New custom template provider builder
      */
-    public TemplateProviderBuilder custom() {
+    public static TemplateProviderBuilder custom() {
         return new TemplateProviderBuilder();
     }
 }

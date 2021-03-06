@@ -18,14 +18,12 @@ package com.github.lero4ka16.te4j.template.exception;
 
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;
-import lombok.Getter;
 
 import java.util.Arrays;
 
 /**
  * @author lero4ka16
  */
-@Getter
 public class TemplateUnexpectedTokenException extends RuntimeException {
 
     private final TemplateTokenType[] expect;
@@ -36,6 +34,18 @@ public class TemplateUnexpectedTokenException extends RuntimeException {
         this.expect = expect;
         this.token = token;
         this.position = position;
+    }
+
+    public TemplateTokenType[] getExpect() {
+        return expect;
+    }
+
+    public TemplateToken getToken() {
+        return token;
+    }
+
+    public int getPosition() {
+        return position;
     }
 
     @Override

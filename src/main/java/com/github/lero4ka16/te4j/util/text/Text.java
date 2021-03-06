@@ -21,19 +21,13 @@ import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 public abstract class Text {
 
     protected boolean escaping = true;
-    protected ReplaceStrategy replaceStrategy = ReplaceStrategy.NONE;
+    protected int replaceStrategy;
 
-    public Text replaceStrategy(ReplaceStrategy strategy) {
-        if (strategy == null) {
-            throw new IllegalArgumentException("strategy");
-
-        }
+    public Text replaceStrategy(int strategy) {
         this.replaceStrategy = strategy;
         return this;
     }
@@ -69,16 +63,92 @@ public abstract class Text {
 
     public void compute(Appendable out) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        compute(baos);
+        compute(new TextOutputStream(baos));
 
         out.append(baos.toString());
     }
 
     public void compute(OutputStream out) throws IOException {
-        try (Writer writer = new OutputStreamWriter(out)) {
-            compute(writer);
+        compute(new TextOutputStream(out));
+    }
+
+    public void compute(TextOutput out) throws IOException {
+        boolean insertSpace = false;
+
+        for (int i = 0; i < length(); i++) {
+            int ch = charAt(i);
+
+            if (insertSpace && ch != ' ') {
+                out.write(' ');
+                insertSpace = false;
+            }
+
+            switch (ch) {
+                case '"':
+                    if (escaping) {
+                        out.write('\\');
+                        out.write(ch);
+                        continue;
+                    }
+
+                    break;
+                case '\\':
+                    if (escaping) {
+                        out.write(ch);
+                        out.write(ch);
+                        continue;
+                    }
+
+                    break;
+                case '\n':
+                    if ((replaceStrategy & ReplaceStrategy.DEL_LF) != 0) {
+                        continue;
+                    }
+
+                    if (escaping) {
+                        out.write('\\');
+                        out.write('n');
+                        continue;
+                    }
+                case '\t':
+                    if ((replaceStrategy & ReplaceStrategy.DEL_TAB) != 0) {
+                        continue;
+                    }
+
+                    if (escaping) {
+                        out.write('\\');
+                        out.write('t');
+                        continue;
+                    }
+                case '\r':
+                    if ((replaceStrategy & ReplaceStrategy.DEL_CR) != 0) {
+                        continue;
+                    }
+
+                    if (escaping) {
+                        out.write('\\');
+                        out.write('r');
+                        continue;
+                    }
+                case ' ':
+                    if ((replaceStrategy & ReplaceStrategy.DEL_REPEATING_SPACES) != 0) {
+                        insertSpace = true;
+                        continue;
+                    }
+                    break;
+            }
+
+            out.write(ch);
+        }
+
+        if (insertSpace) {
+            out.write(' ');
         }
     }
+
+    public abstract int length();
+
+    public abstract int charAt(int i);
 
     public static Text of(String text) {
         return new StringText(text);

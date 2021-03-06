@@ -22,8 +22,8 @@ import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
 import com.github.lero4ka16.te4j.template.provider.root.TemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
-import lombok.Data;
+import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,26 +33,55 @@ import java.nio.file.Path;
 /**
  * @author lero4ka16
  */
-@Data
 public final class TemplateProvider {
 
     private final TemplateProviderRoot root;
-    private final ReplaceStrategy replaceStrategy;
+    private final int replaceStrategy;
 
-    public <BoundType> Template<BoundType> load(Class<BoundType> type, byte[] bytes) {
+    public TemplateProvider(TemplateProviderRoot root,
+                            int replaceStrategy) {
+        this.root = root;
+        this.replaceStrategy = replaceStrategy;
+    }
+
+    public TemplateProviderRoot getRoot() {
+        return root;
+    }
+
+    public int getReplaceStrategy() {
+        return replaceStrategy;
+    }
+
+    public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, byte[] bytes) {
         return parse(bytes).compile(type);
     }
 
-    public <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
+    public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
         return parse(name).compile(type);
     }
 
-    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, File file) {
+    public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
         return parseFile(file).compile(type);
     }
 
-    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, Path path) {
+    public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
         return parseFile(path).compile(type);
+    }
+
+    public <BoundType> Template<BoundType> load(Class<BoundType> type, byte[] bytes) {
+        return load(new ClassRef<>(type), bytes);
+    }
+
+    public <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
+        return load(new ClassRef<>(type), name);
+    }
+
+    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, File file) {
+        return loadFile(new ClassRef<>(type), file);
+    }
+
+    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, Path path) {
+        return loadFile(new ClassRef<>(type), path);
     }
 
     public ParsedTemplate parse(byte[] bytes) {

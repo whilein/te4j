@@ -17,9 +17,7 @@
 package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Setter;
 
-@Setter
 public abstract class Expression {
 
     protected String filter;

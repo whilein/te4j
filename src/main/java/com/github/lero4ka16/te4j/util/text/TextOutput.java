@@ -16,24 +16,13 @@
 
 package com.github.lero4ka16.te4j.util.text;
 
+import java.io.IOException;
+
 /**
  * @author lero4ka16
  */
-public class StringText extends Text {
+public interface TextOutput {
 
-    private final String value;
+    void write(int i) throws IOException;
 
-    public StringText(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public int length() {
-        return value.length();
-    }
-
-    @Override
-    public int charAt(int i) {
-        return value.charAt(i);
-    }
 }

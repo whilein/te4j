@@ -16,19 +16,22 @@
 
 package com.github.lero4ka16.te4j.expression;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * @author lero4ka16
  */
-@Getter
-@RequiredArgsConstructor
 public enum ExpressionNegation {
 
     LOGICAL("!"), NUMERICAL("-"), NONE("");
 
     private final String prefix;
+
+    ExpressionNegation(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
 
     public static ExpressionNegation byChar(int ch) {
         switch (ch) {

@@ -36,7 +36,6 @@ import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;
 import com.github.lero4ka16.te4j.util.io.BytesReader;
 import com.github.lero4ka16.te4j.util.io.DataReader;
 import com.github.lero4ka16.te4j.util.text.Text;
-import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -271,10 +270,14 @@ public final class TemplateReader {
         return new TemplateToken(path, TemplateTokenType.getType(path));
     }
 
-    @RequiredArgsConstructor
     private static class Inner {
         private final ParsedTemplate template;
         private final TemplateTokenType byToken;
+
+        public Inner(ParsedTemplate template, TemplateTokenType byToken) {
+            this.template = template;
+            this.byToken = byToken;
+        }
     }
 
 }

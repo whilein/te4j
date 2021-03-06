@@ -18,15 +18,17 @@ package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
 
-@Getter
 public final class ExpressionNumber extends Expression {
 
     private final String number;
 
     public ExpressionNumber(String number) {
         this.number = number;
+    }
+
+    public String getNumber() {
+        return number;
     }
 
     @Override

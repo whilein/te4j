@@ -19,18 +19,42 @@ package com.github.lero4ka16.te4j.template.method.impl;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class SwitchCaseMethod implements TemplateMethod {
 
     private final String value;
     private final String from;
 
     private final ParsedTemplate block, defaultBlock;
+
+    public SwitchCaseMethod(String value,
+                            String from,
+                            ParsedTemplate block,
+                            ParsedTemplate defaultBlock) {
+        this.value = value;
+        this.from = from;
+        this.block = block;
+        this.defaultBlock = defaultBlock;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public ParsedTemplate getBlock() {
+        return block;
+    }
+
+    public ParsedTemplate getDefaultBlock() {
+        return defaultBlock;
+    }
 
     @Override
     public TemplateMethodType getType() {

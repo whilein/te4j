@@ -19,12 +19,10 @@ package com.github.lero4ka16.te4j.template.compiled.path;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class PathAccessor {
 
     public static final PathAccessor TRUE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "true", false);
@@ -35,5 +33,23 @@ public class PathAccessor {
     private final String accessor;
 
     private final boolean stream;
+
+    public PathAccessor(TypeInfo returnType, String accessor, boolean stream) {
+        this.returnType = returnType;
+        this.accessor = accessor;
+        this.stream = stream;
+    }
+
+    public TypeInfo getReturnType() {
+        return returnType;
+    }
+
+    public String getAccessor() {
+        return accessor;
+    }
+
+    public boolean isStream() {
+        return stream;
+    }
 
 }

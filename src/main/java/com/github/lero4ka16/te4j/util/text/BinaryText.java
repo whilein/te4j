@@ -16,9 +16,6 @@
 
 package com.github.lero4ka16.te4j.util.text;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 /**
  * @author lero4ka16
  */
@@ -35,77 +32,12 @@ public class BinaryText extends Text {
     }
 
     @Override
-    public void compute(OutputStream out) throws IOException {
-        boolean insertSpace = false;
+    public int length() {
+        return len;
+    }
 
-        for (int i = 0; i < len; i++) {
-            int ch = value[i + off];
-
-            if (insertSpace && ch != ' ') {
-                out.write(' ');
-                insertSpace = false;
-            }
-
-            switch (ch) {
-                case '"':
-                    if (escaping) {
-                        out.write('\\');
-                        out.write(ch);
-                        continue;
-                    }
-
-                    break;
-                case '\\':
-                    if (escaping) {
-                        out.write(ch);
-                        out.write(ch);
-                        continue;
-                    }
-
-                    break;
-                case '\n':
-                    if (replaceStrategy.isRemoveLineFeed()) {
-                        continue;
-                    }
-
-                    if (escaping) {
-                        out.write('\\');
-                        out.write('n');
-                        continue;
-                    }
-                case '\t':
-                    if (replaceStrategy.isRemoveTab()) {
-                        continue;
-                    }
-
-                    if (escaping) {
-                        out.write('\\');
-                        out.write('t');
-                        continue;
-                    }
-                case '\r':
-                    if (replaceStrategy.isRemoveCarriageReturn()) {
-                        continue;
-                    }
-
-                    if (escaping) {
-                        out.write('\\');
-                        out.write('n');
-                        continue;
-                    }
-                case ' ':
-                    if (replaceStrategy.isRemoveRepeatingSpaces()) {
-                        insertSpace = true;
-                        continue;
-                    }
-                    break;
-            }
-
-            out.write(ch);
-        }
-
-        if (insertSpace) {
-            out.write(' ');
-        }
+    @Override
+    public int charAt(int i) {
+        return value[off + i];
     }
 }

@@ -20,7 +20,7 @@ import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.compiled.TemplateCompiler;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
-import lombok.Getter;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -28,7 +28,6 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-@Getter
 public final class StandardParsedTemplate extends ParsedTemplate {
 
     private final List<TemplatePath> paths;
@@ -45,7 +44,12 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(Class<BoundType> type) {
+    public List<TemplatePath> getPaths() {
+        return paths;
+    }
+
+    @Override
+    public <BoundType> Template<BoundType> compile(TypeRef<BoundType> type) {
         return TemplateCompiler.getInstance().compile(provider, content, offset, length, paths, type);
     }
 

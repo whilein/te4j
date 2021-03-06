@@ -14,15 +14,20 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.feature;
+package com.github.lero4ka16.te4j.util.type.ref;
 
-import lombok.Data;
+/**
+ * @author lero4ka16
+ */
+public class ClassRef<Type> extends TypeRef<Type> {
 
-@Data
-public final class Namespace {
+    public ClassRef(Class<Type> cls) {
+        this.cls = cls;
+        this.type = cls;
+    }
 
-    private final String name;
-    private final String javaName;
-    private final Class<?> type;
+    @Override
+    protected void initType() {
+    }
 
 }

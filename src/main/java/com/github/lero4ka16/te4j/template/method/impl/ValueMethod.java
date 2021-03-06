@@ -18,15 +18,21 @@ package com.github.lero4ka16.te4j.template.method.impl;
 
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class ValueMethod implements TemplateMethod {
 
     private final String value;
+
+    public ValueMethod(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     @Override
     public TemplateMethodType getType() {

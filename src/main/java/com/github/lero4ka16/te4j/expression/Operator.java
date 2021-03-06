@@ -16,14 +16,9 @@
 
 package com.github.lero4ka16.te4j.expression;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
 import java.util.Optional;
 
-@Getter
-@RequiredArgsConstructor
 public enum Operator {
     MULTIPLY("*"),
     PLUS("+"),
@@ -37,11 +32,24 @@ public enum Operator {
     BITWISE_LSHIFT("<<"),
     BITWISE_RSHIFT(">>"),
     EQUAL("=="),
-    NOT_EQUAL("!=");
+    MORE_THAN(">"),
+    MORE_THAN_OR_EQUAL(">="),
+    LESS_THAN("<"),
+    LESS_THAN_OR_EQUAL("<="),
+    NOT_EQUAL("!="),
+    REMAINDER("%");
+
+    public static final Operator[] VALUES = values();
 
     private final String operator;
 
-    public static final Operator[] VALUES = values();
+    Operator(String operator) {
+        this.operator = operator;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
 
     public boolean isComparison() {
         return this == EQUAL || this == NOT_EQUAL;

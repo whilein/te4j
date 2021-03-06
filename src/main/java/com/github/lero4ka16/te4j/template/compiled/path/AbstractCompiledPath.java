@@ -20,18 +20,27 @@ import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author lero4ka16
  */
-@Data
-@RequiredArgsConstructor
 public abstract class AbstractCompiledPath {
 
     private final String id;
     private final TemplatePath original;
+
+    public AbstractCompiledPath(String id, TemplatePath original) {
+        this.id = id;
+        this.original = original;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public TemplatePath getOriginal() {
+        return original;
+    }
 
     public int getOffset() {
         return original.getOffset();

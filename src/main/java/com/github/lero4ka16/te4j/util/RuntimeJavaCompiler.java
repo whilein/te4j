@@ -16,9 +16,6 @@
 
 package com.github.lero4ka16.te4j.util;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
@@ -33,7 +30,6 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-@RequiredArgsConstructor
 public final class RuntimeJavaCompiler {
 
     private static final File TMP = new File("tmp");
@@ -46,12 +42,20 @@ public final class RuntimeJavaCompiler {
     private final String pkg;
     private final String name;
 
-    @Setter
     private String superclass;
 
     private List<String> interfaces;
 
     private final StringBuilder content = new StringBuilder();
+
+    public RuntimeJavaCompiler(String pkg, String name) {
+        this.pkg = pkg;
+        this.name = name;
+    }
+
+    public void setSuperclass(String superclass) {
+        this.superclass = superclass;
+    }
 
     public void addInterface(String cls) {
         if (interfaces == null) {

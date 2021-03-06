@@ -19,16 +19,18 @@ package com.github.lero4ka16.te4j.expression;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.io.CharsReader;
 import com.github.lero4ka16.te4j.util.io.DataReader;
-import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-@RequiredArgsConstructor
 public final class ExpressionParser {
 
     private final Function<String, PathAccessor> mapper;
+
+    public ExpressionParser(Function<String, PathAccessor> mapper) {
+        this.mapper = mapper;
+    }
 
     public Expression parseExpression(String value) {
         DataReader reader = new CharsReader("(" + value + ")");
@@ -259,7 +261,8 @@ public final class ExpressionParser {
                 break;
             }
 
-            if ((ch == '-' || ch == '!') && start == reader.position() - 1) { // negation
+            if (ExpressionNegation.byChar(ch) != ExpressionNegation.NONE
+                    && start == reader.position() - 1) { // negation
                 continue;
             }
 

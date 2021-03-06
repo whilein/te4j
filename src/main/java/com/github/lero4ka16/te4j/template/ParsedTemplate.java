@@ -19,7 +19,7 @@ package com.github.lero4ka16.te4j.template;
 import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
-import lombok.Getter;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,10 +33,7 @@ public abstract class ParsedTemplate {
 
     protected final byte[] content;
 
-    @Getter
     protected int offset;
-
-    @Getter
     protected int length;
 
     private byte[] _content;
@@ -59,6 +56,14 @@ public abstract class ParsedTemplate {
         this.length = length;
 
         trim();
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getLength() {
+        return length;
     }
 
     public TemplateProvider getProvider() {
@@ -96,7 +101,7 @@ public abstract class ParsedTemplate {
         return _content;
     }
 
-    public abstract <BoundType> Template<BoundType> compile(Class<BoundType> type);
+    public abstract <BoundType> Template<BoundType> compile(TypeRef<BoundType> type);
 
     public abstract boolean hasPaths();
 

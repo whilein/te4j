@@ -20,12 +20,10 @@ import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
 
 /**
  * @author lero4ka16
  */
-@Getter
 public class IncludeCompiledPath extends AbstractCompiledPath {
 
     private final IncludeFile file;
@@ -36,6 +34,10 @@ public class IncludeCompiledPath extends AbstractCompiledPath {
         this.file = file;
     }
 
+    public IncludeFile getFile() {
+        return file;
+    }
+
     @Override
     public TypeInfo getReturnType() {
         return GenericInfo.STRING;
@@ -43,7 +45,7 @@ public class IncludeCompiledPath extends AbstractCompiledPath {
 
     @Override
     public String getAccessorValue() {
-        return file.getPath();
+        return file.format();
     }
 
 }

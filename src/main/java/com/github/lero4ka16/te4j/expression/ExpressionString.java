@@ -18,14 +18,18 @@ package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
-public class ExpressionString extends Expression {
+public final class ExpressionString extends Expression {
 
     private final String value;
+
+    public ExpressionString(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     @Override
     public ExpressionReturnType getReturnType() {

@@ -19,16 +19,34 @@ package com.github.lero4ka16.te4j.template.method.impl;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class ConditionMethod implements TemplateMethod {
 
     private final String condition;
     private final ParsedTemplate block, elseBlock;
+
+    public ConditionMethod(String condition,
+                           ParsedTemplate block,
+                           ParsedTemplate elseBlock) {
+        this.condition = condition;
+        this.block = block;
+        this.elseBlock = elseBlock;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public ParsedTemplate getBlock() {
+        return block;
+    }
+
+    public ParsedTemplate getElseBlock() {
+        return elseBlock;
+    }
 
     @Override
     public TemplateMethodType getType() {

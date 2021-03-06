@@ -27,12 +27,15 @@ import com.github.lero4ka16.te4j.template.compiled.accessor.ArrayAccessor;
 import com.github.lero4ka16.te4j.template.compiled.accessor.BytesAccessor;
 import com.github.lero4ka16.te4j.template.compiled.accessor.MethodAccessor;
 import com.github.lero4ka16.te4j.template.compiled.accessor.RawAccessor;
-import com.github.lero4ka16.te4j.template.compiled.feature.Namespace;
+import com.github.lero4ka16.te4j.template.compiled.code.ForCode;
 import com.github.lero4ka16.te4j.template.compiled.feature.SwitchCase;
 import com.github.lero4ka16.te4j.template.compiled.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.IncludeCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.environment.DefaultEnvironment;
+import com.github.lero4ka16.te4j.template.environment.Environment;
+import com.github.lero4ka16.te4j.template.environment.LoopEnvironment;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
@@ -41,6 +44,7 @@ import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
 import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
@@ -48,13 +52,11 @@ import com.github.lero4ka16.te4j.util.BytesHashKey;
 import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
 import com.github.lero4ka16.te4j.util.StringConcatenation;
 import com.github.lero4ka16.te4j.util.text.Text;
-import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -65,9 +67,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static com.github.lero4ka16.te4j.util.Utils.getMethod;
-import static com.github.lero4ka16.te4j.util.Utils.toCamelCase;
 
 /**
  * @author lero4ka16
@@ -85,7 +84,8 @@ public class TemplateCompileProcess<BoundType> {
 
     private static final String TEMPLATE_OUTPUT_CLASS
             = TemplateOutput.class.getName();
-
+    private static final String TEMPLATE_OUTPUT_STRING_CLASS
+            = TemplateOutputString.class.getName();
     /**
      * Content of template
      */
@@ -95,9 +95,8 @@ public class TemplateCompileProcess<BoundType> {
     private final int len;
 
     private final TemplateProvider provider;
-    private final AtomicInteger nameCounter;
 
-    private final Class<BoundType> type;
+    private final TypeRef<BoundType> type;
 
     private final RuntimeJavaCompiler javaCompiler;
 
@@ -106,15 +105,22 @@ public class TemplateCompileProcess<BoundType> {
     private final Map<String, Accessor> accessors;
 
     private final Set<String> includes;
-    private final Map<String, Namespace> namespaces = new HashMap<>();
+
+    private final DefaultEnvironment baseEnvironment;
+    private final Map<String, Environment> environments = new HashMap<>();
 
     private final ExpressionParser expressionParser;
 
+    private AtomicInteger nameCounter;
+
+    private boolean stringOptimize;
     private SwitchCase currentSwitchCase;
 
     public TemplateCompileProcess(TemplateProvider provider, byte[] template, int off, int len,
-                                  Class<BoundType> type, List<TemplatePath> paths) {
+                                  TypeRef<BoundType> type, List<TemplatePath> paths) {
         this.type = type;
+        this.baseEnvironment = new DefaultEnvironment("object", type.getType(), type.getTypeClass());
+
         this.provider = provider;
 
         this.off = off;
@@ -139,7 +145,7 @@ public class TemplateCompileProcess<BoundType> {
                     continue;
                 }
 
-                includes.add(includeMethod.getFile().getPath());
+                includes.add(includeMethod.getFile().format());
             }
         }
 
@@ -147,15 +153,20 @@ public class TemplateCompileProcess<BoundType> {
         this.javaCompiler.setSuperclass(COMPILED_TEMPLATE_CLASS + "<" + type.getCanonicalName() + ">");
     }
 
-    public void addNamespace(Namespace namespace) {
-        if (namespaces.containsKey(namespace.getName())) {
-            throw new TemplateException("Namespace already exists: " + namespace.getName());
+    public Environment setEnvironment(String name, Environment environment) {
+        return environments.put(name, environment);
+    }
+
+    public void addEnvironment(String name, Environment environment) {
+        if (environments.containsKey(name)) {
+            throw new TemplateException("Namespace already exists: " + name);
         }
-        namespaces.put(namespace.getName(), namespace);
+
+        environments.put(name, environment);
     }
 
     public void removeNamespace(String name) {
-        namespaces.remove(name);
+        environments.remove(name);
     }
 
     private AbstractCompiledPath compilePaths(TemplatePath path) {
@@ -224,68 +235,14 @@ public class TemplateCompileProcess<BoundType> {
             }
         }
 
-        Namespace namespace = namespaces.get(element);
+        Environment environment = environments.get(element);
 
-        Class<?> currentType;
-        StringBuilder sb;
-
-        if (namespace == null) {
-            currentType = type;
-            sb = new StringBuilder("object");
-        } else {
-            if (iterator.hasNext()) {
-                sb = new StringBuilder(namespace.getJavaName());
-                currentType = namespace.getType();
-
-                element = iterator.next();
-            } else {
-                return new PathAccessor(new GenericInfo(namespace.getType()), namespace.getJavaName(), false);
-            }
+        if (environment == null) {
+            iterator.previous();
+            environment = baseEnvironment;
         }
 
-        boolean stream;
-        Method found;
-
-        for (; ; ) {
-            sb.append('.');
-
-            String upperCamelCase_1 = "get" + toCamelCase(true, element);
-            String upperCamelCase_2 = "is" + toCamelCase(true, element);
-
-            String lowerCamelCase = toCamelCase(false, element);
-
-            String name;
-
-            if ((found = getMethod(currentType, upperCamelCase_1)) != null) {
-                name = upperCamelCase_1;
-            } else if ((found = getMethod(currentType, upperCamelCase_2)) != null) {
-                name = upperCamelCase_2;
-            } else if ((found = getMethod(currentType, lowerCamelCase)) != null) {
-                name = lowerCamelCase;
-            } else {
-                return null;
-            }
-
-            sb.append(name);
-
-            stream = found.getParameterCount() == 1 && OutputStream.class.isAssignableFrom(found.getParameterTypes()[0]);
-
-            if (stream) {
-                sb.append("(out)");
-            } else {
-                sb.append("()");
-            }
-
-            currentType = found.getReturnType();
-
-            if (!iterator.hasNext()) {
-                break;
-            }
-
-            element = iterator.next();
-        }
-
-        return new PathAccessor(new GenericInfo(found.getGenericReturnType()), sb.toString(), stream);
+        return environment.resolve(iterator);
     }
 
     private List<AbstractCompiledPath> compilePaths(List<TemplatePath> paths) {
@@ -304,7 +261,7 @@ public class TemplateCompileProcess<BoundType> {
 
         generateAccessors(compiled);
 
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb);
+        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
         concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
         concatenation.generateFields(this);
     }
@@ -441,24 +398,39 @@ public class TemplateCompileProcess<BoundType> {
 
                 ParsedTemplate template = method.getBlock();
                 String as = method.getAs();
+
+                String counterFieldName = "_" + as + "_cnt";
                 String fieldName = "_" + as;
 
-                addNamespace(new Namespace(as, fieldName, listType));
+                LoopEnvironment loop = new LoopEnvironment(counterFieldName);
+
+                Environment prevLoop = setEnvironment("loop", loop);
+                addEnvironment(as, new DefaultEnvironment(fieldName, listType, listType));
+
+                ForCode code = new ForCode();
+                code.setElementType(listType.getName());
+                code.setElementName(fieldName);
+                code.setFrom(accessorValue);
 
                 StringBuilder sb = new StringBuilder();
 
-                sb.append("for(").append(listType.getName()).append(' ').append(fieldName).append(':').append(accessorValue).append(") {");
                 List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
                 generateAccessors(compiled);
 
-                StringConcatenation concatenation = new StringConcatenation(nameCounter, sb);
+                StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
                 concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
                 concatenation.generateFields(this);
-                sb.append('}');
 
+                code.setContent(sb.toString());
+
+                if (loop.hasIndex()) {
+                    code.setCounter(counterFieldName);
+                }
+
+                setEnvironment("loop", prevLoop);
                 removeNamespace(as);
 
-                return new RawAccessor(sb.toString());
+                return new RawAccessor(code.toString());
             }
         }
 
@@ -467,12 +439,19 @@ public class TemplateCompileProcess<BoundType> {
 
     private final Map<BytesHashKey, String> byteValues = new HashMap<>();
 
-    public void addBytes(String fieldName, byte[] bytes) {
-        BytesHashKey key = new BytesHashKey(bytes);
-        String prevFieldName = byteValues.put(key, fieldName);
+    public void addBytes(Integer field, byte[] bytes, boolean string) {
+        String fieldName = string ? "STRING_" + field : "BYTES_" + field;
 
-        addContent("private final byte[] " + fieldName + " = "
-                + (prevFieldName != null ? prevFieldName : getString(bytes)) + ";");
+        BytesHashKey key = new BytesHashKey(bytes);
+        String prevField = byteValues.put(key, fieldName);
+
+        if (string) {
+            addContent("private final String " + fieldName + " = "
+                    + (prevField != null ? prevField : getString(bytes)) + ";");
+        } else {
+            addContent("private final byte[] " + fieldName + " = "
+                    + (prevField != null ? prevField : getString(bytes) + ".getBytes()") + ";");
+        }
     }
 
     private String getString(byte[] bytes) {
@@ -487,7 +466,7 @@ public class TemplateCompileProcess<BoundType> {
             e.printStackTrace();
         }
 
-        sb.append("\".getBytes()");
+        sb.append("\"");
 
         return sb.toString();
     }
@@ -508,20 +487,23 @@ public class TemplateCompileProcess<BoundType> {
         return new ArrayAccessor(result.toArray(new Accessor[0]));
     }
 
-    private String generateFormatMethod() {
-        addNamespace(new Namespace("this", "object", type));
+    private String generateFormatMethod(boolean stringOptimize) {
+        this.stringOptimize = stringOptimize;
+        this.nameCounter = new AtomicInteger();
 
         StringBuilder sb = new StringBuilder();
+
         sb.append("public void render(")
                 .append(type.getCanonicalName()).append(" object, ")
-                .append(TEMPLATE_OUTPUT_CLASS).append(" out) {");
-        sb.append("try {");
+                .append(stringOptimize ? TEMPLATE_OUTPUT_STRING_CLASS : TEMPLATE_OUTPUT_CLASS).append(" out) {");
         List<AbstractCompiledPath> compiled = compilePaths(paths);
         generateAccessors(compiled);
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb);
+        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
         concat(compiled, template, off, len).insert(concatenation);
         concatenation.generateFields(this);
-        sb.append("} catch (Throwable cause) { throw new com.github.lero4ka16.te4j.template.exception.TemplateException(\"Cannot render template\", cause); } }");
+        sb.append('}');
+
+        byteValues.clear();
 
         return sb.toString();
     }
@@ -530,9 +512,12 @@ public class TemplateCompileProcess<BoundType> {
         javaCompiler.addContent(src);
     }
 
-    @SuppressWarnings("unchecked")
-    public Template<BoundType> compile() throws Exception {
-        addContent(generateFormatMethod());
+    @SuppressWarnings("rawtypes")
+    public Template compile() throws Exception {
+        addEnvironment("this", baseEnvironment);
+
+        addContent(generateFormatMethod(false));
+        addContent(generateFormatMethod(true));
 
         StringBuilder includeBuilder = new StringBuilder();
 
@@ -553,7 +538,7 @@ public class TemplateCompileProcess<BoundType> {
         Class<?> result = javaCompiler.compile();
 
         Constructor<?> constructor = result.getDeclaredConstructor();
-        return (Template<BoundType>) constructor.newInstance();
+        return (Template) constructor.newInstance();
     }
 
 }

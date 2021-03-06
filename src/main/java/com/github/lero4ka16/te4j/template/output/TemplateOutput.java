@@ -165,6 +165,11 @@ public abstract class TemplateOutput extends OutputStream {
     }
 
     public void put(int value) {
+        if (value == 0) {
+            write('0');
+            return;
+        }
+
         boolean negative = value < 0;
 
         if (negative) {

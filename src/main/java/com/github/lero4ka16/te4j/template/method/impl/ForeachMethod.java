@@ -19,18 +19,35 @@ package com.github.lero4ka16.te4j.template.method.impl;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
-import lombok.Data;
 
 /**
  * @author lero4ka16
  */
-@Data
 public class ForeachMethod implements TemplateMethod {
 
     private final String path;
     private final String as;
 
     private final ParsedTemplate block;
+
+    public ForeachMethod(String path, String as,
+                         ParsedTemplate block) {
+        this.path = path;
+        this.as = as;
+        this.block = block;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getAs() {
+        return as;
+    }
+
+    public ParsedTemplate getBlock() {
+        return block;
+    }
 
     @Override
     public TemplateMethodType getType() {

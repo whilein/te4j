@@ -20,23 +20,18 @@ import com.github.lero4ka16.te4j.template.provider.root.FileTemplateProviderRoot
 import com.github.lero4ka16.te4j.template.provider.root.PathTemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.provider.root.ResourceTemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.provider.root.TemplateProviderRoot;
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategyBuilder;
-import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Consumer;
 
 /**
  * @author lero4ka16
  */
-@RequiredArgsConstructor
 public class TemplateProviderBuilder {
 
     private TemplateProviderRoot root;
-    private ReplaceStrategy replaceStrategy;
+    private int replaceStrategy;
 
     public TemplateProviderBuilder use(TemplateProviderRoot root) {
         this.root = root;
@@ -67,23 +62,13 @@ public class TemplateProviderBuilder {
         return use(new ResourceTemplateProviderRoot(resource));
     }
 
-    public TemplateProviderBuilder replaceStrategy(ReplaceStrategy value) {
+    public TemplateProviderBuilder replaceStrategy(int value) {
         this.replaceStrategy = value;
         return this;
     }
 
-    public TemplateProviderBuilder replaceStrategy(Consumer<ReplaceStrategyBuilder> value) {
-        ReplaceStrategyBuilder builder = new ReplaceStrategyBuilder();
-        value.accept(builder);
-
-        this.replaceStrategy = builder.build();
-        return this;
-    }
-
     public TemplateProvider build() {
-        if (replaceStrategy == null) return replaceStrategy(ReplaceStrategy.NONE).build();
         if (root == null) return useFiles().build();
-
         return new TemplateProvider(root, replaceStrategy);
     }
 

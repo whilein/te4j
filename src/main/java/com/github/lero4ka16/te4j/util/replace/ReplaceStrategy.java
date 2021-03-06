@@ -16,25 +16,21 @@
 
 package com.github.lero4ka16.te4j.util.replace;
 
-import lombok.Data;
-
 /**
  * @author lero4ka16
  */
-@Data
 public final class ReplaceStrategy {
 
-    public static final ReplaceStrategy NONE = new ReplaceStrategy(
-            false, false, false, false
-    );
+    public static final int DEL_CR = 1;
+    public static final int DEL_LF = 2;
+    public static final int DEL_REPEATING_SPACES = 4;
+    public static final int DEL_TAB = 8;
 
-    public static final ReplaceStrategy ALL = new ReplaceStrategy(
-            true, true, true, true
-    );
+    public static final int ALL = DEL_CR | DEL_LF | DEL_REPEATING_SPACES | DEL_TAB;
+    public static final int NONE = 0;
 
-    private final boolean removeCarriageReturn;
-    private final boolean removeLineFeed;
-    private final boolean removeRepeatingSpaces;
-    private final boolean removeTab;
+    private ReplaceStrategy() {
+        throw new UnsupportedOperationException();
+    }
 
 }

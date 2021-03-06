@@ -17,19 +17,32 @@
 package com.github.lero4ka16.te4j.expression;
 
 import com.github.lero4ka16.te4j.Te4j;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.LinkedList;
 
-@Getter
-@RequiredArgsConstructor
-public class ExpCompile {
+public final class ExpCompile {
 
     private final Expression[] expression;
     private final LinkedList<String> tokens;
 
     private int position;
+
+    public ExpCompile(Expression[] expression, LinkedList<String> tokens) {
+        this.expression = expression;
+        this.tokens = tokens;
+    }
+
+    public Expression[] getExpression() {
+        return expression;
+    }
+
+    public LinkedList<String> getTokens() {
+        return tokens;
+    }
+
+    public int getPosition() {
+        return position;
+    }
 
     public void skipNext() {
         position++;

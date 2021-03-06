@@ -14,26 +14,16 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.text;
+package com.github.lero4ka16.te4j.template.environment;
+
+import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 
 /**
  * @author lero4ka16
  */
-public class StringText extends Text {
+public interface Environment {
 
-    private final String value;
+    PathAccessor resolve(TemplatePathIterator iterator);
 
-    public StringText(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public int length() {
-        return value.length();
-    }
-
-    @Override
-    public int charAt(int i) {
-        return value.charAt(i);
-    }
 }

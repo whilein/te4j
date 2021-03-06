@@ -16,14 +16,32 @@
 
 package com.github.lero4ka16.te4j.template.compiled.feature;
 
-import lombok.Data;
-
-@Data
 public final class SwitchCase {
 
     private final Class<?> type;
     private final Object[] values;
 
     private Object value;
+
+    public SwitchCase(Class<?> type, Object[] values) {
+        this.type = type;
+        this.values = values;
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
+
+    public Object[] getValues() {
+        return values;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
 }

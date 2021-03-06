@@ -16,8 +16,6 @@
 
 package com.github.lero4ka16.te4j.util.type;
 
-import lombok.RequiredArgsConstructor;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
@@ -25,17 +23,27 @@ import java.lang.reflect.WildcardType;
 /**
  * @author lero4ka16
  */
-@RequiredArgsConstructor
 public class GenericInfo implements TypeInfo {
 
-    public static final GenericInfo STRING = new GenericInfo(String.class, String.class, null);
-    public static final GenericInfo NUMBER = new GenericInfo(Number.class, Number.class, null);
-    public static final GenericInfo PRIMITIVE_BOOLEAN = new GenericInfo(boolean.class, boolean.class, null);
+    public static final GenericInfo STRING = new GenericInfo(String.class, String.class);
+    public static final GenericInfo NUMBER = new GenericInfo(Number.class, Number.class);
+    public static final GenericInfo PRIMITIVE_BOOLEAN = new GenericInfo(boolean.class, boolean.class);
+    public static final GenericInfo PRIMITIVE_INT = new GenericInfo(int.class, int.class);
 
     private final Type type;
 
     private final Class<?> rawType;
     private final Class<?> component;
+
+    public GenericInfo(Type type, Class<?> rawType, Class<?> component) {
+        this.type = type;
+        this.rawType = rawType;
+        this.component = component;
+    }
+
+    public GenericInfo(Type type, Class<?> rawType) {
+        this(type, rawType, null);
+    }
 
     public GenericInfo(Type type) {
         this.type = type;

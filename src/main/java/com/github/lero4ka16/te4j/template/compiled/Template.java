@@ -19,6 +19,7 @@ package com.github.lero4ka16.te4j.template.compiled;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 
 import java.io.OutputStream;
 
@@ -27,31 +28,35 @@ import java.io.OutputStream;
  */
 public abstract class Template<BoundType> {
 
-    private final TemplateOutputBuffer buffer = new TemplateOutputBuffer();
+    private static final ThreadLocal<TemplateOutputBuffer> byteOptimized
+            = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+    private static final ThreadLocal<TemplateOutputString> stringOptimized
+            = ThreadLocal.withInitial(TemplateOutputString::new);
 
     public abstract String[] getIncludes();
 
-    public synchronized String renderAsString(BoundType object) {
-        try {
-            render(object, buffer);
-            return buffer.toString();
-        } finally {
-            buffer.reset();
-        }
+    public String renderAsString(BoundType object) {
+        TemplateOutputString string = stringOptimized.get();
+        string.reset();
+
+        render(object, string);
+        return string.toString();
     }
 
-    public synchronized byte[] renderAsBytes(BoundType object) {
-        try {
-            render(object, buffer);
-            return buffer.toByteArray();
-        } finally {
-            buffer.reset();
-        }
+    public byte[] renderAsBytes(BoundType object) {
+        TemplateOutputBuffer bytes = byteOptimized.get();
+        bytes.reset();
+
+        render(object, bytes);
+        return bytes.toByteArray();
     }
 
     public void render(BoundType object, OutputStream os) {
         render(object, new TemplateOutputStream(os));
     }
+
+    // optimized for strings
+    public abstract void render(BoundType object, TemplateOutputString out);
 
     public abstract void render(BoundType object, TemplateOutput out);
 
