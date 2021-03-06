@@ -29,9 +29,10 @@ public class ExpressionValue extends Expression {
 
     private final ExpressionReturnType type;
 
-    public ExpressionValue(PathAccessor accessor, boolean negate) {
+    public ExpressionValue(PathAccessor accessor, ExpressionNegation negation) {
         this.accessor = accessor;
-        this.value = (negate ? "-" : "") + accessor.getAccessor();
+        this.value = negation.getPrefix() + accessor.getAccessor();
+
         this.objectType = accessor.getReturnType();
 
         if (objectType instanceof NullTypeInfo) {

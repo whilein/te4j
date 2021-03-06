@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ExpressionOperator extends Expression {
+public final class ExpressionOperator extends Expression {
 
     private final Operator operator;
 

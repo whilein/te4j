@@ -16,24 +16,29 @@
 
 package com.github.lero4ka16.te4j.expression;
 
-import com.github.lero4ka16.te4j.util.type.TypeInfo;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author lero4ka16
  */
-public class ExpressionLogicalNegation extends Expression {
-    @Override
-    public ExpressionReturnType getReturnType() {
-        return null;
+@Getter
+@RequiredArgsConstructor
+public enum ExpressionNegation {
+
+    LOGICAL("!"), NUMERICAL("-"), NONE("");
+
+    private final String prefix;
+
+    public static ExpressionNegation byChar(int ch) {
+        switch (ch) {
+            case '!':
+                return LOGICAL;
+            case '-':
+                return NUMERICAL;
+            default:
+                return NONE;
+        }
     }
 
-    @Override
-    public TypeInfo getObjectType() {
-        return null;
-    }
-
-    @Override
-    protected void compile(ExpCompile compile) {
-        compile.append("!");
-    }
 }

@@ -51,8 +51,8 @@ public class ExpressionTest {
     @Test
     public void expBooleanNegate() {
         Expression exp = parser.parseExpression("!condition");
-        assertEquals(ExpressionParentheses.class, exp.getClass());
-        assertEquals("(!isCondition())", exp.compile());
+        assertEquals(ExpressionValue.class, exp.getClass());
+        assertEquals("!isCondition()", exp.compile());
     }
 
     @Test

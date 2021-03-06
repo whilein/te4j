@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.Getter;
 
 @Getter
-public class ExpressionNumber extends Expression {
+public final class ExpressionNumber extends Expression {
 
     private final String number;
 

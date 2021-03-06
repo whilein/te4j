@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ExpressionEnum extends Expression {
+public final class ExpressionEnum extends Expression {
 
     private final String value;
 

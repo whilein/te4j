@@ -65,17 +65,24 @@ public final class ExpressionParser {
             } else if (ch == '#') {
                 token = parseEnum(parseText(reader, eof));
             } else if (ch != ' ' && ch != ',') {
-                boolean nextDigit = reader.isReadable();
+                boolean readable = reader.isReadable();
 
-                if (nextDigit) {
+                boolean nextDigit;
+                boolean logicalNeg;
+
+                if (readable) {
                     int next = reader.read();
                     nextDigit = next >= '0' && next <= '9';
+                    logicalNeg = ch == '!' && next != '=';
                     reader.roll();
+                } else {
+                    nextDigit = logicalNeg = false;
                 }
 
                 reader.roll();
 
-                if (Operator.isOperator(ch) && !(prev instanceof ExpressionOperator) && !nextDigit) {
+                if (Operator.isOperator(ch) && !(prev instanceof ExpressionOperator) && !nextDigit
+                        && !logicalNeg) {
                     token = parseOperator(reader);
                 } else {
                     token = parseValue(parseText(reader, eof));
@@ -234,10 +241,6 @@ public final class ExpressionParser {
 
         String op = reader.substring(startPos, reader.position());
 
-        if (op.equals("!")) {
-            return new ExpressionLogicalNegation();
-        }
-
         Operator type = Operator.get(types, op)
                 .orElseThrow(() -> new IllegalStateException("Unknown operator: " + op));
 
@@ -256,7 +259,7 @@ public final class ExpressionParser {
                 break;
             }
 
-            if (ch == '-' && start == reader.position() - 1) { // negation
+            if ((ch == '-' || ch == '!') && start == reader.position() - 1) { // negation
                 continue;
             }
 
@@ -272,10 +275,10 @@ public final class ExpressionParser {
     private Expression parseValue(String value) {
         int idx = 0;
         int ch = value.charAt(idx);
-        boolean negate = false;
 
-        if (ch == '-') {
-            negate = true;
+        ExpressionNegation negation = ExpressionNegation.byChar(ch);
+
+        if (negation != ExpressionNegation.NONE) {
             ch = value.charAt(++idx);
         }
 
@@ -290,7 +293,7 @@ public final class ExpressionParser {
             throw new IllegalStateException("Accessor not found: " + text);
         }
 
-        return new ExpressionValue(accessor, negate);
+        return new ExpressionValue(accessor, negation);
     }
 
 }

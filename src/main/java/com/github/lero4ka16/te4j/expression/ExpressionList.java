@@ -22,7 +22,7 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
 import java.lang.reflect.Array;
 
-public class ExpressionList extends Expression {
+public final class ExpressionList extends Expression {
 
     private final TypeInfo type;
     private final Expression[] inner;
