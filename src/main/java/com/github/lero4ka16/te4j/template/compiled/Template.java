@@ -56,7 +56,9 @@ public abstract class Template<BoundType> {
     }
 
     // optimized for strings
-    public abstract void render(BoundType object, TemplateOutputString out);
+    public void render(BoundType object, TemplateOutputString out) {
+        render(object, (TemplateOutput) out);
+    }
 
     public abstract void render(BoundType object, TemplateOutput out);
 

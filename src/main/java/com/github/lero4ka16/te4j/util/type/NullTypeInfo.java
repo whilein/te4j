@@ -31,6 +31,11 @@ public class NullTypeInfo implements TypeInfo {
     }
 
     @Override
+    public boolean isArrayList() {
+        return false;
+    }
+
+    @Override
     public String getName() {
         return "null";
     }

@@ -14,25 +14,20 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type;
+package com.github.lero4ka16.te4j.optimization;
 
-import java.lang.reflect.Type;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Помечает метод, что он вернёт ArrayList. Нужно для оптимизации
+ * итерации по этому самому списку
+ *
  * @author lero4ka16
  */
-public interface TypeInfo {
-
-    boolean isArray();
-
-    boolean isArrayList();
-
-    String getName();
-
-    Type getType();
-
-    Class<?> getComponentType();
-
-    boolean isEnum();
-
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ReturnsArrayList {
 }

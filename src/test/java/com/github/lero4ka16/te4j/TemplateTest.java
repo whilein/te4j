@@ -63,7 +63,7 @@ public class TemplateTest {
     @Test
     public void testForeach() {
         testTemplate(Te4j.custom().useResources().replaceStrategy(ReplaceStrategy.ALL).build(),
-                "foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a>",
+                "foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
                 new Example_2(10, 20, 30), new ClassRef<>(Example_2.class));
     }
 
@@ -99,7 +99,7 @@ public class TemplateTest {
     @Test
     public void testSwitchCase_Foreach() {
         testTemplate(Te4j.custom().useResources().replaceStrategy(ReplaceStrategy.ALL).build(),
-                "switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a>",
+                "switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
                 new Example_4(new int[]{5, 10, 15}), new ClassRef<>(Example_4.class));
     }
 

@@ -16,9 +16,12 @@
 
 package com.github.lero4ka16.te4j.util.type;
 
+import com.github.lero4ka16.te4j.optimization.ReturnsArrayList;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
 
 /**
  * @author lero4ka16
@@ -72,6 +75,14 @@ public class GenericInfo implements TypeInfo {
     @Override
     public boolean isArray() {
         return type instanceof Class && ((Class<?>) type).isArray();
+    }
+
+    @Override
+    public boolean isArrayList() {
+        return type instanceof Class && (
+                ArrayList.class.isAssignableFrom((Class<?>) type)
+                        || ((Class<?>) type).isAnnotationPresent(ReturnsArrayList.class)
+        );
     }
 
     @Override

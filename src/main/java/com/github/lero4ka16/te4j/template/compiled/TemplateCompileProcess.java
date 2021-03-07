@@ -399,18 +399,15 @@ public class TemplateCompileProcess<BoundType> {
                 ParsedTemplate template = method.getBlock();
                 String as = method.getAs();
 
-                String counterFieldName = "_" + as + "_cnt";
-                String fieldName = "_" + as;
-
-                LoopEnvironment loop = new LoopEnvironment(counterFieldName);
-
-                Environment prevLoop = setEnvironment("loop", loop);
-                addEnvironment(as, new DefaultEnvironment(fieldName, listType, listType));
-
                 ForCode code = new ForCode();
                 code.setElementType(listType.getName());
-                code.setElementName(fieldName);
+                code.setAs(as + path.getId());
                 code.setFrom(accessorValue);
+
+                LoopEnvironment loop = new LoopEnvironment(code.getCounterFieldName());
+
+                Environment prevLoop = setEnvironment("loop", loop);
+                addEnvironment(as, new DefaultEnvironment(code.getElementName(), listType, listType));
 
                 StringBuilder sb = new StringBuilder();
 
@@ -423,8 +420,14 @@ public class TemplateCompileProcess<BoundType> {
 
                 code.setContent(sb.toString());
 
+                if (returnType.isArray()) {
+                    code.setArray(true);
+                } else if (returnType.isArrayList()) {
+                    code.setArrayList(true);
+                }
+
                 if (loop.hasIndex()) {
-                    code.setCounter(counterFieldName);
+                    code.setInsertCounter(true);
                 }
 
                 setEnvironment("loop", prevLoop);

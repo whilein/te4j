@@ -25,15 +25,15 @@ public enum TemplateTokenType {
 
     public static TemplateTokenType getType(String path) {
         switch (path) {
-            case "done":
+            case "endfor":
                 return END_FOR;
             case "default":
                 return CASE_DEFAULT;
-            case "esac":
+            case "endcase":
                 return END_CASE;
             case "else":
                 return ELSE;
-            case "fi":
+            case "endif":
                 return END_IF;
             default:
                 return BEGIN;
