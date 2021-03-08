@@ -17,10 +17,10 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.filter.Filters;
-import com.github.lero4ka16.te4j.template.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 

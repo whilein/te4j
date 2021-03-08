@@ -14,45 +14,52 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template;
+package com.github.lero4ka16.te4j.template.parse;
 
-import com.github.lero4ka16.te4j.template.compiled.PlainTemplate;
-import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.Template;
+import com.github.lero4ka16.te4j.template.compiler.TemplateCompiler;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author lero4ka16
  */
-public final class PlainParsedTemplate extends ParsedTemplate {
+public final class StandardParsedTemplate extends ParsedTemplate {
 
-    public PlainParsedTemplate(TemplateContext context,
-                               byte[] content, int offset, int length) {
+    private final List<TemplatePath> paths;
+
+    public StandardParsedTemplate(TemplateContext context, List<TemplatePath> paths,
+                                  byte[] content, int offset, int length) {
         super(context, content, offset, length);
-    }
 
-    @Override
-    public <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type) {
-        return new PlainTemplate<>(content, offset, length);
-    }
+        if (paths.isEmpty()) {
+            throw new IllegalArgumentException("paths");
+        }
 
-    @Override
-    public boolean hasPaths() {
-        return false;
+        this.paths = paths;
     }
 
     @Override
     public List<TemplatePath> getPaths() {
-        return Collections.emptyList();
+        return paths;
+    }
+
+    @Override
+    public <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type) {
+        return TemplateCompiler.getInstance().compile(context, content, offset, length, paths, type, parent);
+    }
+
+    @Override
+    public boolean hasPaths() {
+        return true;
     }
 
     @Override
     public String toString() {
-        return "Template.Plain[" + new String(content, offset, length, StandardCharsets.UTF_8) + "]";
+        return "Template[content=b(" + new String(content, offset, length, StandardCharsets.UTF_8) + "), paths=" + paths + "]";
     }
 }

@@ -14,34 +14,23 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.feature;
+package com.github.lero4ka16.te4j.template.compiler.accessor;
 
-public final class SwitchCase {
+import com.github.lero4ka16.te4j.util.StringConcatenation;
 
-    private final Class<?> type;
-    private final Object[] values;
+/**
+ * @author lero4ka16
+ */
+public class RawAccessor implements Accessor {
 
-    private Object value;
+    private final String value;
 
-    public SwitchCase(Class<?> type, Object[] values) {
-        this.type = type;
-        this.values = values;
-    }
-
-    public Class<?> getType() {
-        return type;
-    }
-
-    public Object[] getValues() {
-        return values;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
+    public RawAccessor(String value) {
         this.value = value;
     }
 
+    @Override
+    public void insert(StringConcatenation concatenation) {
+        concatenation.appendRaw(value);
+    }
 }

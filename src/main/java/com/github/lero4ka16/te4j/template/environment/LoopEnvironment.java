@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.environment;
 
-import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 

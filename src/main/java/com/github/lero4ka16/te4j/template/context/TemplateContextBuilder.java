@@ -23,12 +23,12 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
  */
 public class TemplateContextBuilder {
 
-    private TemplateOutputType[] outputTypes;
     private boolean useResources;
+    private int outputTypes;
     private int replaceStrategy;
 
-    public TemplateContextBuilder outputTypes(TemplateOutputType... outputTypes) {
-        this.outputTypes = outputTypes;
+    public TemplateContextBuilder outputTypes(int bits) {
+        this.outputTypes = bits;
         return this;
     }
 
@@ -43,11 +43,11 @@ public class TemplateContextBuilder {
     }
 
     public TemplateContext build() {
-        if (outputTypes == null || outputTypes.length == 0) {
-            outputTypes(TemplateOutputType.STRING, TemplateOutputType.BYTES);
+        if (outputTypes == 0) {
+            outputTypes(TemplateOutputType.STRING | TemplateOutputType.BYTES);
         }
 
-        return new TemplateContext(outputTypes, useResources, replaceStrategy);
+        return new TemplateContext(useResources, outputTypes, replaceStrategy);
     }
 
 }

@@ -16,7 +16,6 @@
 
 package com.github.lero4ka16.te4j.template.output;
 
-import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
-public abstract class TemplateOutput extends OutputStream {
+public abstract class TemplateOutput {
 
     private static final byte[] ARRAY_DELIMITER = ", ".getBytes(StandardCharsets.UTF_8);
 

@@ -19,12 +19,21 @@ package com.github.lero4ka16.te4j.template.output;
 /**
  * @author lero4ka16
  */
-public enum TemplateOutputType {
+public class TemplateOutputType {
 
-    STRING, BYTES;
+    public static final int STRING = 1;
+    public static final int BYTES = 2;
+    public static final int[] VALUES = new int[]{STRING, BYTES};
 
-    public String getPrefix() {
-        return name() + "_";
+    public static String getPrefix(int bit) {
+        switch (bit) {
+            case 1:
+                return "STRING_";
+            case 2:
+                return "BYTES_";
+            default:
+                throw new IllegalArgumentException("Undefined bit: " + bit);
+        }
     }
 
 }

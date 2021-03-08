@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template;
+package com.github.lero4ka16.te4j.template.parse;
 
-import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;

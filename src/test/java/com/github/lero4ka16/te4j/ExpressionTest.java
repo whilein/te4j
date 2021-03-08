@@ -23,7 +23,7 @@ import com.github.lero4ka16.te4j.expression.ExpressionParentheses;
 import com.github.lero4ka16.te4j.expression.ExpressionParser;
 import com.github.lero4ka16.te4j.expression.ExpressionString;
 import com.github.lero4ka16.te4j.expression.ExpressionValue;
-import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import org.junit.jupiter.api.Test;
 

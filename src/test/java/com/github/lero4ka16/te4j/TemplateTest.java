@@ -40,7 +40,7 @@ public class TemplateTest {
     public void init() {
         context = Te4j.custom()
                 .useResources()
-                .outputTypes(TemplateOutputType.BYTES)
+                .outputTypes(TemplateOutputType.STRING | TemplateOutputType.BYTES)
                 .replaceStrategy(ReplaceStrategy.ALL)
                 .build();
     }

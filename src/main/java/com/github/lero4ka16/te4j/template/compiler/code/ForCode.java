@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.code;
+package com.github.lero4ka16.te4j.template.compiler.code;
 
 /**
  * @author lero4ka16

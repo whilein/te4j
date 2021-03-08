@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.expression;
 
-import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.io.CharsReader;
 import com.github.lero4ka16.te4j.util.io.DataReader;
 

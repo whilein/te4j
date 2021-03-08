@@ -16,6 +16,8 @@
 
 package com.github.lero4ka16.te4j.template.output;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author lero4ka16
  */
@@ -84,6 +86,10 @@ public class TemplateOutputString extends TemplateOutput {
 
     public void reset() {
         builder.setLength(0);
+    }
+
+    public byte[] toByteArray() {
+        return builder.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

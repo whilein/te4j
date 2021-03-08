@@ -16,9 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.method.impl;
 
-import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 
 /**
  * @author lero4ka16

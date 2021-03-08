@@ -16,10 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.context;
 
-import com.github.lero4ka16.te4j.template.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
@@ -38,19 +37,18 @@ import java.nio.file.Paths;
  */
 public final class TemplateContext {
 
-    private final TemplateOutputType[] outputTypes;
     private final boolean useResources;
+    private final int outputTypes;
     private final int replaceStrategy;
 
-    public TemplateContext(TemplateOutputType[] outputTypes,
-                           boolean useResources,
-                           int replaceStrategy) {
+    public TemplateContext(boolean useResources,
+                           int outputTypes, int replaceStrategy) {
         this.outputTypes = outputTypes;
         this.useResources = useResources;
         this.replaceStrategy = replaceStrategy;
     }
 
-    public TemplateOutputType[] getOutputTypes() {
+    public int getOutputTypes() {
         return outputTypes;
     }
 

@@ -14,10 +14,11 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled;
+package com.github.lero4ka16.te4j.template;
 
-import com.github.lero4ka16.te4j.template.output.TemplateOutput;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * @author lero4ka16
@@ -40,17 +41,23 @@ public class PlainTemplate<BoundType> extends Template<BoundType> {
     }
 
     @Override
-    public void render(BoundType object, TemplateOutput out) {
-        out.write(value, offset, length);
-    }
-
-    @Override
     public String[] getIncludes() {
         return new String[0];
     }
 
     @Override
-    public void render(BoundType object, TemplateOutputString out) {
-        out.write(chars);
+    public String renderAsString(BoundType object) {
+        return chars;
     }
+
+    @Override
+    public byte[] renderAsBytes(BoundType object) {
+        return Arrays.copyOfRange(value, offset, offset + length);
+    }
+
+    @Override
+    public void render(BoundType object, OutputStream os) throws IOException {
+        os.write(value, offset, offset + length);
+    }
+
 }

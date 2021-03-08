@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled;
+package com.github.lero4ka16.te4j.template.compiler;
 
+import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;

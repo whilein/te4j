@@ -14,25 +14,25 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled;
+package com.github.lero4ka16.te4j.template.compiler;
 
 import com.github.lero4ka16.te4j.expression.Expression;
 import com.github.lero4ka16.te4j.expression.ExpressionList;
 import com.github.lero4ka16.te4j.expression.ExpressionParser;
 import com.github.lero4ka16.te4j.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.include.IncludeFile;
-import com.github.lero4ka16.te4j.template.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.compiled.accessor.Accessor;
-import com.github.lero4ka16.te4j.template.compiled.accessor.ArrayAccessor;
-import com.github.lero4ka16.te4j.template.compiled.accessor.BytesAccessor;
-import com.github.lero4ka16.te4j.template.compiled.accessor.MethodAccessor;
-import com.github.lero4ka16.te4j.template.compiled.accessor.RawAccessor;
-import com.github.lero4ka16.te4j.template.compiled.code.ForCode;
-import com.github.lero4ka16.te4j.template.compiled.feature.SwitchCase;
-import com.github.lero4ka16.te4j.template.compiled.path.AbstractCompiledPath;
-import com.github.lero4ka16.te4j.template.compiled.path.DefaultCompiledPath;
-import com.github.lero4ka16.te4j.template.compiled.path.IncludeCompiledPath;
-import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.Template;
+import com.github.lero4ka16.te4j.template.compiler.accessor.Accessor;
+import com.github.lero4ka16.te4j.template.compiler.accessor.ArrayAccessor;
+import com.github.lero4ka16.te4j.template.compiler.accessor.BytesAccessor;
+import com.github.lero4ka16.te4j.template.compiler.accessor.MethodAccessor;
+import com.github.lero4ka16.te4j.template.compiler.accessor.RawAccessor;
+import com.github.lero4ka16.te4j.template.compiler.code.ForCode;
+import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
+import com.github.lero4ka16.te4j.template.compiler.path.DefaultCompiledPath;
+import com.github.lero4ka16.te4j.template.compiler.path.IncludeCompiledPath;
+import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.compiler.switchcase.SwitchCase;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.environment.DefaultEnvironment;
 import com.github.lero4ka16.te4j.template.environment.Environment;
@@ -45,8 +45,11 @@ import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
 import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.util.BytesHashKey;
@@ -57,9 +60,8 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,16 +79,20 @@ public class TemplateCompileProcess<BoundType> {
     private static final String COMPILED_TEMPLATE_CLASS
             = Template.class.getName();
 
-    private static final String PATH_CLASS
-            = Path.class.getName();
-
-    private static final String PATHS_CLASS
-            = Paths.class.getName();
+    private static final String OUTPUT_STREAM_CLASS
+            = OutputStream.class.getName();
 
     private static final String TEMPLATE_OUTPUT_CLASS
             = TemplateOutput.class.getName();
+
     private static final String TEMPLATE_OUTPUT_STRING_CLASS
             = TemplateOutputString.class.getName();
+
+    private static final String TEMPLATE_OUTPUT_STREAM_CLASS
+            = TemplateOutputStream.class.getName();
+
+    private static final String TEMPLATE_OUTPUT_BUFFER_CLASS
+            = TemplateOutputBuffer.class.getName();
     /**
      * Content of template
      */
@@ -115,7 +121,7 @@ public class TemplateCompileProcess<BoundType> {
 
     private AtomicInteger nameCounter;
 
-    private TemplateOutputType outputType;
+    private int outputType;
     private SwitchCase currentSwitchCase;
 
     public TemplateCompileProcess(TemplateContext context, byte[] template, int off, int len,
@@ -446,18 +452,18 @@ public class TemplateCompileProcess<BoundType> {
 
     private final Map<BytesHashKey, String> byteValues = new HashMap<>();
 
-    public void addBytes(Integer field, byte[] bytes, TemplateOutputType outputType) {
-        String fieldName = outputType.getPrefix() + field;
+    public void addBytes(Integer field, byte[] bytes, int outputType) {
+        String fieldName = TemplateOutputType.getPrefix(outputType) + field;
 
         BytesHashKey key = new BytesHashKey(bytes);
         String prevField = byteValues.put(key, fieldName);
 
         switch (outputType) {
-            case STRING:
+            case TemplateOutputType.STRING:
                 addContent("private final String " + fieldName + " = "
                         + (prevField != null ? prevField : getString(bytes)) + ";");
                 break;
-            case BYTES:
+            case TemplateOutputType.BYTES:
                 addContent("private final byte[] " + fieldName + " = "
                         + (prevField != null ? prevField : getString(bytes) + ".getBytes()") + ";");
                 break;
@@ -497,9 +503,8 @@ public class TemplateCompileProcess<BoundType> {
         return new ArrayAccessor(result.toArray(new Accessor[0]));
     }
 
-    private String generateFormatMethod(TemplateOutputType outputType) {
+    private void addRenderMethod(int outputType) {
         this.outputType = outputType;
-
         this.nameCounter = new AtomicInteger();
 
         StringBuilder sb = new StringBuilder();
@@ -519,7 +524,60 @@ public class TemplateCompileProcess<BoundType> {
 
         byteValues.clear();
 
-        return sb.toString();
+        addContent(sb.toString());
+    }
+
+    public void addRenderAsBytes(boolean hasBytesOptimization) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("public byte[] renderAsBytes(").append(type.getCanonicalName()).append(" object) {");
+
+        if (hasBytesOptimization) {
+            sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
+        } else {
+            sb.append(TEMPLATE_OUTPUT_STRING_CLASS).append(" result = stringOptimized.get();");
+        }
+
+        sb.append("result.reset();");
+        sb.append("render(object, result);");
+        sb.append("return result.toByteArray();");
+        sb.append("}");
+
+        addContent(sb.toString());
+    }
+
+    public void addRenderAsString(boolean hasStringOptimization) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("public String renderAsString(").append(type.getCanonicalName()).append(" object) {");
+
+        if (hasStringOptimization) {
+            sb.append(TEMPLATE_OUTPUT_STRING_CLASS).append(" result = stringOptimized.get();");
+        } else {
+            sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
+        }
+
+        sb.append("result.reset();");
+        sb.append("render(object, result);");
+        sb.append("return result.toString();");
+        sb.append("}");
+
+        addContent(sb.toString());
+    }
+
+    public void addRenderToStream(boolean hasBytesOptimization) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
+        sb.append(OUTPUT_STREAM_CLASS).append(" out) throws java.io.IOException {");
+
+        if (hasBytesOptimization) {
+            sb.append("render(object, new ").append(TEMPLATE_OUTPUT_STREAM_CLASS).append("(out));");
+        } else {
+            sb.append("out.write(renderAsBytes(object));");
+        }
+
+        sb.append("}");
+
+        addContent(sb.toString());
     }
 
     public void addContent(String src) {
@@ -530,9 +588,15 @@ public class TemplateCompileProcess<BoundType> {
     public Template compile() throws Exception {
         addEnvironment("this", baseEnvironment);
 
-        for (TemplateOutputType type : context.getOutputTypes()) {
-            addContent(generateFormatMethod(type));
+        for (int value : TemplateOutputType.VALUES) {
+            if ((context.getOutputTypes() & value) == value) {
+                addRenderMethod(value);
+            }
         }
+
+        addRenderAsString((context.getOutputTypes() & TemplateOutputType.STRING) != 0);
+        addRenderAsBytes((context.getOutputTypes() & TemplateOutputType.BYTES) != 0);
+        addRenderToStream((context.getOutputTypes() & TemplateOutputType.BYTES) != 0);
 
         StringBuilder includeBuilder = new StringBuilder();
 

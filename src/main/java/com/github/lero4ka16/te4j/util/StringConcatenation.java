@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.util;
 
-import com.github.lero4ka16.te4j.template.compiled.TemplateCompileProcess;
+import com.github.lero4ka16.te4j.template.compiler.TemplateCompileProcess;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 
 import java.io.ByteArrayOutputStream;
@@ -37,11 +37,11 @@ public final class StringConcatenation {
     private final ByteArrayOutputStream textBuffer = new ByteArrayOutputStream();
     private final StringBuilder sb;
 
-    private final TemplateOutputType outputType;
+    private final int outputType;
     private boolean prevText;
 
     public StringConcatenation(AtomicInteger textFieldCounter,
-                               StringBuilder sb, TemplateOutputType outputType) {
+                               StringBuilder sb, int outputType) {
         this.textFieldCounter = textFieldCounter;
         this.outputType = outputType;
         this.sb = sb;
@@ -80,7 +80,7 @@ public final class StringConcatenation {
         if (field != null) {
             fieldTextMap.put(field, textBuffer.toByteArray());
             sb.append("out.write(");
-            sb.append(outputType.getPrefix());
+            sb.append(TemplateOutputType.getPrefix(outputType));
             sb.append(field);
             sb.append(");");
             textBuffer.reset();

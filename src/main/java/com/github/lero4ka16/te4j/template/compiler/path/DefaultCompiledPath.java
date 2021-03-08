@@ -14,23 +14,38 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.accessor;
+package com.github.lero4ka16.te4j.template.compiler.path;
 
-import com.github.lero4ka16.te4j.util.StringConcatenation;
+import com.github.lero4ka16.te4j.template.path.TemplatePath;
+import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
 /**
  * @author lero4ka16
  */
-public class RawAccessor implements Accessor {
+public class DefaultCompiledPath extends AbstractCompiledPath {
 
-    private final String value;
+    private final PathAccessor value;
 
-    public RawAccessor(String value) {
+    public DefaultCompiledPath(String id, PathAccessor value, TemplatePath original) {
+        super(id, original);
+
         this.value = value;
     }
 
     @Override
-    public void insert(StringConcatenation concatenation) {
-        concatenation.appendRaw(value);
+    public boolean isStream() {
+        return value.isStream();
     }
+
+    @Override
+    public TypeInfo getReturnType() {
+        return value.getReturnType();
+    }
+
+    @Override
+    public String getAccessorValue() {
+        return value.getAccessor();
+    }
+
+
 }

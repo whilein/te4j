@@ -17,9 +17,6 @@
 package com.github.lero4ka16.te4j.template.reader;
 
 import com.github.lero4ka16.te4j.include.IncludeFile;
-import com.github.lero4ka16.te4j.template.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.PlainParsedTemplate;
-import com.github.lero4ka16.te4j.template.StandardParsedTemplate;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
@@ -30,6 +27,9 @@ import com.github.lero4ka16.te4j.template.method.impl.ForeachMethod;
 import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
 import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
+import com.github.lero4ka16.te4j.template.parse.PlainParsedTemplate;
+import com.github.lero4ka16.te4j.template.parse.StandardParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;

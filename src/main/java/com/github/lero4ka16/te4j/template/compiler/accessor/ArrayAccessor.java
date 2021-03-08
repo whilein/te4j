@@ -14,23 +14,25 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.accessor;
+package com.github.lero4ka16.te4j.template.compiler.accessor;
 
 import com.github.lero4ka16.te4j.util.StringConcatenation;
 
 /**
  * @author lero4ka16
  */
-public class MethodAccessor implements Accessor {
+public class ArrayAccessor implements Accessor {
 
-    private final String value;
+    private final Accessor[] value;
 
-    public MethodAccessor(String value) {
+    public ArrayAccessor(Accessor[] value) {
         this.value = value;
     }
 
     @Override
     public void insert(StringConcatenation concatenation) {
-        concatenation.appendMethod(value);
+        for (Accessor element : value) {
+            element.insert(concatenation);
+        }
     }
 }

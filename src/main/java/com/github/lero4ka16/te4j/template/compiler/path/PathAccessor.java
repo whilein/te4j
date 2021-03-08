@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.compiled.path;
+package com.github.lero4ka16.te4j.template.compiler.path;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
