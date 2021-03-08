@@ -49,54 +49,121 @@ public abstract class TemplateOutput extends OutputStream {
         write(value.getBytes(StandardCharsets.UTF_8));
     }
 
-    private int longLength(long value) {
-        int pivotIdx = 9;
-        long pivot = LONG_UNITS[pivotIdx];
-
-        if (pivot == value) {
-            return pivotIdx;
-        }
-
-        if (value < pivot) {
-            for (int i = pivotIdx; i >= 0; i--) {
-                if (value >= LONG_UNITS[i - 1]) {
-                    return i;
+    private int longLength(long n) {
+        if (n < 1000000000) {
+            if (n < 10000) {
+                if (n < 1000) {
+                    if (n < 100) {
+                        if (n < 10) {
+                            return 1;
+                        } else {
+                            return 2;
+                        }
+                    } else {
+                        return 3;
+                    }
+                } else {
+                    return 4;
+                }
+            } else {
+                if (n < 100000) {
+                    return 5;
+                } else {
+                    if (n < 1000000) {
+                        return 6;
+                    } else {
+                        if (n < 10000000) {
+                            return 7;
+                        } else {
+                            if (n < 100000000) {
+                                return 8;
+                            } else {
+                                return 9;
+                            }
+                        }
+                    }
                 }
             }
         } else {
-            for (int i = LONG_UNITS.length; i >= pivotIdx; i--) {
-                if (value >= LONG_UNITS[i - 1]) {
-                    return i;
+            if (n < 100000000000000L) {
+                if (n < 10000000000L) {
+                    return 10;
+                } else {
+                    if (n < 100000000000L) {
+                        return 11;
+                    } else {
+                        if (n < 1000000000000L) {
+                            return 12;
+                        } else {
+                            if (n < 10000000000000L) {
+                                return 13;
+                            } else {
+                                return 14;
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (n < 1000000000000000L) {
+                    return 15;
+                } else {
+                    if (n < 10000000000000000L) {
+                        return 16;
+                    } else {
+                        if (n < 100000000000000000L) {
+                            return 17;
+                        } else {
+                            if (n < 1000000000000000000L) {
+                                return 18;
+                            } else {
+                                return 19;
+                            }
+                        }
+                    }
                 }
             }
         }
-
-        return -1;
     }
 
+    // https://www.baeldung.com/java-number-of-digits-in-int#5-divide-and-conquer
     private int intLength(int value) {
-        int pivotIdx = 5;
-        int pivot = INT_UNITS[pivotIdx];
-
-        if (pivot == value) {
-            return pivotIdx;
-        }
-
-        if (value < pivot) {
-            for (int i = pivotIdx; i >= 0; i--) {
-                if (value >= INT_UNITS[i - 1]) {
-                    return i;
+        if (value < 100000) {
+            if (value < 100) {
+                if (value < 10) {
+                    return 1;
+                } else {
+                    return 2;
+                }
+            } else {
+                if (value < 1000) {
+                    return 3;
+                } else {
+                    if (value < 10000) {
+                        return 4;
+                    } else {
+                        return 5;
+                    }
                 }
             }
         } else {
-            for (int i = INT_UNITS.length; i >= pivotIdx; i--) {
-                if (value >= INT_UNITS[i - 1]) {
-                    return i;
+            if (value < 10000000) {
+                if (value < 1000000) {
+                    return 6;
+                } else {
+                    return 7;
+                }
+            } else {
+                if (value < 100000000) {
+                    return 8;
+                } else {
+                    if (value < 1000000000) {
+                        return 9;
+                    } else {
+                        return 10;
+                    }
                 }
             }
         }
-
-        return -1;
     }
 
     public void put(Object object) {
@@ -158,6 +225,7 @@ public abstract class TemplateOutput extends OutputStream {
         }
 
         int length = longLength(value);
+        System.out.println(length);
 
         for (int i = length - 1; i >= 0; i--) {
             writeDigit((int) (value / LONG_UNITS[i] % 10L));
