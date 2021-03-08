@@ -51,7 +51,7 @@ public class LoopEnvironment implements Environment {
                 }
 
                 index = true;
-                return new PathAccessor(GenericInfo.PRIMITIVE_INT, counterField, false);
+                return new PathAccessor(GenericInfo.PRIMITIVE_INT, counterField);
         }
 
         throw new IllegalStateException(iterator.getText());

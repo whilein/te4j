@@ -33,11 +33,6 @@ public class DefaultCompiledPath extends AbstractCompiledPath {
     }
 
     @Override
-    public boolean isStream() {
-        return value.isStream();
-    }
-
-    @Override
     public TypeInfo getReturnType() {
         return value.getReturnType();
     }

@@ -25,19 +25,16 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
  */
 public class PathAccessor {
 
-    public static final PathAccessor TRUE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "true", false);
-    public static final PathAccessor FALSE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "false", false);
-    public static final PathAccessor NULL = new PathAccessor(NullTypeInfo.INSTANCE, "null", false);
+    public static final PathAccessor TRUE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "true");
+    public static final PathAccessor FALSE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "false");
+    public static final PathAccessor NULL = new PathAccessor(NullTypeInfo.INSTANCE, "null");
 
     private final TypeInfo returnType;
     private final String accessor;
 
-    private final boolean stream;
-
-    public PathAccessor(TypeInfo returnType, String accessor, boolean stream) {
+    public PathAccessor(TypeInfo returnType, String accessor) {
         this.returnType = returnType;
         this.accessor = accessor;
-        this.stream = stream;
     }
 
     public TypeInfo getReturnType() {
@@ -46,10 +43,6 @@ public class PathAccessor {
 
     public String getAccessor() {
         return accessor;
-    }
-
-    public boolean isStream() {
-        return stream;
     }
 
 }

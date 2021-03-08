@@ -58,10 +58,6 @@ public abstract class AbstractCompiledPath {
         return original.getMethod();
     }
 
-    public boolean isStream() {
-        return false;
-    }
-
     public abstract TypeInfo getReturnType();
     public abstract String getAccessorValue();
 

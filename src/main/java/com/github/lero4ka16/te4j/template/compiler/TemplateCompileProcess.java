@@ -27,16 +27,16 @@ import com.github.lero4ka16.te4j.template.compiler.accessor.ArrayAccessor;
 import com.github.lero4ka16.te4j.template.compiler.accessor.BytesAccessor;
 import com.github.lero4ka16.te4j.template.compiler.accessor.MethodAccessor;
 import com.github.lero4ka16.te4j.template.compiler.accessor.RawAccessor;
-import com.github.lero4ka16.te4j.template.compiler.code.ForCode;
+import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
 import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.IncludeCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.compiler.switchcase.SwitchCase;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
-import com.github.lero4ka16.te4j.template.environment.DefaultEnvironment;
 import com.github.lero4ka16.te4j.template.environment.Environment;
 import com.github.lero4ka16.te4j.template.environment.LoopEnvironment;
+import com.github.lero4ka16.te4j.template.environment.PrimaryEnvironment;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 import com.github.lero4ka16.te4j.template.method.impl.ConditionMethod;
@@ -114,7 +114,7 @@ public class TemplateCompileProcess<BoundType> {
 
     private final Set<String> includes;
 
-    private final DefaultEnvironment baseEnvironment;
+    private final PrimaryEnvironment primaryEnvironment;
     private final Map<String, Environment> environments = new HashMap<>();
 
     private final ExpressionParser expressionParser;
@@ -129,7 +129,7 @@ public class TemplateCompileProcess<BoundType> {
         this.type = type;
         this.parentFile = parentFile;
 
-        this.baseEnvironment = new DefaultEnvironment("object", type.getType(), type.getTypeClass());
+        this.primaryEnvironment = new PrimaryEnvironment("object", type.getType(), type.getTypeClass());
 
         this.context = context;
 
@@ -207,10 +207,10 @@ public class TemplateCompileProcess<BoundType> {
                     if (oldAccessor.getAccessor().equals(result)) {
                         newAccessor = oldAccessor;
                     } else {
-                        newAccessor = new PathAccessor(exp.getObjectType(), result, oldAccessor.isStream());
+                        newAccessor = new PathAccessor(exp.getObjectType(), result);
                     }
                 } else {
-                    newAccessor = new PathAccessor(exp.getObjectType(), result, false);
+                    newAccessor = new PathAccessor(exp.getObjectType(), result);
                 }
 
                 return new DefaultCompiledPath(id, newAccessor, path);
@@ -221,7 +221,7 @@ public class TemplateCompileProcess<BoundType> {
                 Expression exp = expressionParser.parseExpression(value);
                 String result = exp.compile();
 
-                return new DefaultCompiledPath(id, new PathAccessor(exp.getObjectType(), result, false), path);
+                return new DefaultCompiledPath(id, new PathAccessor(exp.getObjectType(), result), path);
         }
     }
 
@@ -249,7 +249,7 @@ public class TemplateCompileProcess<BoundType> {
 
         if (environment == null) {
             iterator.previous();
-            environment = baseEnvironment;
+            environment = primaryEnvironment;
         }
 
         return environment.resolve(iterator);
@@ -281,9 +281,7 @@ public class TemplateCompileProcess<BoundType> {
 
         switch (path.getMethodType()) {
             case VALUE:
-                return path.isStream()
-                        ? new RawAccessor(accessorValue + ";")
-                        : new MethodAccessor(accessorValue);
+                return new MethodAccessor(accessorValue);
             case CASE: {
                 SwitchCaseMethod SwitchCaseMethod = path.getMethod();
                 String value = SwitchCaseMethod.getValue();
@@ -409,7 +407,7 @@ public class TemplateCompileProcess<BoundType> {
                 ParsedTemplate template = method.getBlock();
                 String as = method.getAs();
 
-                ForCode code = new ForCode();
+                IterationCode code = new IterationCode();
                 code.setElementType(listType.getName());
                 code.setAs(as + path.getId());
                 code.setFrom(accessorValue);
@@ -417,7 +415,7 @@ public class TemplateCompileProcess<BoundType> {
                 LoopEnvironment loop = new LoopEnvironment(code.getCounterFieldName());
 
                 Environment prevLoop = setEnvironment("loop", loop);
-                addEnvironment(as, new DefaultEnvironment(code.getElementName(), listType, listType));
+                addEnvironment(as, new PrimaryEnvironment(code.getElementName(), listType, listType));
 
                 StringBuilder sb = new StringBuilder();
 
@@ -586,7 +584,7 @@ public class TemplateCompileProcess<BoundType> {
 
     @SuppressWarnings("rawtypes")
     public Template compile() throws Exception {
-        addEnvironment("this", baseEnvironment);
+        addEnvironment("this", primaryEnvironment);
 
         for (int value : TemplateOutputType.VALUES) {
             if ((context.getOutputTypes() & value) == value) {

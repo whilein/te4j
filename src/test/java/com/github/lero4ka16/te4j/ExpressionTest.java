@@ -37,11 +37,11 @@ public class ExpressionTest {
     private final ExpressionParser parser = new ExpressionParser(
             value -> {
                 if (value.equals("message")) {
-                    return new PathAccessor(GenericInfo.STRING, "getMessage()", false);
+                    return new PathAccessor(GenericInfo.STRING, "getMessage()");
                 }
 
                 if (value.equals("condition")) {
-                    return new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "isCondition()", false);
+                    return new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "isCondition()");
                 }
 
                 return null;

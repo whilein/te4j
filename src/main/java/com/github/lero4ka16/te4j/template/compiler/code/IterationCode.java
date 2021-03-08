@@ -19,7 +19,7 @@ package com.github.lero4ka16.te4j.template.compiler.code;
 /**
  * @author lero4ka16
  */
-public final class ForCode {
+public final class IterationCode {
 
     private String elementType;
     private String as;

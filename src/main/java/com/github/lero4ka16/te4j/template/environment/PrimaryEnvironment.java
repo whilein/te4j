@@ -18,6 +18,7 @@ package com.github.lero4ka16.te4j.template.environment;
 
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
+import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 
 import java.io.OutputStream;
@@ -25,16 +26,21 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import static com.github.lero4ka16.te4j.util.Utils.getMethod;
-import static com.github.lero4ka16.te4j.util.Utils.toCamelCase;
 
-public class DefaultEnvironment implements Environment {
+public class PrimaryEnvironment implements Environment {
+
+    private static final MethodResolver[] RESOLVERS = new MethodResolver[]{
+            new DefaultMethodResolver("get%s", NameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("is%s", NameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("%s", NameCase.LOWER_CAMEL_CASE),
+    };
 
     private final String javaObject;
 
     private final Type type;
     private final Class<?> cls;
 
-    public DefaultEnvironment(String javaObject, Type type, Class<?> cls) {
+    public PrimaryEnvironment(String javaObject, Type type, Class<?> cls) {
         this.javaObject = javaObject;
 
         this.type = type;
@@ -44,37 +50,30 @@ public class DefaultEnvironment implements Environment {
     @Override
     public final PathAccessor resolve(TemplatePathIterator iterator) {
         if (!iterator.hasNext()) {
-            return new PathAccessor(new GenericInfo(type), javaObject, false);
+            return new PathAccessor(new GenericInfo(type), javaObject);
         }
 
         Class<?> currentType = cls;
         StringBuilder sb = new StringBuilder(javaObject);
 
         boolean stream;
-        Method found;
+        Method found = null;
 
         do {
             sb.append('.');
 
             String element = iterator.next();
-            String upperCamelCase_1 = "get" + toCamelCase(true, element);
-            String upperCamelCase_2 = "is" + toCamelCase(true, element);
 
-            String lowerCamelCase = toCamelCase(false, element);
+            for (MethodResolver resolver : RESOLVERS) {
+                found = resolver.findMethod(element, currentType);
+                if (found != null) break;
+            }
 
-            String name;
-
-            if ((found = getMethod(currentType, upperCamelCase_1)) != null) {
-                name = upperCamelCase_1;
-            } else if ((found = getMethod(currentType, upperCamelCase_2)) != null) {
-                name = upperCamelCase_2;
-            } else if ((found = getMethod(currentType, lowerCamelCase)) != null) {
-                name = lowerCamelCase;
-            } else {
+            if (found == null) {
                 return null;
             }
 
-            sb.append(name);
+            sb.append(found.getName());
 
             stream = found.getParameterCount() == 1 && OutputStream.class.isAssignableFrom(found.getParameterTypes()[0]);
 
@@ -87,6 +86,47 @@ public class DefaultEnvironment implements Environment {
             currentType = found.getReturnType();
         } while (iterator.hasNext());
 
-        return new PathAccessor(new GenericInfo(found.getGenericReturnType()), sb.toString(), stream);
+        return new PathAccessor(new GenericInfo(found.getGenericReturnType()), sb.toString());
+    }
+
+    public enum NameCase {
+
+        UPPER_CAMEL_CASE {
+            @Override
+            public String apply(String text) {
+                return Utils.toCamelCase(true, text);
+            }
+        },
+        LOWER_CAMEL_CASE {
+            @Override
+            public String apply(String text) {
+                return Utils.toCamelCase(false, text);
+            }
+        };
+
+        public abstract String apply(String text);
+
+    }
+
+    public static class DefaultMethodResolver implements MethodResolver {
+
+        private final String format;
+        private final NameCase nameCase;
+
+        public DefaultMethodResolver(String format, NameCase nameCase) {
+            this.format = format;
+            this.nameCase = nameCase;
+        }
+
+        @Override
+        public Method findMethod(String value, Class<?> in) {
+            return getMethod(in, String.format(format, nameCase.apply(value)));
+        }
+    }
+
+    public interface MethodResolver {
+
+        Method findMethod(String value, Class<?> in);
+
     }
 }
