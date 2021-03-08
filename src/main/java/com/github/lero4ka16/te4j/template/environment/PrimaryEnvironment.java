@@ -18,7 +18,9 @@ package com.github.lero4ka16.te4j.template.environment;
 
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
-import com.github.lero4ka16.te4j.util.Utils;
+import com.github.lero4ka16.te4j.util.resolver.DefaultMethodResolver;
+import com.github.lero4ka16.te4j.util.resolver.MethodNameCase;
+import com.github.lero4ka16.te4j.util.resolver.MethodResolver;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 
 import java.io.OutputStream;
@@ -26,14 +28,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static com.github.lero4ka16.te4j.util.Utils.getMethod;
-
-public class PrimaryEnvironment implements Environment {
+public final class PrimaryEnvironment implements Environment {
 
     private static final MethodResolver[] RESOLVERS = new MethodResolver[]{
-            new DefaultMethodResolver("get%s", NameCase.UPPER_CAMEL_CASE),
-            new DefaultMethodResolver("is%s", NameCase.UPPER_CAMEL_CASE),
-            new DefaultMethodResolver("%s", NameCase.LOWER_CAMEL_CASE),
+            new DefaultMethodResolver("get%s", MethodNameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("is%s", MethodNameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("%s", MethodNameCase.LOWER_CAMEL_CASE),
     };
 
     private final String javaObject;
@@ -90,44 +90,4 @@ public class PrimaryEnvironment implements Environment {
         return new PathAccessor(new GenericInfo(found.getGenericReturnType(), found.getAnnotations()), sb.toString());
     }
 
-    public enum NameCase {
-
-        UPPER_CAMEL_CASE {
-            @Override
-            public String apply(String text) {
-                return Utils.toCamelCase(true, text);
-            }
-        },
-        LOWER_CAMEL_CASE {
-            @Override
-            public String apply(String text) {
-                return Utils.toCamelCase(false, text);
-            }
-        };
-
-        public abstract String apply(String text);
-
-    }
-
-    public static class DefaultMethodResolver implements MethodResolver {
-
-        private final String format;
-        private final NameCase nameCase;
-
-        public DefaultMethodResolver(String format, NameCase nameCase) {
-            this.format = format;
-            this.nameCase = nameCase;
-        }
-
-        @Override
-        public Method findMethod(String value, Class<?> in) {
-            return getMethod(in, String.format(format, nameCase.apply(value)));
-        }
-    }
-
-    public interface MethodResolver {
-
-        Method findMethod(String value, Class<?> in);
-
-    }
 }

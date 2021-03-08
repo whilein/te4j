@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 /**
  * @author lero4ka16
  */
-public class TemplateContextBuilder {
+public final class TemplateContextBuilder {
 
     private boolean useResources;
     private int outputTypes;

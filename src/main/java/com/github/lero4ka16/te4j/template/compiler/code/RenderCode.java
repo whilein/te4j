@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author lero4ka16
  */
-public class RenderCode {
+public final class RenderCode {
 
     private final TemplateCompileProcess<?> process;
 

@@ -24,7 +24,7 @@ import com.github.lero4ka16.te4j.util.type.GenericInfo;
 /**
  * @author lero4ka16
  */
-public class LoopEnvironment implements Environment {
+public final class LoopEnvironment implements Environment {
 
     private final IterationCode iterationCode;
     private final String counterField;
