@@ -28,9 +28,9 @@ import java.io.OutputStream;
  */
 public abstract class Template<BoundType> {
 
-    private static final ThreadLocal<TemplateOutputBuffer> byteOptimized
+    protected static final ThreadLocal<TemplateOutputBuffer> byteOptimized
             = ThreadLocal.withInitial(TemplateOutputBuffer::new);
-    private static final ThreadLocal<TemplateOutputString> stringOptimized
+    protected static final ThreadLocal<TemplateOutputString> stringOptimized
             = ThreadLocal.withInitial(TemplateOutputString::new);
 
     public abstract String[] getIncludes();

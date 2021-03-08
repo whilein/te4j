@@ -149,7 +149,7 @@ public class TemplateCompileProcess<BoundType> {
                     continue;
                 }
 
-                includes.add(includeMethod.getFile().format());
+                includes.add(parentFile + "/" + includeMethod.getFile().format());
             }
         }
 
@@ -357,7 +357,7 @@ public class TemplateCompileProcess<BoundType> {
                         fileName = file.format();
                     }
 
-                    includes.add(fileName);
+                    includes.add(parentFile + "/" + fileName);
                 } else {
                     fileName = file.format();
                 }
