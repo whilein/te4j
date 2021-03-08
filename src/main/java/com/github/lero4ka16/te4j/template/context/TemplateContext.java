@@ -14,43 +14,40 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.provider;
+package com.github.lero4ka16.te4j.template.context;
 
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
-import com.github.lero4ka16.te4j.template.provider.root.TemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author lero4ka16
  */
-public final class TemplateProvider {
-
-    private final TemplateProviderRoot root;
+public final class TemplateContext {
 
     private final TemplateOutputType[] outputTypes;
+    private final boolean useResources;
     private final int replaceStrategy;
 
-    public TemplateProvider(TemplateProviderRoot root,
-                            TemplateOutputType[] outputTypes,
-                            int replaceStrategy) {
-        this.root = root;
+    public TemplateContext(TemplateOutputType[] outputTypes,
+                           boolean useResources,
+                           int replaceStrategy) {
         this.outputTypes = outputTypes;
+        this.useResources = useResources;
         this.replaceStrategy = replaceStrategy;
-    }
-
-    public TemplateProviderRoot getRoot() {
-        return root;
     }
 
     public TemplateOutputType[] getOutputTypes() {
@@ -61,24 +58,35 @@ public final class TemplateProvider {
         return replaceStrategy;
     }
 
-    public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, byte[] bytes) {
-        return parse(bytes).compile(type);
+    private String getParent(String name) {
+        int separator = -1;
+
+        for (int i = name.length() - 1; i >= 0; i--) {
+            char ch = name.charAt(i);
+
+            if (ch == '/' || ch == '\\') {
+                separator = i;
+                break;
+            }
+        }
+
+        if (separator == -1) {
+            return ".";
+        }
+
+        return name.substring(0, separator);
     }
 
     public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
-        return parse(name).compile(type);
+        return parse(name).compile(getParent(name), type);
     }
 
     public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
-        return parseFile(file).compile(type);
+        return parseFile(file).compile(file.getParentFile().getAbsolutePath(), type);
     }
 
     public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
-        return parseFile(path).compile(type);
-    }
-
-    public <BoundType> Template<BoundType> load(Class<BoundType> type, byte[] bytes) {
-        return load(new ClassRef<>(type), bytes);
+        return parseFile(path).compile(path.toAbsolutePath().getParent().toString(), type);
     }
 
     public <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
@@ -93,15 +101,25 @@ public final class TemplateProvider {
         return loadFile(new ClassRef<>(type), path);
     }
 
-    public ParsedTemplate parse(byte[] bytes) {
+    private ParsedTemplate parse(byte[] bytes) {
         return new TemplateReader(this, bytes).readTemplate();
     }
 
     public ParsedTemplate parse(String name) {
-        try {
-            return parse(root.read(name));
-        } catch (IOException e) {
-            throw new TemplateLoadException("Cannot read template", e);
+        if (useResources) {
+            try {
+                InputStream is = ClassLoader.getSystemResourceAsStream(name);
+
+                if (is == null) {
+                    throw new FileNotFoundException("Resource not found: " + name);
+                }
+
+                return parse(Utils.readBytes(is));
+            } catch (IOException e) {
+                throw new TemplateLoadException("Cannot read template", e);
+            }
+        } else {
+            return parseFile(Paths.get(name));
         }
     }
 

@@ -20,6 +20,7 @@ import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.PlainParsedTemplate;
 import com.github.lero4ka16.te4j.template.StandardParsedTemplate;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
@@ -30,7 +31,6 @@ import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
 import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;
 import com.github.lero4ka16.te4j.util.io.BytesReader;
@@ -42,13 +42,13 @@ import java.util.List;
 
 public final class TemplateReader {
 
-    private final TemplateProvider provider;
+    private final TemplateContext context;
 
     private final byte[] value;
     private final DataReader reader;
 
-    public TemplateReader(TemplateProvider provider, byte[] value) {
-        this.provider = provider;
+    public TemplateReader(TemplateContext context, byte[] value) {
+        this.context = context;
 
         this.value = value;
         this.reader = new BytesReader(value);
@@ -61,15 +61,15 @@ public final class TemplateReader {
             if (!inner) {
                 byte[] processed = Text.of(value, begin, end - begin)
                         .disableEscaping()
-                        .replaceStrategy(provider.getReplaceStrategy())
+                        .replaceStrategy(context.getReplaceStrategy())
                         .computeAsBytes();
 
-                template = new PlainParsedTemplate(provider, processed, 0, processed.length);
+                template = new PlainParsedTemplate(context, processed, 0, processed.length);
             } else {
-                template = new PlainParsedTemplate(provider, value, begin, end - begin);
+                template = new PlainParsedTemplate(context, value, begin, end - begin);
             }
         } else {
-            template = new StandardParsedTemplate(provider, paths, value, begin, end - begin);
+            template = new StandardParsedTemplate(context, paths, value, begin, end - begin);
         }
 
         return template;

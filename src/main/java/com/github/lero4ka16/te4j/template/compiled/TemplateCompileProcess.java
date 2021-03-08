@@ -33,6 +33,7 @@ import com.github.lero4ka16.te4j.template.compiled.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.IncludeCompiledPath;
 import com.github.lero4ka16.te4j.template.compiled.path.PathAccessor;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.environment.DefaultEnvironment;
 import com.github.lero4ka16.te4j.template.environment.Environment;
 import com.github.lero4ka16.te4j.template.environment.LoopEnvironment;
@@ -48,7 +49,6 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.BytesHashKey;
 import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
 import com.github.lero4ka16.te4j.util.StringConcatenation;
@@ -95,9 +95,10 @@ public class TemplateCompileProcess<BoundType> {
     private final int off;
     private final int len;
 
-    private final TemplateProvider provider;
+    private final TemplateContext context;
 
     private final TypeRef<BoundType> type;
+    private final String parentFile;
 
     private final RuntimeJavaCompiler javaCompiler;
 
@@ -117,12 +118,14 @@ public class TemplateCompileProcess<BoundType> {
     private TemplateOutputType outputType;
     private SwitchCase currentSwitchCase;
 
-    public TemplateCompileProcess(TemplateProvider provider, byte[] template, int off, int len,
-                                  TypeRef<BoundType> type, List<TemplatePath> paths) {
+    public TemplateCompileProcess(TemplateContext context, byte[] template, int off, int len,
+                                  TypeRef<BoundType> type, String parentFile, List<TemplatePath> paths) {
         this.type = type;
+        this.parentFile = parentFile;
+
         this.baseEnvironment = new DefaultEnvironment("object", type.getType(), type.getTypeClass());
 
-        this.provider = provider;
+        this.context = context;
 
         this.off = off;
         this.len = len;
@@ -359,7 +362,7 @@ public class TemplateCompileProcess<BoundType> {
                     fileName = file.format();
                 }
 
-                ParsedTemplate template = provider.parse(fileName);
+                ParsedTemplate template = context.parse(parentFile + "/" + fileName);
 
                 if (template.hasPaths()) {
                     List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
@@ -467,7 +470,7 @@ public class TemplateCompileProcess<BoundType> {
 
         try {
             Text.of(bytes)
-                    .replaceStrategy(provider.getReplaceStrategy())
+                    .replaceStrategy(context.getReplaceStrategy())
                     .compute(sb);
         } catch (IOException e) {
             e.printStackTrace();
@@ -527,7 +530,7 @@ public class TemplateCompileProcess<BoundType> {
     public Template compile() throws Exception {
         addEnvironment("this", baseEnvironment);
 
-        for (TemplateOutputType type : provider.getOutputTypes()) {
+        for (TemplateOutputType type : context.getOutputTypes()) {
             addContent(generateFormatMethod(type));
         }
 
@@ -540,7 +543,7 @@ public class TemplateCompileProcess<BoundType> {
 
             includeBuilder
                     .append('"')
-                    .append(Text.of(provider.getRoot().resolve(include)).computeAsString())
+                    .append(Text.of(parentFile + "/" + include).computeAsString())
                     .append('"');
         }
 

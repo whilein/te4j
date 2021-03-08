@@ -16,8 +16,8 @@
 
 package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
@@ -34,11 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class TemplateTest {
 
-    private TemplateProvider provider;
+    private TemplateContext context;
 
     @BeforeEach
     public void init() {
-        provider = Te4j.custom()
+        context = Te4j.custom()
                 .useResources()
                 .outputTypes(TemplateOutputType.BYTES)
                 .replaceStrategy(ReplaceStrategy.ALL)
@@ -47,71 +47,71 @@ public class TemplateTest {
 
     @Test
     public void testPlain() {
-        testTemplate(provider,
-                "plain.html", "Hello world!Привет мир!",
+        testTemplate(context,
+                "WEB-INF/plain.html", "Hello world!Привет мир!",
                 null, new ClassRef<>(Object.class));
     }
 
     @Test
     public void testValue() {
-        testTemplate(provider,
-                "value.html", "Hello my friend!",
+        testTemplate(context,
+                "WEB-INF/value.html", "Hello my friend!",
                 new Example_1("my friend"), new ClassRef<>(Example_1.class));
     }
 
     @Test
     public void testForeach() {
-        testTemplate(provider,
-                "foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
+        testTemplate(context,
+                "WEB-INF/foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
                 new Example_2(10, 20, 30), new ClassRef<>(Example_2.class));
     }
 
     @Test
     public void testForeachGeneric() {
-        testTemplate(provider,
-                "foreach_generic.html", "<a>0: 50</a><a>1: 100</a><a>2: 200</a>",
+        testTemplate(context,
+                "WEB-INF/foreach_generic.html", "<a>0: 50</a><a>1: 100</a><a>2: 200</a>",
                 Arrays.asList(50, 100, 200), new TypeRef<List<Integer>>() {
                 });
     }
 
     @Test
     public void testConditionFalse() {
-        testTemplate(provider,
-                "condition.html", "<a>Result is false</a>",
+        testTemplate(context,
+                "WEB-INF/condition.html", "<a>Result is false</a>",
                 new Example_3("Hello world", false), new ClassRef<>(Example_3.class));
     }
 
     @Test
     public void testConditionTrue() {
-        testTemplate(provider,
-                "condition.html", "<a>Hello world</a>",
+        testTemplate(context,
+                "WEB-INF/condition.html", "<a>Hello world</a>",
                 new Example_3("Hello world", true), new ClassRef<>(Example_3.class));
     }
 
     @Test
     public void testSwitchCase_Condition() {
-        testTemplate(provider,
-                "switchcase.html", "<a>Goodbye my friend</a>",
+        testTemplate(context,
+                "WEB-INF/switchcase.html", "<a>Goodbye my friend</a>",
                 new Example_4("Goodbye my friend", true), new ClassRef<>(Example_4.class));
     }
 
     @Test
     public void testSwitchCase_Foreach() {
-        testTemplate(provider,
-                "switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
+        testTemplate(context,
+                "WEB-INF/switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
                 new Example_4(new int[]{5, 10, 15}), new ClassRef<>(Example_4.class));
     }
 
     @Test
     public void testSwitchCase_Value() {
-        testTemplate(provider,
-                "switchcase.html", "Hello you!",
+        testTemplate(context,
+                "WEB-INF/switchcase.html", "Hello you!",
                 new Example_4("you"), new ClassRef<>(Example_4.class));
     }
 
-    private <T> void testTemplate(TemplateProvider provider, String resource, String expectText,
+    private <T> void testTemplate(TemplateContext context, String resource, String expectText,
                                   T object, TypeRef<T> type) {
-        String result = provider.load(type, resource).renderAsString(object);
+        String result = context.load(type, resource).renderAsString(object);
         assertEquals(expectText, result);
     }
 

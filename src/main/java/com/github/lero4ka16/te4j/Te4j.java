@@ -17,9 +17,15 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.filter.Filters;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
-import com.github.lero4ka16.te4j.template.provider.TemplateProviderBuilder;
+import com.github.lero4ka16.te4j.template.ParsedTemplate;
+import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
+import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
 import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author lero4ka16
@@ -32,9 +38,8 @@ public final class Te4j {
 
     private static final Filters FILTERS = new Filters();
 
-    private static final TemplateProvider DEFAULTS = custom()
-            .useFiles()
-            .replaceStrategy(ReplaceStrategy.NONE)
+    private static final TemplateContext DEFAULTS = custom()
+            .replaceStrategy(ReplaceStrategy.ALL)
             .build();
 
     public static Filters getFilters() {
@@ -42,16 +47,52 @@ public final class Te4j {
     }
 
     /**
-     * @return Default template provider
+     * @return Default template context
      */
-    public static TemplateProvider defaults() {
+    public static TemplateContext defaults() {
         return DEFAULTS;
     }
 
+    public static <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
+        return DEFAULTS.load(type, name);
+    }
+
+    public static <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
+        return DEFAULTS.loadFile(type, file);
+    }
+
+    public static <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
+        return DEFAULTS.loadFile(type, path);
+    }
+
+    public static <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
+        return DEFAULTS.load(type, name);
+    }
+
+    public static <BoundType> Template<BoundType> loadFile(Class<BoundType> type, File file) {
+        return DEFAULTS.loadFile(type, file);
+    }
+
+    public static <BoundType> Template<BoundType> loadFile(Class<BoundType> type, Path path) {
+        return DEFAULTS.loadFile(type, path);
+    }
+
+    public static ParsedTemplate parse(String name) {
+        return DEFAULTS.parse(name);
+    }
+
+    public static ParsedTemplate parseFile(File file) {
+        return DEFAULTS.parseFile(file);
+    }
+
+    public static ParsedTemplate parseFile(Path path) {
+        return DEFAULTS.parseFile(path);
+    }
+
     /**
-     * @return New custom template provider builder
+     * @return New custom template context builder
      */
-    public static TemplateProviderBuilder custom() {
-        return new TemplateProviderBuilder();
+    public static TemplateContextBuilder custom() {
+        return new TemplateContextBuilder();
     }
 }

@@ -17,8 +17,8 @@
 package com.github.lero4ka16.te4j.template;
 
 import com.github.lero4ka16.te4j.template.compiled.Template;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class ParsedTemplate {
 
-    protected final TemplateProvider provider;
+    protected final TemplateContext context;
 
     protected final byte[] content;
 
@@ -38,7 +38,7 @@ public abstract class ParsedTemplate {
 
     private byte[] _content;
 
-    public ParsedTemplate(TemplateProvider provider, byte[] content,
+    public ParsedTemplate(TemplateContext context, byte[] content,
                           int offset, int length) {
         if (offset < 0 || offset >= content.length) {
             throw new IllegalArgumentException("offset must be between 0 and "
@@ -50,7 +50,7 @@ public abstract class ParsedTemplate {
                     + (content.length - offset) + ", but " + length);
         }
 
-        this.provider = provider;
+        this.context = context;
         this.content = content;
         this.offset = offset;
         this.length = length;
@@ -66,8 +66,8 @@ public abstract class ParsedTemplate {
         return length;
     }
 
-    public TemplateProvider getProvider() {
-        return provider;
+    public TemplateContext getContext() {
+        return context;
     }
 
     public boolean newline(int ch) {
@@ -101,10 +101,9 @@ public abstract class ParsedTemplate {
         return _content;
     }
 
-    public abstract <BoundType> Template<BoundType> compile(TypeRef<BoundType> type);
+    public abstract <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type);
 
     public abstract boolean hasPaths();
-
     public abstract List<TemplatePath> getPaths();
 
 }

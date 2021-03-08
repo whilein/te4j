@@ -18,8 +18,8 @@ package com.github.lero4ka16.te4j.template;
 
 import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.compiled.TemplateCompiler;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.nio.charset.StandardCharsets;
@@ -32,9 +32,9 @@ public final class StandardParsedTemplate extends ParsedTemplate {
 
     private final List<TemplatePath> paths;
 
-    public StandardParsedTemplate(TemplateProvider provider, List<TemplatePath> paths,
+    public StandardParsedTemplate(TemplateContext context, List<TemplatePath> paths,
                                   byte[] content, int offset, int length) {
-        super(provider, content, offset, length);
+        super(context, content, offset, length);
 
         if (paths.isEmpty()) {
             throw new IllegalArgumentException("paths");
@@ -49,8 +49,8 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(TypeRef<BoundType> type) {
-        return TemplateCompiler.getInstance().compile(provider, content, offset, length, paths, type);
+    public <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type) {
+        return TemplateCompiler.getInstance().compile(context, content, offset, length, paths, type, parent);
     }
 
     @Override
