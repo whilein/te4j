@@ -19,6 +19,7 @@ package com.github.lero4ka16.te4j.template.provider;
 import com.github.lero4ka16.te4j.template.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.compiled.Template;
 import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.provider.root.TemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
@@ -36,16 +37,24 @@ import java.nio.file.Path;
 public final class TemplateProvider {
 
     private final TemplateProviderRoot root;
+
+    private final TemplateOutputType[] outputTypes;
     private final int replaceStrategy;
 
     public TemplateProvider(TemplateProviderRoot root,
+                            TemplateOutputType[] outputTypes,
                             int replaceStrategy) {
         this.root = root;
+        this.outputTypes = outputTypes;
         this.replaceStrategy = replaceStrategy;
     }
 
     public TemplateProviderRoot getRoot() {
         return root;
+    }
+
+    public TemplateOutputType[] getOutputTypes() {
+        return outputTypes;
     }
 
     public int getReplaceStrategy() {

@@ -57,9 +57,16 @@ public abstract class Template<BoundType> {
 
     // optimized for strings
     public void render(BoundType object, TemplateOutputString out) {
-        render(object, (TemplateOutput) out);
+        out.write(new String(renderAsBytes(object)));
     }
 
-    public abstract void render(BoundType object, TemplateOutput out);
+    // optimized for stream and buffers
+    public void render(BoundType object, TemplateOutput out) {
+        if (out instanceof TemplateOutputString) {
+            render(object, (TemplateOutputString) out);
+        } else {
+            throw new UnsupportedOperationException("No implementation for bytes");
+        }
+    }
 
 }

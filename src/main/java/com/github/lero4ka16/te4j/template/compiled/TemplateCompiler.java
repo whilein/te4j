@@ -34,6 +34,7 @@ public class TemplateCompiler {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public <BoundType> Template<BoundType> compile(TemplateProvider provider, byte[] template, int off, int len,
                                                    List<TemplatePath> paths, TypeRef<BoundType> ref) {
         try {

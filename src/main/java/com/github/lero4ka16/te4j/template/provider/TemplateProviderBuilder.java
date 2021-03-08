@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.provider;
 
+import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.provider.root.FileTemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.provider.root.PathTemplateProviderRoot;
 import com.github.lero4ka16.te4j.template.provider.root.ResourceTemplateProviderRoot;
@@ -31,10 +32,16 @@ import java.nio.file.Paths;
 public class TemplateProviderBuilder {
 
     private TemplateProviderRoot root;
+    private TemplateOutputType[] outputTypes;
     private int replaceStrategy;
 
     public TemplateProviderBuilder use(TemplateProviderRoot root) {
         this.root = root;
+        return this;
+    }
+
+    public TemplateProviderBuilder outputTypes(TemplateOutputType... outputTypes) {
+        this.outputTypes = outputTypes;
         return this;
     }
 
@@ -68,8 +75,15 @@ public class TemplateProviderBuilder {
     }
 
     public TemplateProvider build() {
-        if (root == null) return useFiles().build();
-        return new TemplateProvider(root, replaceStrategy);
+        if (root == null) {
+            useFiles();
+        }
+
+        if (outputTypes == null || outputTypes.length == 0) {
+            outputTypes(TemplateOutputType.STRING, TemplateOutputType.BYTES);
+        }
+
+        return new TemplateProvider(root, outputTypes, replaceStrategy);
     }
 
 }

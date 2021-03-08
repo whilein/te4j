@@ -45,6 +45,7 @@ import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
+import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.template.provider.TemplateProvider;
@@ -113,7 +114,7 @@ public class TemplateCompileProcess<BoundType> {
 
     private AtomicInteger nameCounter;
 
-    private boolean stringOptimize;
+    private TemplateOutputType outputType;
     private SwitchCase currentSwitchCase;
 
     public TemplateCompileProcess(TemplateProvider provider, byte[] template, int off, int len,
@@ -261,7 +262,7 @@ public class TemplateCompileProcess<BoundType> {
 
         generateAccessors(compiled);
 
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
+        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
         concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
         concatenation.generateFields(this);
     }
@@ -414,7 +415,7 @@ public class TemplateCompileProcess<BoundType> {
                 List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
                 generateAccessors(compiled);
 
-                StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
+                StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
                 concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
                 concatenation.generateFields(this);
 
@@ -442,18 +443,21 @@ public class TemplateCompileProcess<BoundType> {
 
     private final Map<BytesHashKey, String> byteValues = new HashMap<>();
 
-    public void addBytes(Integer field, byte[] bytes, boolean string) {
-        String fieldName = string ? "STRING_" + field : "BYTES_" + field;
+    public void addBytes(Integer field, byte[] bytes, TemplateOutputType outputType) {
+        String fieldName = outputType.getPrefix() + field;
 
         BytesHashKey key = new BytesHashKey(bytes);
         String prevField = byteValues.put(key, fieldName);
 
-        if (string) {
-            addContent("private final String " + fieldName + " = "
-                    + (prevField != null ? prevField : getString(bytes)) + ";");
-        } else {
-            addContent("private final byte[] " + fieldName + " = "
-                    + (prevField != null ? prevField : getString(bytes) + ".getBytes()") + ";");
+        switch (outputType) {
+            case STRING:
+                addContent("private final String " + fieldName + " = "
+                        + (prevField != null ? prevField : getString(bytes)) + ";");
+                break;
+            case BYTES:
+                addContent("private final byte[] " + fieldName + " = "
+                        + (prevField != null ? prevField : getString(bytes) + ".getBytes()") + ";");
+                break;
         }
     }
 
@@ -490,18 +494,22 @@ public class TemplateCompileProcess<BoundType> {
         return new ArrayAccessor(result.toArray(new Accessor[0]));
     }
 
-    private String generateFormatMethod(boolean stringOptimize) {
-        this.stringOptimize = stringOptimize;
+    private String generateFormatMethod(TemplateOutputType outputType) {
+        this.outputType = outputType;
+
         this.nameCounter = new AtomicInteger();
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("public void render(")
-                .append(type.getCanonicalName()).append(" object, ")
-                .append(stringOptimize ? TEMPLATE_OUTPUT_STRING_CLASS : TEMPLATE_OUTPUT_CLASS).append(" out) {");
+        sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
+        sb.append(outputType == TemplateOutputType.STRING
+                ? TEMPLATE_OUTPUT_STRING_CLASS
+                : TEMPLATE_OUTPUT_CLASS);
+        sb.append(" out) {");
+
         List<AbstractCompiledPath> compiled = compilePaths(paths);
         generateAccessors(compiled);
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, stringOptimize);
+        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
         concat(compiled, template, off, len).insert(concatenation);
         concatenation.generateFields(this);
         sb.append('}');
@@ -519,8 +527,9 @@ public class TemplateCompileProcess<BoundType> {
     public Template compile() throws Exception {
         addEnvironment("this", baseEnvironment);
 
-        addContent(generateFormatMethod(false));
-        addContent(generateFormatMethod(true));
+        for (TemplateOutputType type : provider.getOutputTypes()) {
+            addContent(generateFormatMethod(type));
+        }
 
         StringBuilder includeBuilder = new StringBuilder();
 

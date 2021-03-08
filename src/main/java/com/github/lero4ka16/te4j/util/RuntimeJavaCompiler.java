@@ -77,7 +77,6 @@ public final class RuntimeJavaCompiler {
         }
 
         String uniqueName = name;
-        File out = new File(dir, uniqueName + ".class");
         File tmp = new File(dir, uniqueName + ".java");
 
         try (Writer writer = new FileWriter(tmp)) {
