@@ -16,16 +16,20 @@
 
 package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.annotation.ReturnsArrayList;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
+import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,6 +68,13 @@ public class TemplateTest {
         testTemplate(context,
                 "WEB-INF/foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
                 new Example_2(10, 20, 30), new ClassRef<>(Example_2.class));
+    }
+
+    @Test
+    public void testForeachCollection() {
+        testTemplate(context,
+                "WEB-INF/foreach.html", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
+                new Example_5(15, 25, 35), new ClassRef<>(Example_5.class));
     }
 
     @Test
@@ -203,6 +214,19 @@ public class TemplateTest {
 
         public boolean isCondition() {
             return condition;
+        }
+    }
+
+    public static class Example_5 {
+        private final List<Integer> elements;
+
+        public Example_5(int... elements) {
+            this.elements = IntStream.of(elements).boxed().collect(Collectors.toList());
+        }
+
+        @ReturnsArrayList
+        public Collection<Integer> getElements() {
+            return elements;
         }
     }
 

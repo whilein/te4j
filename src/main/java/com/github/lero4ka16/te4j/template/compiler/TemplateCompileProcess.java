@@ -22,12 +22,8 @@ import com.github.lero4ka16.te4j.expression.ExpressionParser;
 import com.github.lero4ka16.te4j.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.include.IncludeFile;
 import com.github.lero4ka16.te4j.template.Template;
-import com.github.lero4ka16.te4j.template.compiler.accessor.Accessor;
-import com.github.lero4ka16.te4j.template.compiler.accessor.ArrayAccessor;
-import com.github.lero4ka16.te4j.template.compiler.accessor.BytesAccessor;
-import com.github.lero4ka16.te4j.template.compiler.accessor.MethodAccessor;
-import com.github.lero4ka16.te4j.template.compiler.accessor.RawAccessor;
 import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
+import com.github.lero4ka16.te4j.template.compiler.code.RenderCode;
 import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.IncludeCompiledPath;
@@ -52,17 +48,15 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
-import com.github.lero4ka16.te4j.util.BytesHashKey;
 import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
-import com.github.lero4ka16.te4j.util.StringConcatenation;
-import com.github.lero4ka16.te4j.util.text.Text;
+import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
+import com.github.lero4ka16.te4j.util.hash.Hash;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -93,24 +87,14 @@ public class TemplateCompileProcess<BoundType> {
 
     private static final String TEMPLATE_OUTPUT_BUFFER_CLASS
             = TemplateOutputBuffer.class.getName();
-    /**
-     * Content of template
-     */
-    private final byte[] template;
 
-    private final int off;
-    private final int len;
-
+    private final ParsedTemplate template;
     private final TemplateContext context;
 
     private final TypeRef<BoundType> type;
     private final String parentFile;
 
     private final RuntimeJavaCompiler javaCompiler;
-
-    private final List<TemplatePath> paths;
-
-    private final Map<String, Accessor> accessors;
 
     private final Set<String> includes;
 
@@ -124,8 +108,8 @@ public class TemplateCompileProcess<BoundType> {
     private int outputType;
     private SwitchCase currentSwitchCase;
 
-    public TemplateCompileProcess(TemplateContext context, byte[] template, int off, int len,
-                                  TypeRef<BoundType> type, String parentFile, List<TemplatePath> paths) {
+    public TemplateCompileProcess(TemplateContext context, ParsedTemplate template,
+                                  TypeRef<BoundType> type, String parentFile) {
         this.type = type;
         this.parentFile = parentFile;
 
@@ -133,21 +117,15 @@ public class TemplateCompileProcess<BoundType> {
 
         this.context = context;
 
-        this.off = off;
-        this.len = len;
-
         this.template = template;
         this.expressionParser = new ExpressionParser(this::compilePathAccessor);
-
-        this.nameCounter = new AtomicInteger();
-        this.accessors = new HashMap<>();
 
         String simpleName = "GeneratedTemplate";
         this.javaCompiler = new RuntimeJavaCompiler(null, simpleName);
 
         this.includes = new HashSet<>();
 
-        for (TemplatePath path : paths) {
+        for (TemplatePath path : template.getPaths()) {
             if (path.getMethodType() == TemplateMethodType.INCLUDE) {
                 IncludeMethod includeMethod = path.getMethod();
 
@@ -159,7 +137,6 @@ public class TemplateCompileProcess<BoundType> {
             }
         }
 
-        this.paths = paths;
         this.javaCompiler.setSuperclass(COMPILED_TEMPLATE_CLASS + "<" + type.getCanonicalName() + ">");
     }
 
@@ -175,11 +152,15 @@ public class TemplateCompileProcess<BoundType> {
         environments.put(name, environment);
     }
 
-    public void removeNamespace(String name) {
+    public void removeEnvironment(String name) {
         environments.remove(name);
     }
 
-    private AbstractCompiledPath compilePaths(TemplatePath path) {
+    public List<AbstractCompiledPath> compilePaths(List<TemplatePath> paths) {
+        return paths.stream().map(this::compilePaths).collect(Collectors.toList());
+    }
+
+    public AbstractCompiledPath compilePaths(TemplatePath path) {
         String id = "_" + nameCounter.incrementAndGet();
 
         TemplateMethodType methodType = path.getMethodType();
@@ -255,33 +236,13 @@ public class TemplateCompileProcess<BoundType> {
         return environment.resolve(iterator);
     }
 
-    private List<AbstractCompiledPath> compilePaths(List<TemplatePath> paths) {
-        return paths.stream().map(this::compilePaths).collect(Collectors.toList());
-    }
-
-    private void generateAccessors(List<AbstractCompiledPath> paths) {
-        for (AbstractCompiledPath path : paths) {
-            Accessor accessor = generateAccessor(path);
-            accessors.put(path.getId(), accessor);
-        }
-    }
-
-    private void writeTemplate(StringBuilder sb, ParsedTemplate template) {
-        List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
-
-        generateAccessors(compiled);
-
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
-        concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
-        concatenation.generateFields(this);
-    }
-
-    private Accessor generateAccessor(AbstractCompiledPath path) {
+    public void writePath(AbstractCompiledPath path, RenderCode out) {
         String accessorValue = path.getAccessorValue();
 
         switch (path.getMethodType()) {
             case VALUE:
-                return new MethodAccessor(accessorValue);
+                out.appendCodeSegment("out.put(" + accessorValue + ");");
+                break;
             case CASE: {
                 SwitchCaseMethod SwitchCaseMethod = path.getMethod();
                 String value = SwitchCaseMethod.getValue();
@@ -316,35 +277,33 @@ public class TemplateCompileProcess<BoundType> {
                 SwitchCase switchCase = new SwitchCase(type, values);
                 currentSwitchCase = switchCase;
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("switch (").append(accessorValue).append(") {");
+                out.append("switch (").append(accessorValue).append(") {");
 
                 for (Object o : values) {
                     switchCase.setValue(o);
-                    sb.append("case ");
+                    out.append("case ");
 
                     boolean string = o instanceof String;
 
-                    if (string) sb.append('"');
-                    sb.append(o);
-                    if (string) sb.append('"');
+                    if (string) out.append("\"");
+                    out.append(o.toString());
+                    if (string) out.append("\"");
 
-                    sb.append(": {");
-                    writeTemplate(sb, SwitchCaseMethod.getBlock());
-                    sb.append("break;}");
+                    out.append(": {");
+                    out.appendTemplate(SwitchCaseMethod.getBlock());
+                    out.append("break;}");
                 }
 
                 currentSwitchCase = oldSwitchCase;
 
                 if (SwitchCaseMethod.getDefaultBlock() != null) {
-                    sb.append("default: {");
-                    writeTemplate(sb, SwitchCaseMethod.getDefaultBlock());
-                    sb.append("}");
+                    out.append("default: {");
+                    out.appendTemplate(SwitchCaseMethod.getDefaultBlock());
+                    out.append("}");
                 }
 
-                sb.append("}");
-
-                return new RawAccessor(sb.toString());
+                out.append("}");
+                break;
             }
             case INCLUDE: {
                 IncludeMethod method = path.getMethod();
@@ -369,30 +328,28 @@ public class TemplateCompileProcess<BoundType> {
                 ParsedTemplate template = context.parse(parentFile + "/" + fileName);
 
                 if (template.hasPaths()) {
-                    List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
-                    generateAccessors(compiled);
-
-                    return concat(compiled, template.getRawContent(), template.getOffset(), template.getLength());
+                    out.appendTemplate(template);
                 } else {
-                    return new BytesAccessor(template.getRawContent(), template.getOffset(), template.getLength());
+                    out.appendTextSegment(template);
                 }
+
+                break;
             }
             case CONDITION: {
                 ConditionMethod method = path.getMethod();
                 ParsedTemplate block = method.getBlock();
                 ParsedTemplate elseBlock = method.getElseBlock();
 
-                StringBuilder sb = new StringBuilder("if(");
-                sb.append(accessorValue).append("){");
-                writeTemplate(sb, block);
+                out.append("if(").append(accessorValue).append("){");
+                out.appendTemplate(block);
 
                 if (elseBlock != null) {
-                    sb.append("} else {");
-                    writeTemplate(sb, elseBlock);
+                    out.append("} else {");
+                    out.appendTemplate(elseBlock);
                 }
 
-                sb.append('}');
-                return new RawAccessor(sb.toString());
+                out.append("}");
+                break;
             }
             case FOR: {
                 ForeachMethod method = path.getMethod();
@@ -407,63 +364,52 @@ public class TemplateCompileProcess<BoundType> {
                 ParsedTemplate template = method.getBlock();
                 String as = method.getAs();
 
-                IterationCode code = new IterationCode();
-                code.setElementType(listType.getName());
-                code.setAs(as + path.getId());
-                code.setFrom(accessorValue);
+                IterationCode iterationCode = new IterationCode();
+                iterationCode.setElementType(listType.getName());
+                iterationCode.setAs(as + path.getId());
+                iterationCode.setFrom(accessorValue);
 
-                LoopEnvironment loop = new LoopEnvironment(code.getCounterFieldName());
+                LoopEnvironment loop = new LoopEnvironment(iterationCode, iterationCode.getCounterFieldName());
 
                 Environment prevLoop = setEnvironment("loop", loop);
-                addEnvironment(as, new PrimaryEnvironment(code.getElementName(), listType, listType));
+                addEnvironment(as, new PrimaryEnvironment(iterationCode.getElementName(), listType, listType));
 
-                StringBuilder sb = new StringBuilder();
-
-                List<AbstractCompiledPath> compiled = compilePaths(template.getPaths());
-                generateAccessors(compiled);
-
-                StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
-                concat(compiled, template.getRawContent(), template.getOffset(), template.getLength()).insert(concatenation);
-                concatenation.generateFields(this);
-
-                code.setContent(sb.toString());
+                iterationCode.setContent(template);
 
                 if (returnType.isArray()) {
-                    code.setArray(true);
+                    iterationCode.setArray(true);
                 } else if (returnType.isArrayList()) {
-                    code.setArrayList(true);
+                    iterationCode.setArrayList(true);
+                    iterationCode.setCastArrayList(!List.class.isAssignableFrom(returnType.getRawType()));
                 }
 
-                if (loop.hasIndex()) {
-                    code.setInsertCounter(true);
-                }
+                iterationCode.write(out);
 
                 setEnvironment("loop", prevLoop);
-                removeNamespace(as);
-
-                return new RawAccessor(code.toString());
+                removeEnvironment(as);
+                break;
             }
         }
-
-        throw new IllegalStateException();
     }
 
-    private final Map<BytesHashKey, String> byteValues = new HashMap<>();
+    private final Map<Hash, String> byteValues = new HashMap<>();
 
-    public void addBytes(Integer field, byte[] bytes, int outputType) {
+    public AtomicInteger getNameCounter() {
+        return nameCounter;
+    }
+
+    public void addBytes(Integer field, byte[] bytes) {
         String fieldName = TemplateOutputType.getPrefix(outputType) + field;
-
-        BytesHashKey key = new BytesHashKey(bytes);
-        String prevField = byteValues.put(key, fieldName);
+        String prevFieldName = byteValues.put(Hash.forArray(bytes), fieldName);
 
         switch (outputType) {
             case TemplateOutputType.STRING:
                 addContent("private final String " + fieldName + " = "
-                        + (prevField != null ? prevField : getString(bytes)) + ";");
+                        + (prevFieldName != null ? prevFieldName : getString(bytes)) + ";");
                 break;
             case TemplateOutputType.BYTES:
                 addContent("private final byte[] " + fieldName + " = "
-                        + (prevField != null ? prevField : getString(bytes) + ".getBytes()") + ";");
+                        + (prevFieldName != null ? prevFieldName : getString(bytes) + ".getBytes()") + ";");
                 break;
         }
     }
@@ -473,9 +419,9 @@ public class TemplateCompileProcess<BoundType> {
         sb.append('"');
 
         try {
-            Text.of(bytes)
+            new TextFormatter(bytes)
                     .replaceStrategy(context.getReplaceStrategy())
-                    .compute(sb);
+                    .write(sb);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -485,20 +431,8 @@ public class TemplateCompileProcess<BoundType> {
         return sb.toString();
     }
 
-    private Accessor concat(List<AbstractCompiledPath> paths, byte[] value, int off, int len) {
-        List<Accessor> result = new ArrayList<>();
-
-        int startIndex = off;
-
-        for (AbstractCompiledPath path : paths) {
-            result.add(new BytesAccessor(value, startIndex, path.getOffset() - startIndex));
-            result.add(accessors.get(path.getId()));
-
-            startIndex = path.getOffset() + path.getLength();
-        }
-
-        result.add(new BytesAccessor(value, startIndex, len + off - startIndex));
-        return new ArrayAccessor(result.toArray(new Accessor[0]));
+    public int getOutputType() {
+        return outputType;
     }
 
     private void addRenderMethod(int outputType) {
@@ -513,11 +447,11 @@ public class TemplateCompileProcess<BoundType> {
                 : TEMPLATE_OUTPUT_CLASS);
         sb.append(" out) {");
 
-        List<AbstractCompiledPath> compiled = compilePaths(paths);
-        generateAccessors(compiled);
-        StringConcatenation concatenation = new StringConcatenation(nameCounter, sb, outputType);
-        concat(compiled, template, off, len).insert(concatenation);
-        concatenation.generateFields(this);
+        RenderCode renderCode = new RenderCode(this);
+        renderCode.appendTemplate(template);
+        renderCode.flushTemplates();
+
+        sb.append(renderCode);
         sb.append('}');
 
         byteValues.clear();
@@ -603,10 +537,9 @@ public class TemplateCompileProcess<BoundType> {
                 includeBuilder.append(", ");
             }
 
-            includeBuilder
-                    .append('"')
-                    .append(Text.of(parentFile + "/" + include).computeAsString())
-                    .append('"');
+            includeBuilder.append('"');
+            includeBuilder.append(new TextFormatter(parentFile + "/" + include).format());
+            includeBuilder.append('"');
         }
 
         addContent("private final String[] includes = new String[]{" + includeBuilder + "};");

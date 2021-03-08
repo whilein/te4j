@@ -14,20 +14,23 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.optimization;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.github.lero4ka16.te4j.template.replace;
 
 /**
- * Помечает метод, что он вернёт ArrayList. Нужно для оптимизации
- * итерации по этому самому списку
- *
  * @author lero4ka16
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ReturnsArrayList {
+public final class ReplaceStrategy {
+
+    public static final int DEL_CR = 1;
+    public static final int DEL_LF = 2;
+    public static final int DEL_REPEATING_SPACES = 4;
+    public static final int DEL_TAB = 8;
+
+    public static final int ALL = DEL_CR | DEL_LF | DEL_REPEATING_SPACES | DEL_TAB;
+    public static final int NONE = 0;
+
+    private ReplaceStrategy() {
+        throw new UnsupportedOperationException();
+    }
+
 }

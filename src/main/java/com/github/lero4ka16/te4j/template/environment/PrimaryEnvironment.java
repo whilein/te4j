@@ -22,6 +22,7 @@ import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -50,7 +51,7 @@ public class PrimaryEnvironment implements Environment {
     @Override
     public final PathAccessor resolve(TemplatePathIterator iterator) {
         if (!iterator.hasNext()) {
-            return new PathAccessor(new GenericInfo(type), javaObject);
+            return new PathAccessor(new GenericInfo(type, new Annotation[0]), javaObject);
         }
 
         Class<?> currentType = cls;
@@ -86,7 +87,7 @@ public class PrimaryEnvironment implements Environment {
             currentType = found.getReturnType();
         } while (iterator.hasNext());
 
-        return new PathAccessor(new GenericInfo(found.getGenericReturnType()), sb.toString());
+        return new PathAccessor(new GenericInfo(found.getGenericReturnType(), found.getAnnotations()), sb.toString());
     }
 
     public enum NameCase {

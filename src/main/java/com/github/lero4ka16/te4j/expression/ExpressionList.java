@@ -16,10 +16,11 @@
 
 package com.github.lero4ka16.te4j.expression;
 
-import com.github.lero4ka16.te4j.util.text.Text;
+import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 public final class ExpressionList extends Expression {
@@ -36,7 +37,7 @@ public final class ExpressionList extends Expression {
             arrayType = Array.newInstance(type, 0).getClass();
         }
 
-        this.type = new GenericInfo(arrayType, arrayType, type);
+        this.type = new GenericInfo(arrayType, arrayType, type, new Annotation[0]);
         this.inner = inner;
     }
 
@@ -55,7 +56,7 @@ public final class ExpressionList extends Expression {
             }
 
             if (element instanceof ExpressionString) {
-                result[i] = Text.of(((ExpressionString) element).getValue()).computeAsString();
+                result[i] = new TextFormatter(((ExpressionString) element).getValue()).format();
             } else {
                 throw new UnsupportedOperationException(element.getClass().getSimpleName() + " is unsupported, sorry");
             }

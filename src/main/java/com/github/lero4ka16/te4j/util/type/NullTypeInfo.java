@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.util.type;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
@@ -36,12 +37,32 @@ public class NullTypeInfo implements TypeInfo {
     }
 
     @Override
+    public Annotation[] getAnnotations() {
+        return new Annotation[0];
+    }
+
+    @Override
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
+        return false;
+    }
+
+    @Override
+    public <T extends Annotation> T getAnnotation(Class<T> cls) {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return "null";
     }
 
     @Override
     public Type getType() {
+        return getRawType();
+    }
+
+    @Override
+    public Class<?> getRawType() {
         return Object.class;
     }
 

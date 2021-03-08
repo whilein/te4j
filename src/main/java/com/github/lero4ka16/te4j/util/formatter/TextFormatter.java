@@ -14,34 +14,53 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.text;
+package com.github.lero4ka16.te4j.util.formatter;
 
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
+import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
-public abstract class Text {
+public final class TextFormatter {
+
+    private final byte[] buf;
+    private final int off;
+    private final int len;
+
+    public TextFormatter(byte[] buf, int off, int len) {
+        this.buf = buf;
+        this.off = off;
+        this.len = len;
+    }
+
+    public TextFormatter(byte[] buf) {
+        this(buf, 0, buf.length);
+    }
+
+    public TextFormatter(String value) {
+        this(value.getBytes(StandardCharsets.UTF_8), 0, value.length());
+    }
 
     protected boolean escaping = true;
     protected int replaceStrategy;
 
-    public Text replaceStrategy(int strategy) {
+    public TextFormatter replaceStrategy(int strategy) {
         this.replaceStrategy = strategy;
         return this;
     }
 
-    public Text disableEscaping() {
+    public TextFormatter disableEscaping() {
         escaping = false;
         return this;
     }
 
-    public byte[] computeAsBytes() {
+    public byte[] formatAsBytes() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            compute(baos);
+            write(baos);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,34 +68,22 @@ public abstract class Text {
         return baos.toByteArray();
     }
 
-    public String computeAsString() {
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            compute(sb);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return sb.toString();
+    public String format() {
+        return new String(formatAsBytes());
     }
 
-    public void compute(Appendable out) throws IOException {
+    public void write(Appendable out) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        compute(new TextOutputStream(baos));
+        write(baos);
 
         out.append(baos.toString());
     }
 
-    public void compute(OutputStream out) throws IOException {
-        compute(new TextOutputStream(out));
-    }
-
-    public void compute(TextOutput out) throws IOException {
+    public void write(OutputStream out) throws IOException {
         boolean insertSpace = false;
 
-        for (int i = 0; i < length(); i++) {
-            int ch = charAt(i);
+        for (int i = 0; i < len; i++) {
+            int ch = buf[i + off];
 
             if (insertSpace && ch != ' ') {
                 out.write(' ');
@@ -144,22 +151,6 @@ public abstract class Text {
         if (insertSpace) {
             out.write(' ');
         }
-    }
-
-    public abstract int length();
-
-    public abstract int charAt(int i);
-
-    public static Text of(String text) {
-        return new StringText(text);
-    }
-
-    public static Text of(byte[] text, int off, int len) {
-        return new BinaryText(text, off, len);
-    }
-
-    public static Text of(byte[] text) {
-        return of(text, 0, text.length);
     }
 
 }

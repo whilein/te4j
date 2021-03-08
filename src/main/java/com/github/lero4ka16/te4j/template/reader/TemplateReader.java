@@ -33,9 +33,9 @@ import com.github.lero4ka16.te4j.template.parse.StandardParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateToken;
 import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType;
+import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
 import com.github.lero4ka16.te4j.util.io.BytesReader;
 import com.github.lero4ka16.te4j.util.io.DataReader;
-import com.github.lero4ka16.te4j.util.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +59,10 @@ public final class TemplateReader {
 
         if (paths.isEmpty()) {
             if (!inner) {
-                byte[] processed = Text.of(value, begin, end - begin)
+                byte[] processed = new TextFormatter(value, begin, end - begin)
                         .disableEscaping()
                         .replaceStrategy(context.getReplaceStrategy())
-                        .computeAsBytes();
+                        .formatAsBytes();
 
                 template = new PlainParsedTemplate(context, processed, 0, processed.length);
             } else {

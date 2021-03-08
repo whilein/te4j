@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.environment;
 
+import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
@@ -25,15 +26,12 @@ import com.github.lero4ka16.te4j.util.type.GenericInfo;
  */
 public class LoopEnvironment implements Environment {
 
+    private final IterationCode iterationCode;
     private final String counterField;
-    private boolean index;
 
-    public LoopEnvironment(String counterField) {
+    public LoopEnvironment(IterationCode iterationCode, String counterField) {
+        this.iterationCode = iterationCode;
         this.counterField = counterField;
-    }
-
-    public boolean hasIndex() {
-        return index;
     }
 
     @Override
@@ -50,7 +48,8 @@ public class LoopEnvironment implements Environment {
                     throw new IllegalStateException(iterator.getText());
                 }
 
-                index = true;
+                iterationCode.setInsertCounter(true);
+
                 return new PathAccessor(GenericInfo.PRIMITIVE_INT, counterField);
         }
 

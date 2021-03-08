@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
-import com.github.lero4ka16.te4j.util.replace.ReplaceStrategy;
+import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.File;

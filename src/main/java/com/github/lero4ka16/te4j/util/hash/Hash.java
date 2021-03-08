@@ -14,37 +14,49 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util;
+package com.github.lero4ka16.te4j.util.hash;
 
 import java.util.Arrays;
 
 /**
  * @author lero4ka16
  */
-public final class BytesHashKey {
+public abstract class Hash {
 
-    private final byte[] value;
-    private int hash;
+    private final int hash;
 
-    public BytesHashKey(byte[] value) {
-        this.value = value;
+    public Hash(int hash) {
+        this.hash = hash;
     }
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = Arrays.hashCode(value);
-        }
-
         return hash;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof BytesHashKey)) return false;
-
-        BytesHashKey that = (BytesHashKey) obj;
-        return Arrays.equals(value, that.value);
+    public static Hash forArray(byte[] array) {
+        return new Bytes(array);
     }
+
+    private static class Bytes extends Hash {
+
+        private final byte[] value;
+
+        public Bytes(byte[] value) {
+            super(Arrays.hashCode(value));
+
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof Bytes)) return false;
+
+            Bytes that = (Bytes) obj;
+            return Arrays.equals(value, that.value);
+        }
+
+    }
+
 }

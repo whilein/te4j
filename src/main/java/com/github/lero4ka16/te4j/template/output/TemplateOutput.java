@@ -224,7 +224,6 @@ public abstract class TemplateOutput {
         }
 
         int length = longLength(value);
-        System.out.println(length);
 
         for (int i = length - 1; i >= 0; i--) {
             writeDigit((int) (value / LONG_UNITS[i] % 10L));

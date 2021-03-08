@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.util.type;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
@@ -27,9 +28,17 @@ public interface TypeInfo {
 
     boolean isArrayList();
 
+    Annotation[] getAnnotations();
+
+    boolean isAnnotationPresent(Class<? extends Annotation> annotation);
+
+    <T extends Annotation> T getAnnotation(Class<T> cls);
+
     String getName();
 
     Type getType();
+
+    Class<?> getRawType();
 
     Class<?> getComponentType();
 

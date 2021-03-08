@@ -19,10 +19,8 @@ package com.github.lero4ka16.te4j.template.compiler;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
-import com.github.lero4ka16.te4j.template.path.TemplatePath;
+import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
-
-import java.util.List;
 
 /**
  * @author lero4ka16
@@ -36,11 +34,10 @@ public class TemplateCompiler {
     }
 
     @SuppressWarnings("unchecked")
-    public <BoundType> Template<BoundType> compile(TemplateContext context, byte[] template, int off,
-                                                   int len, List<TemplatePath> paths,
+    public <BoundType> Template<BoundType> compile(TemplateContext context, ParsedTemplate template,
                                                    TypeRef<BoundType> ref, String parentFile) {
         try {
-            return new TemplateCompileProcess<>(context, template, off, len, ref, parentFile, paths).compile();
+            return new TemplateCompileProcess<>(context, template, ref, parentFile).compile();
         } catch (Exception e) {
             throw new TemplateException("Cannot compile template for " + ref.getSimpleName(), e);
         }

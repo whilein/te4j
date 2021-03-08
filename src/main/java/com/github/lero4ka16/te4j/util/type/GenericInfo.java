@@ -16,8 +16,9 @@
 
 package com.github.lero4ka16.te4j.util.type;
 
-import com.github.lero4ka16.te4j.optimization.ReturnsArrayList;
+import com.github.lero4ka16.te4j.annotation.ReturnsArrayList;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
@@ -38,17 +39,21 @@ public class GenericInfo implements TypeInfo {
     private final Class<?> rawType;
     private final Class<?> component;
 
-    public GenericInfo(Type type, Class<?> rawType, Class<?> component) {
+    private final Annotation[] annotations;
+
+    public GenericInfo(Type type, Class<?> rawType, Class<?> component,
+                       Annotation[] annotations) {
         this.type = type;
         this.rawType = rawType;
         this.component = component;
+        this.annotations = annotations;
     }
 
     public GenericInfo(Type type, Class<?> rawType) {
-        this(type, rawType, null);
+        this(type, rawType, null, new Annotation[0]);
     }
 
-    public GenericInfo(Type type) {
+    public GenericInfo(Type type, Annotation[] annotations) {
         this.type = type;
 
         if (type instanceof ParameterizedType) {
@@ -70,6 +75,8 @@ public class GenericInfo implements TypeInfo {
             rawType = (Class<?>) type;
             component = rawType.getComponentType();
         }
+
+        this.annotations = annotations;
     }
 
     @Override
@@ -79,10 +86,29 @@ public class GenericInfo implements TypeInfo {
 
     @Override
     public boolean isArrayList() {
-        return type instanceof Class && (
-                ArrayList.class.isAssignableFrom((Class<?>) type)
-                        || ((Class<?>) type).isAnnotationPresent(ReturnsArrayList.class)
-        );
+        return ArrayList.class.isAssignableFrom(rawType) || isAnnotationPresent(ReturnsArrayList.class);
+    }
+
+    @Override
+    public Annotation[] getAnnotations() {
+        return annotations;
+    }
+
+    @Override
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotation) {
+        return getAnnotation(annotation) != null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Annotation> T getAnnotation(Class<T> cls) {
+        for (Annotation in : annotations) {
+            if (in.annotationType() == cls) {
+                return (T) in;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -93,6 +119,11 @@ public class GenericInfo implements TypeInfo {
     @Override
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public Class<?> getRawType() {
+        return rawType;
     }
 
     @Override

@@ -14,26 +14,20 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.text;
+package com.github.lero4ka16.te4j.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Помечает метод, что он вернёт ArrayList. Нужно для оптимизации
+ * итерации по этому самому списку
+ *
  * @author lero4ka16
  */
-public class StringText extends Text {
-
-    private final String value;
-
-    public StringText(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public int length() {
-        return value.length();
-    }
-
-    @Override
-    public int charAt(int i) {
-        return value.charAt(i);
-    }
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ReturnsArrayList {
 }
