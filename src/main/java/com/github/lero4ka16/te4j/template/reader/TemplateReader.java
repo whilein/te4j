@@ -61,7 +61,7 @@ public final class TemplateReader {
             if (!inner) {
                 byte[] processed = new TextFormatter(value, begin, end - begin)
                         .disableEscaping()
-                        .replaceStrategy(context.getReplaceStrategy())
+                        .replace(context.getReplace())
                         .formatAsBytes();
 
                 template = new PlainParsedTemplate(context, processed, 0, processed.length);

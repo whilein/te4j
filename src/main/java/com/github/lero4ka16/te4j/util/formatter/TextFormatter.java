@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.util.formatter;
 
-import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
+import com.github.lero4ka16.te4j.Te4j;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,10 +44,10 @@ public final class TextFormatter {
     }
 
     protected boolean escaping = true;
-    protected int replaceStrategy;
+    protected int replace;
 
-    public TextFormatter replaceStrategy(int strategy) {
-        this.replaceStrategy = strategy;
+    public TextFormatter replace(int value) {
+        this.replace = value;
         return this;
     }
 
@@ -108,7 +108,7 @@ public final class TextFormatter {
 
                     break;
                 case '\n':
-                    if ((replaceStrategy & ReplaceStrategy.DEL_LF) != 0) {
+                    if ((replace & Te4j.DEL_LF) != 0) {
                         continue;
                     }
 
@@ -118,7 +118,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case '\t':
-                    if ((replaceStrategy & ReplaceStrategy.DEL_TAB) != 0) {
+                    if ((replace & Te4j.DEL_TAB) != 0) {
                         continue;
                     }
 
@@ -128,7 +128,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case '\r':
-                    if ((replaceStrategy & ReplaceStrategy.DEL_CR) != 0) {
+                    if ((replace & Te4j.DEL_CR) != 0) {
                         continue;
                     }
 
@@ -138,7 +138,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case ' ':
-                    if ((replaceStrategy & ReplaceStrategy.DEL_REPEATING_SPACES) != 0) {
+                    if ((replace & Te4j.DEL_REPEATING_SPACES) != 0) {
                         insertSpace = true;
                         continue;
                     }

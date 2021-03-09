@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.compiler;
 
+import com.github.lero4ka16.te4j.Te4j;
 import com.github.lero4ka16.te4j.expression.Expression;
 import com.github.lero4ka16.te4j.expression.ExpressionList;
 import com.github.lero4ka16.te4j.expression.ExpressionParser;
@@ -44,7 +45,6 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
@@ -399,15 +399,15 @@ public class TemplateCompileProcess<BoundType> {
     }
 
     public void addBytes(Integer field, byte[] bytes) {
-        String fieldName = TemplateOutputType.getPrefix(outputType) + field;
+        String fieldName = Te4j.getOutputPrefix(outputType) + field;
         String prevFieldName = byteValues.put(Hash.forArray(bytes), fieldName);
 
         switch (outputType) {
-            case TemplateOutputType.STRING:
+            case Te4j.STRING:
                 addContent("private final String " + fieldName + " = "
                         + (prevFieldName != null ? prevFieldName : getString(bytes)) + ";");
                 break;
-            case TemplateOutputType.BYTES:
+            case Te4j.BYTES:
                 addContent("private final byte[] " + fieldName + " = "
                         + (prevFieldName != null ? prevFieldName : getString(bytes) + ".getBytes()") + ";");
                 break;
@@ -420,7 +420,7 @@ public class TemplateCompileProcess<BoundType> {
 
         try {
             new TextFormatter(bytes)
-                    .replaceStrategy(context.getReplaceStrategy())
+                    .replace(context.getReplace())
                     .write(sb);
         } catch (IOException e) {
             e.printStackTrace();
@@ -442,7 +442,7 @@ public class TemplateCompileProcess<BoundType> {
         StringBuilder sb = new StringBuilder();
 
         sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
-        sb.append(outputType == TemplateOutputType.STRING
+        sb.append(outputType == Te4j.STRING
                 ? TEMPLATE_OUTPUT_STRING_CLASS
                 : TEMPLATE_OUTPUT_CLASS);
         sb.append(" out) {");
@@ -520,15 +520,15 @@ public class TemplateCompileProcess<BoundType> {
     public Template compile() throws Exception {
         addEnvironment("this", primaryEnvironment);
 
-        for (int value : TemplateOutputType.VALUES) {
-            if ((context.getOutputTypes() & value) == value) {
-                addRenderMethod(value);
+        for (int outputType : Te4j.OUTPUT_TYPES) {
+            if ((context.getOutputTypes() & outputType) == outputType) {
+                addRenderMethod(outputType);
             }
         }
 
-        addRenderAsString((context.getOutputTypes() & TemplateOutputType.STRING) != 0);
-        addRenderAsBytes((context.getOutputTypes() & TemplateOutputType.BYTES) != 0);
-        addRenderToStream((context.getOutputTypes() & TemplateOutputType.BYTES) != 0);
+        addRenderAsString((context.getOutputTypes() & Te4j.STRING) != 0);
+        addRenderAsBytes((context.getOutputTypes() & Te4j.BYTES) != 0);
+        addRenderToStream((context.getOutputTypes() & Te4j.BYTES) != 0);
 
         StringBuilder includeBuilder = new StringBuilder();
 

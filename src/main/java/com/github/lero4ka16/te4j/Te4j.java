@@ -21,7 +21,6 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 
 import java.io.File;
@@ -32,6 +31,18 @@ import java.nio.file.Path;
  */
 public final class Te4j {
 
+    public static final int DEL_CR = 1;
+    public static final int DEL_LF = 2;
+    public static final int DEL_REPEATING_SPACES = 4;
+    public static final int DEL_TAB = 8;
+
+    public static final int DEL_ALL = DEL_CR | DEL_LF | DEL_REPEATING_SPACES | DEL_TAB;
+
+    public static final int STRING = 1;
+    public static final int BYTES = 2;
+
+    public static final int[] OUTPUT_TYPES = new int[]{STRING, BYTES};
+
     private Te4j() {
         throw new UnsupportedOperationException();
     }
@@ -39,8 +50,19 @@ public final class Te4j {
     private static final Filters FILTERS = new Filters();
 
     private static final TemplateContext DEFAULTS = custom()
-            .replaceStrategy(ReplaceStrategy.ALL)
+            .replace(DEL_ALL)
             .build();
+
+    public static String getOutputPrefix(int bit) {
+        switch (bit) {
+            case 1:
+                return "STRING_";
+            case 2:
+                return "BYTES_";
+            default:
+                throw new IllegalArgumentException("Undefined bit: " + bit);
+        }
+    }
 
     public static Filters getFilters() {
         return FILTERS;

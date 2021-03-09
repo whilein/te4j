@@ -17,8 +17,6 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
-import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,8 +41,8 @@ public class TemplateTest {
     public void init() {
         context = Te4j.custom()
                 .useResources()
-                .outputTypes(TemplateOutputType.STRING | TemplateOutputType.BYTES)
-                .replaceStrategy(ReplaceStrategy.ALL)
+                .outputTypes(Te4j.STRING | Te4j.BYTES)
+                .replace(Te4j.DEL_ALL)
                 .build();
     }
 

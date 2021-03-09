@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.context;
 
-import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
+import com.github.lero4ka16.te4j.Te4j;
 
 /**
  * @author lero4ka16
@@ -25,7 +25,7 @@ public final class TemplateContextBuilder {
 
     private boolean useResources;
     private int outputTypes;
-    private int replaceStrategy;
+    private int replace;
 
     public TemplateContextBuilder outputTypes(int bits) {
         this.outputTypes = bits;
@@ -37,17 +37,17 @@ public final class TemplateContextBuilder {
         return this;
     }
 
-    public TemplateContextBuilder replaceStrategy(int value) {
-        this.replaceStrategy = value;
+    public TemplateContextBuilder replace(int value) {
+        this.replace = value;
         return this;
     }
 
     public TemplateContext build() {
         if (outputTypes == 0) {
-            outputTypes(TemplateOutputType.STRING | TemplateOutputType.BYTES);
+            outputTypes(Te4j.STRING | Te4j.BYTES);
         }
 
-        return new TemplateContext(useResources, outputTypes, replaceStrategy);
+        return new TemplateContext(useResources, outputTypes, replace);
     }
 
 }

@@ -16,9 +16,9 @@
 
 package com.github.lero4ka16.te4j.template.compiler.code;
 
+import com.github.lero4ka16.te4j.Te4j;
 import com.github.lero4ka16.te4j.template.compiler.TemplateCompileProcess;
 import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 
@@ -140,7 +140,7 @@ public final class RenderCode {
         if (field != null) {
             fieldTextMap.put(field, textBuffer.toByteArray());
             out.append("out.write(");
-            out.append(TemplateOutputType.getPrefix(process.getOutputType()));
+            out.append(Te4j.getOutputPrefix(process.getOutputType()));
             out.append(field);
             out.append(");");
             textBuffer.reset();

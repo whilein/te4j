@@ -39,21 +39,21 @@ public final class TemplateContext {
 
     private final boolean useResources;
     private final int outputTypes;
-    private final int replaceStrategy;
+    private final int replace;
 
     public TemplateContext(boolean useResources,
-                           int outputTypes, int replaceStrategy) {
+                           int outputTypes, int replace) {
         this.outputTypes = outputTypes;
         this.useResources = useResources;
-        this.replaceStrategy = replaceStrategy;
+        this.replace = replace;
     }
 
     public int getOutputTypes() {
         return outputTypes;
     }
 
-    public int getReplaceStrategy() {
-        return replaceStrategy;
+    public int getReplace() {
+        return replace;
     }
 
     private String getParent(String name) {
