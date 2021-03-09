@@ -16,14 +16,23 @@
 
 package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,22 +44,68 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class TemplateTest {
 
+    private Object dummy;
+
     private TemplateContext context;
+    private TemplateContext hotreloadContext;
+
+    private Path tests;
+
+    @AfterEach
+    public void clean() throws IOException {
+        Files.walk(tests).sorted(Comparator.reverseOrder())
+                .forEach(this::deleteSilently);
+    }
+
+    private void deleteSilently(Path path) {
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
+        dummy = new Object();
+
         context = Te4j.custom()
                 .useResources()
-                .outputTypes(Te4j.STRING | Te4j.BYTES)
                 .replace(Te4j.DEL_ALL)
                 .build();
+
+        hotreloadContext = Te4j.custom()
+                .replace(Te4j.DEL_ALL)
+                .enableHotReloading()
+                .build();
+
+        tests = Paths.get("tests");
+
+        Files.createDirectories(tests);
+    }
+
+    @Test
+    public void testPlainHotReload() throws InterruptedException {
+        Path plain = Paths.get("tests/hotreload_plain.html");
+        copyResource("WEB-INF/hotreload_plain_1.html", plain);
+
+        Template<Object> template = hotreloadContext.load(Object.class, "tests/hotreload_plain.html");
+        assertEquals("Before hot reload", template.renderAsString(dummy));
+
+        copyResource("WEB-INF/hotreload_plain_2.html", plain);
+
+        // Слушание событий происходит в отдельном потоке
+        // ждём немного, перед тем, чтобы сделать проверку
+        Thread.sleep(10);
+
+        assertEquals("After hot reload", template.renderAsString(dummy));
     }
 
     @Test
     public void testPlain() {
         testTemplate(context,
                 "WEB-INF/plain.html", "Hello world!Привет мир!",
-                null, new ClassRef<>(Object.class));
+                dummy, new ClassRef<>(Object.class));
     }
 
     @Test
@@ -115,6 +170,22 @@ public class TemplateTest {
         testTemplate(context,
                 "WEB-INF/switchcase.html", "Hello you!",
                 new Example_4("you"), new ClassRef<>(Example_4.class));
+    }
+
+    private void copyResource(String resource, Path to) {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream(resource);
+             OutputStream os = Files.newOutputStream(to)) {
+            assert is != null;
+
+            byte[] buf = new byte[1024];
+            int n;
+
+            while ((n = is.read(buf)) != -1) {
+                os.write(buf, 0, n);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private <T> void testTemplate(TemplateContext context, String resource, String expectText,
