@@ -47,7 +47,8 @@ public class TemplateTest {
     private Object dummy;
 
     private TemplateContext context;
-    private TemplateContext hotreloadContext;
+    private TemplateContext trimContext;
+    private TemplateContext hotReloadContext;
 
     private Path tests;
 
@@ -74,7 +75,11 @@ public class TemplateTest {
                 .replace(Te4j.DEL_ALL)
                 .build();
 
-        hotreloadContext = Te4j.custom()
+        trimContext = Te4j.custom()
+                .useResources()
+                .build();
+
+        hotReloadContext = Te4j.custom()
                 .replace(Te4j.DEL_ALL)
                 .enableHotReloading()
                 .build();
@@ -85,11 +90,18 @@ public class TemplateTest {
     }
 
     @Test
+    public void testTrim() {
+        testTemplate(trimContext,
+                "WEB-INF/trim.html", "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n",
+                new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), new ClassRef<>(Pojo_6.class));
+    }
+
+    @Test
     public void testPlainHotReload() throws InterruptedException {
         Path plain = Paths.get("tests/hotreload_plain.html");
         copyResource("WEB-INF/hotreload_plain_1.html", plain);
 
-        Template<Object> template = hotreloadContext.load(Object.class, "tests/hotreload_plain.html");
+        Template<Object> template = hotReloadContext.load(Object.class, "tests/hotreload_plain.html");
         assertEquals("Before hot reload", template.renderAsString(dummy));
 
         copyResource("WEB-INF/hotreload_plain_2.html", plain);
@@ -112,21 +124,21 @@ public class TemplateTest {
     public void testValue() {
         testTemplate(context,
                 "WEB-INF/value.html", "Hello my friend!",
-                new Example_1("my friend"), new ClassRef<>(Example_1.class));
+                new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
     }
 
     @Test
     public void testForeach() {
         testTemplate(context,
                 "WEB-INF/foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
-                new Example_2(10, 20, 30), new ClassRef<>(Example_2.class));
+                new Pojo_2(10, 20, 30), new ClassRef<>(Pojo_2.class));
     }
 
     @Test
     public void testForeachCollection() {
         testTemplate(context,
                 "WEB-INF/foreach.html", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
-                new Example_5(15, 25, 35), new ClassRef<>(Example_5.class));
+                new Pojo_5(15, 25, 35), new ClassRef<>(Pojo_5.class));
     }
 
     @Test
@@ -141,35 +153,35 @@ public class TemplateTest {
     public void testConditionFalse() {
         testTemplate(context,
                 "WEB-INF/condition.html", "<a>Result is false</a>",
-                new Example_3("Hello world", false), new ClassRef<>(Example_3.class));
+                new Pojo_3("Hello world", false), new ClassRef<>(Pojo_3.class));
     }
 
     @Test
     public void testConditionTrue() {
         testTemplate(context,
                 "WEB-INF/condition.html", "<a>Hello world</a>",
-                new Example_3("Hello world", true), new ClassRef<>(Example_3.class));
+                new Pojo_3("Hello world", true), new ClassRef<>(Pojo_3.class));
     }
 
     @Test
     public void testSwitchCase_Condition() {
         testTemplate(context,
                 "WEB-INF/switchcase.html", "<a>Goodbye my friend</a>",
-                new Example_4("Goodbye my friend", true), new ClassRef<>(Example_4.class));
+                new Pojo_4("Goodbye my friend", true), new ClassRef<>(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Foreach() {
         testTemplate(context,
                 "WEB-INF/switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
-                new Example_4(new int[]{5, 10, 15}), new ClassRef<>(Example_4.class));
+                new Pojo_4(new int[]{5, 10, 15}), new ClassRef<>(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Value() {
         testTemplate(context,
                 "WEB-INF/switchcase.html", "Hello you!",
-                new Example_4("you"), new ClassRef<>(Example_4.class));
+                new Pojo_4("you"), new ClassRef<>(Pojo_4.class));
     }
 
     private void copyResource(String resource, Path to) {
@@ -194,10 +206,10 @@ public class TemplateTest {
         assertEquals(expectText, result);
     }
 
-    public static class Example_1 {
+    public static class Pojo_1 {
         private final String name;
 
-        public Example_1(String name) {
+        public Pojo_1(String name) {
             this.name = name;
         }
 
@@ -206,10 +218,10 @@ public class TemplateTest {
         }
     }
 
-    public static class Example_2 {
+    public static class Pojo_2 {
         private final int[] elements;
 
-        public Example_2(int... elements) {
+        public Pojo_2(int... elements) {
             this.elements = elements;
         }
 
@@ -218,11 +230,11 @@ public class TemplateTest {
         }
     }
 
-    public static class Example_3 {
+    public static class Pojo_3 {
         private final String message;
         private final boolean condition;
 
-        public Example_3(String message, boolean condition) {
+        public Pojo_3(String message, boolean condition) {
             this.message = message;
             this.condition = condition;
         }
@@ -236,7 +248,7 @@ public class TemplateTest {
         }
     }
 
-    public static class Example_4 {
+    public static class Pojo_4 {
         private final Check check;
 
         private final String name;
@@ -244,7 +256,7 @@ public class TemplateTest {
         private final String message;
         private final boolean condition;
 
-        public Example_4(Check check, String name, int[] elements, String message, boolean condition) {
+        public Pojo_4(Check check, String name, int[] elements, String message, boolean condition) {
             this.check = check;
             this.name = name;
             this.elements = elements;
@@ -252,15 +264,15 @@ public class TemplateTest {
             this.condition = condition;
         }
 
-        public Example_4(String name) {
+        public Pojo_4(String name) {
             this(Check.VALUE, name, null, null, false);
         }
 
-        public Example_4(int[] elements) {
+        public Pojo_4(int[] elements) {
             this(Check.FOREACH, null, elements, null, false);
         }
 
-        public Example_4(String message, boolean condition) {
+        public Pojo_4(String message, boolean condition) {
             this(Check.CONDITION, null, null, message, condition);
         }
 
@@ -285,15 +297,33 @@ public class TemplateTest {
         }
     }
 
-    public static class Example_5 {
+    public static class Pojo_5 {
         private final List<Integer> elements;
 
-        public Example_5(int... elements) {
+        public Pojo_5(int... elements) {
             this.elements = IntStream.of(elements).boxed().collect(Collectors.toList());
         }
 
         public Collection<Integer> getElements() {
             return elements;
+        }
+    }
+
+    public static class Pojo_6 {
+        private final boolean condition;
+        private final List<String> list;
+
+        public Pojo_6(boolean condition, List<String> list) {
+            this.condition = condition;
+            this.list = list;
+        }
+
+        public boolean isCondition() {
+            return condition;
+        }
+
+        public List<String> getList() {
+            return list;
         }
     }
 

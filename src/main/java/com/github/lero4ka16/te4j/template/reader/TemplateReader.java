@@ -125,9 +125,19 @@ public final class TemplateReader {
 
         for (;;) {
             int value = reader.read();
-
             if (value == -1) return null;
-            if (value == '^' && reader.read() == '^') break;
+
+            if (value == '^') {
+                if (reader.read() == '^')
+                    break;
+                else
+                    reader.roll();
+
+                if (valueBegin + 1 == reader.position()) {
+                    valueBegin++;
+                    pathBegin++;
+                }
+            }
         }
 
         int pathEnd = reader.position();

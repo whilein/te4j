@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author lero4ka16
@@ -39,41 +40,41 @@ public class Filters {
 
     private static final Random RANDOM = Utils.isJUnitTest() ? new Random(1) : new Random();
 
-    private final Map<String, Filter> filters = new ConcurrentHashMap<>();
+    private final Map<String, Function<String, String>> filters = new ConcurrentHashMap<>();
 
     public Filters() {
-        addFilter("upper", value -> value + ".toUpperCase()");
-        addFilter("lower", value -> value + ".toLowerCase()");
-        addFilter("capitalize", value -> FILTERS_CLASS + ".capitalize(" + value + ")");
-        addFilter("striptags", value -> FILTERS_CLASS + ".striptags(" + value + ")");
-        addFilter("trim", value -> value + ".trim()");
-        addFilter("sorted", value -> FILTERS_CLASS + ".sort(" + value + ")");
-        addFilter("double", value -> "(double) " + value);
-        addFilter("int", value -> "(int) " + value);
-        addFilter("char", value -> "(char) " + value);
-        addFilter("byte", value -> "(byte) " + value);
-        addFilter("short", value -> "(short) " + value);
-        addFilter("float", value -> "(float) " + value);
-        addFilter("long", value -> "(long) " + value);
-        addFilter("double", value -> "(double) " + value);
-        addFilter("wrap", value -> FILTERS_CLASS + ".wrap(" + value + ")");
-        addFilter("floor", value -> FILTERS_CLASS + ".floor(" + value + ")");
-        addFilter("ceil", value -> FILTERS_CLASS + ".ceil(" + value + ")");
-        addFilter("round", value -> FILTERS_CLASS + ".round(" + value + ")");
-        addFilter("sum", value -> FILTERS_CLASS + ".sum(" + value + ")");
-        addFilter("max", value -> FILTERS_CLASS + ".max(" + value + ")");
-        addFilter("min", value -> FILTERS_CLASS + ".min(" + value + ")");
-        addFilter("average", value -> FILTERS_CLASS + ".average(" + value + ")");
-        addFilter("hex", value -> UTILS_CLASS + ".toHexString(" + value + ")");
-        addFilter("escapetags", value -> UTILS_CLASS + ".escapeTags(" + value + ")");
+        add("upper", value -> value + ".toUpperCase()");
+        add("lower", value -> value + ".toLowerCase()");
+        add("capitalize", value -> FILTERS_CLASS + ".capitalize(" + value + ")");
+        add("striptags", value -> FILTERS_CLASS + ".striptags(" + value + ")");
+        add("trim", value -> value + ".trim()");
+        add("sorted", value -> FILTERS_CLASS + ".sort(" + value + ")");
+        add("double", value -> "(double) " + value);
+        add("int", value -> "(int) " + value);
+        add("char", value -> "(char) " + value);
+        add("byte", value -> "(byte) " + value);
+        add("short", value -> "(short) " + value);
+        add("float", value -> "(float) " + value);
+        add("long", value -> "(long) " + value);
+        add("double", value -> "(double) " + value);
+        add("wrap", value -> FILTERS_CLASS + ".wrap(" + value + ")");
+        add("floor", value -> FILTERS_CLASS + ".floor(" + value + ")");
+        add("ceil", value -> FILTERS_CLASS + ".ceil(" + value + ")");
+        add("round", value -> FILTERS_CLASS + ".round(" + value + ")");
+        add("sum", value -> FILTERS_CLASS + ".sum(" + value + ")");
+        add("max", value -> FILTERS_CLASS + ".max(" + value + ")");
+        add("min", value -> FILTERS_CLASS + ".min(" + value + ")");
+        add("average", value -> FILTERS_CLASS + ".average(" + value + ")");
+        add("hex", value -> UTILS_CLASS + ".toHexString(" + value + ")");
+        add("escapetags", value -> UTILS_CLASS + ".escapeTags(" + value + ")");
     }
 
-    public Filter getFilter(String name) {
+    public Function<String, String> get(String name) {
         return filters.get(name);
     }
 
-    public void addFilter(String name, Filter value) {
-        filters.put(name, value);
+    public void add(String name, Function<String, String> filter) {
+        filters.put(name, filter);
     }
 
     public String applyFilters(String filters, String value) {
@@ -84,13 +85,13 @@ public class Filters {
         String[] filterArray = filters.split(":");
 
         for (String filterName : filterArray) {
-            Filter filter = getFilter(filterName);
+            Function<String, String> filter = get(filterName);
 
             if (filter == null) {
                 throw new IllegalStateException("Filter not found: " + filterName);
             }
 
-            value = filter.wrap(value);
+            value = filter.apply(value);
         }
 
         return value;

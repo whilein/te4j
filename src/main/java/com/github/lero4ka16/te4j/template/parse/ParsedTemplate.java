@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntPredicate;
 
 /**
  * @author lero4ka16
@@ -71,21 +72,41 @@ public abstract class ParsedTemplate {
         return context;
     }
 
-    public boolean newline(int ch) {
-        return ch <= ' ';
+    private boolean hasNewlines() {
+        for (int i = 0; i < length; i++) {
+            if (content[offset + i] == '\n') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void trim() {
-        while (length != 0 && newline(content[offset] & 0xFF)) {
+        boolean inline = !hasNewlines();
+        if (inline) return;
+
+        // trim spaces until crlf
+        trim(this::space);
+        // trim beginning crlf
+        trim(this::crlf);
+
+        _content = null;
+    }
+
+    private boolean space(int value) {
+        return value == ' ' || value == '\t';
+    }
+
+    private boolean crlf(int value) {
+        return value == '\r' || value == '\n';
+    }
+
+    private void trim(IntPredicate value) {
+        while (length != 0 && value.test(content[offset] & 0xFF)) {
             offset++;
             length--;
         }
-
-        while (length != 0 && newline(content[offset + length - 1] & 0xFF)) {
-            length--;
-        }
-
-        _content = null;
     }
 
     public byte @NotNull [] getRawContent() {
