@@ -16,7 +16,6 @@
 
 package com.github.lero4ka16.te4j;
 
-import com.github.lero4ka16.te4j.annotation.ReturnsArrayList;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputType;
 import com.github.lero4ka16.te4j.template.replace.ReplaceStrategy;
@@ -224,7 +223,6 @@ public class TemplateTest {
             this.elements = IntStream.of(elements).boxed().collect(Collectors.toList());
         }
 
-        @ReturnsArrayList
         public Collection<Integer> getElements() {
             return elements;
         }

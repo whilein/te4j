@@ -27,14 +27,14 @@ public abstract class TemplateOutput {
 
     private static final byte[] ARRAY_DELIMITER = ", ".getBytes(StandardCharsets.UTF_8);
 
-    private static final int[] INT_UNITS = new int[]{
+    static final int[] INT_UNITS = new int[]{
             1, 10, 100,
             1_000, 10_000, 100_000,
             1_000_000, 10_000_000, 100_000_000,
             1_000_000_000
     };
 
-    private static final long[] LONG_UNITS = new long[]{
+    static final long[] LONG_UNITS = new long[]{
             1L, 10L, 100L,
             1_000L, 10_000L, 100_000L,
             1_000_000L, 10_000_000L, 100_000_000L,
@@ -48,75 +48,75 @@ public abstract class TemplateOutput {
         write(value.getBytes(StandardCharsets.UTF_8));
     }
 
-    private int longLength(long n) {
-        if (n < 1000000000) {
-            if (n < 10000) {
-                if (n < 1000) {
-                    if (n < 100) {
-                        if (n < 10) {
-                            return 1;
-                        } else {
-                            return 2;
-                        }
+    int longLength(long value) {
+        if (value < 1000000000) {
+            if (value < 100000) {
+                if (value < 100) {
+                    if (value < 10) {
+                        return 1;
                     } else {
-                        return 3;
+                        return 2;
                     }
                 } else {
-                    return 4;
+                    if (value < 1000) {
+                        return 3;
+                    } else {
+                        if (value < 10000) {
+                            return 4;
+                        } else {
+                            return 5;
+                        }
+                    }
                 }
             } else {
-                if (n < 100000) {
-                    return 5;
-                } else {
-                    if (n < 1000000) {
+                if (value < 10000000) {
+                    if (value < 1000000) {
                         return 6;
                     } else {
-                        if (n < 10000000) {
-                            return 7;
-                        } else {
-                            if (n < 100000000) {
-                                return 8;
-                            } else {
-                                return 9;
-                            }
-                        }
+                        return 7;
+                    }
+                } else {
+                    if (value < 100000000) {
+                        return 8;
+                    } else {
+                        return 9;
                     }
                 }
             }
         } else {
-            if (n < 100000000000000L) {
-                if (n < 10000000000L) {
-                    return 10;
-                } else {
-                    if (n < 100000000000L) {
-                        return 11;
+            if (value < 100000000000000L) {
+                if (value < 100000000000L) {
+                    if (value < 10000000000L) {
+                        return 10;
                     } else {
-                        if (n < 1000000000000L) {
-                            return 12;
+                        return 11;
+                    }
+                } else {
+                    if (value < 1000000000000L) {
+                        return 12;
+                    } else {
+                        if (value < 10000000000000L) {
+                            return 13;
                         } else {
-                            if (n < 10000000000000L) {
-                                return 13;
-                            } else {
-                                return 14;
-                            }
+                            return 14;
                         }
                     }
                 }
             } else {
-                if (n < 1000000000000000L) {
-                    return 15;
-                } else {
-                    if (n < 10000000000000000L) {
-                        return 16;
+                if (value < 10000000000000000L) {
+                    if (value < 1000000000000000L) {
+                        return 15;
                     } else {
-                        if (n < 100000000000000000L) {
-                            return 17;
+                        return 16;
+                    }
+                } else {
+                    if (value < 100000000000000000L) {
+                        return 17;
+                    } else {
+                        if (value < 1000000000000000000L) {
+                            return 18;
                         } else {
-                            if (n < 1000000000000000000L) {
-                                return 18;
-                            } else {
-                                return 19;
-                            }
+                            return 19;
                         }
                     }
                 }
