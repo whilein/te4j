@@ -37,7 +37,9 @@ public final class PlainParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type) {
+    public <BoundType> Template<BoundType> compile(boolean hotReloading,
+                                                   String parentFile, String thatFile,
+                                                   TypeRef<BoundType> type) {
         return new PlainTemplate<>(content, offset, length);
     }
 

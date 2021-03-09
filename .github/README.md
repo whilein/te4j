@@ -27,7 +27,6 @@ There are no any dependencies in the output jar, works really fast (`//todo benc
 
 1. Documentation and javadocs
 2. Maven
-3. Add a dynamic template reloading
 
 ## Contact
 

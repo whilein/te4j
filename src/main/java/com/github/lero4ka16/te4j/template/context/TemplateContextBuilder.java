@@ -24,11 +24,18 @@ import com.github.lero4ka16.te4j.Te4j;
 public final class TemplateContextBuilder {
 
     private boolean useResources;
+    private boolean enableHotReloading;
+
     private int outputTypes;
     private int replace;
 
     public TemplateContextBuilder outputTypes(int bits) {
         this.outputTypes = bits;
+        return this;
+    }
+
+    public TemplateContextBuilder enableHotReloading() {
+        this.enableHotReloading = true;
         return this;
     }
 
@@ -47,7 +54,7 @@ public final class TemplateContextBuilder {
             outputTypes(Te4j.STRING | Te4j.BYTES);
         }
 
-        return new TemplateContext(useResources, outputTypes, replace);
+        return new TemplateContext(useResources, enableHotReloading, outputTypes, replace);
     }
 
 }

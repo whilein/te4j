@@ -101,9 +101,12 @@ public abstract class ParsedTemplate {
         return _content;
     }
 
-    public abstract <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type);
+    public abstract <BoundType> Template<BoundType> compile(boolean hotReloading,
+                                                            String parentFile, String thatFile,
+                                                            TypeRef<BoundType> type);
 
     public abstract boolean hasPaths();
+
     public abstract List<TemplatePath> getPaths();
 
 }

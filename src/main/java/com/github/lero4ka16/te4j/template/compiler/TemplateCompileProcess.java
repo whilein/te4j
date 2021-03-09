@@ -516,8 +516,8 @@ public class TemplateCompileProcess<BoundType> {
         javaCompiler.addContent(src);
     }
 
-    @SuppressWarnings("rawtypes")
-    public Template compile() throws Exception {
+    @SuppressWarnings("unchecked")
+    public Template<BoundType> compile() throws Exception {
         addEnvironment("this", primaryEnvironment);
 
         for (int outputType : Te4j.OUTPUT_TYPES) {
@@ -548,7 +548,7 @@ public class TemplateCompileProcess<BoundType> {
         Class<?> result = javaCompiler.compile();
 
         Constructor<?> constructor = result.getDeclaredConstructor();
-        return (Template) constructor.newInstance();
+        return (Template<BoundType>) constructor.newInstance();
     }
 
 }

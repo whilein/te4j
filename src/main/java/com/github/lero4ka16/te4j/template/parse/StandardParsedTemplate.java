@@ -49,8 +49,10 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(String parent, TypeRef<BoundType> type) {
-        return TemplateCompiler.getInstance().compile(context, this, type, parent);
+    public <BoundType> Template<BoundType> compile(boolean hotReloading,
+                                                   String parentFile, String thatFile,
+                                                   TypeRef<BoundType> type) {
+        return TemplateCompiler.getInstance().compile(context, this, hotReloading, type, parentFile, thatFile);
     }
 
     @Override

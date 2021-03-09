@@ -51,6 +51,7 @@ public final class Te4j {
 
     private static final TemplateContext DEFAULTS = custom()
             .replace(DEL_ALL)
+            .enableHotReloading()
             .build();
 
     public static String getOutputPrefix(int bit) {

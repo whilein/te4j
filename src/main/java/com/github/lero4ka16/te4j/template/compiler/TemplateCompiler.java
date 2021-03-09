@@ -33,11 +33,16 @@ public class TemplateCompiler {
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
-    public <BoundType> Template<BoundType> compile(TemplateContext context, ParsedTemplate template,
-                                                   TypeRef<BoundType> ref, String parentFile) {
+    public <BoundType> Template<BoundType> compile(TemplateContext context, ParsedTemplate template, boolean hotReloading,
+                                                   TypeRef<BoundType> ref, String parentFile, String thatFile) {
         try {
-            return new TemplateCompileProcess<>(context, template, ref, parentFile).compile();
+            Template<BoundType> compiled = new TemplateCompileProcess<>(context, template, ref, parentFile).compile();
+
+            if (hotReloading) {
+                compiled = new Template.HotReloadingWrapper<>(context, ref, compiled, thatFile);
+            }
+
+            return compiled;
         } catch (Exception e) {
             throw new TemplateException("Cannot compile template for " + ref.getSimpleName(), e);
         }

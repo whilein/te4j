@@ -38,13 +38,16 @@ import java.nio.file.Paths;
 public final class TemplateContext {
 
     private final boolean useResources;
+    private final boolean enableHotReloading;
+
     private final int outputTypes;
     private final int replace;
 
-    public TemplateContext(boolean useResources,
+    public TemplateContext(boolean useResources, boolean enableHotReloading,
                            int outputTypes, int replace) {
-        this.outputTypes = outputTypes;
         this.useResources = useResources;
+        this.enableHotReloading = enableHotReloading;
+        this.outputTypes = outputTypes;
         this.replace = replace;
     }
 
@@ -76,15 +79,28 @@ public final class TemplateContext {
     }
 
     public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
-        return parse(name).compile(getParent(name), type);
+        return parse(name).compile(
+                !useResources && enableHotReloading,
+                getParent(name), name, type
+        );
     }
 
     public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
-        return parseFile(file).compile(file.getParentFile().getAbsolutePath(), type);
+        return parseFile(file).compile(
+                enableHotReloading,
+                file.getAbsolutePath(),
+                file.getParentFile().getAbsolutePath(),
+                type
+        );
     }
 
     public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
-        return parseFile(path).compile(path.toAbsolutePath().getParent().toString(), type);
+        return parseFile(path).compile(
+                enableHotReloading,
+                path.toAbsolutePath().toString(),
+                path.toAbsolutePath().getParent().toString(),
+                type
+        );
     }
 
     public <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
