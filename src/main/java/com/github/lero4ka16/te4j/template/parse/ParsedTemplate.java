@@ -20,6 +20,7 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,11 +88,11 @@ public abstract class ParsedTemplate {
         _content = null;
     }
 
-    public byte[] getRawContent() {
+    public byte @NotNull [] getRawContent() {
         return content;
     }
 
-    public byte[] getContent() {
+    public byte @NotNull [] getContent() {
         if (_content == null) {
             _content = offset != 0 || length != content.length
                     ? Arrays.copyOfRange(content, offset, offset + length)
@@ -102,7 +103,7 @@ public abstract class ParsedTemplate {
     }
 
     public abstract <BoundType> Template<BoundType> compile(boolean hotReloading,
-                                                            String parentFile, String thatFile,
+                                                            String parentFile, String file,
                                                             TypeRef<BoundType> type);
 
     public abstract boolean hasPaths();

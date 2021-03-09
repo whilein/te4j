@@ -38,10 +38,6 @@ public abstract class AbstractCompiledPath {
         return id;
     }
 
-    public TemplatePath getOriginal() {
-        return original;
-    }
-
     public int getOffset() {
         return original.getOffset();
     }

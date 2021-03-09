@@ -22,6 +22,8 @@ import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -43,18 +45,24 @@ public final class Te4j {
 
     public static final int[] OUTPUT_TYPES = new int[]{STRING, BYTES};
 
-    private Te4j() {
-        throw new UnsupportedOperationException();
-    }
-
     private static final Filters FILTERS = new Filters();
 
     private static final TemplateContext DEFAULTS = custom()
             .replace(DEL_ALL)
+            .outputTypes(STRING | BYTES)
             .enableHotReloading()
             .build();
 
-    public static String getOutputPrefix(int bit) {
+    private static final TemplateContext MINIMAL = custom()
+            .outputTypes(STRING | BYTES)
+            .build();
+
+    private Te4j() {
+        throw new UnsupportedOperationException();
+    }
+
+    @ApiStatus.Internal
+    public static @NotNull String getOutputPrefix(int bit) {
         switch (bit) {
             case 1:
                 return "STRING_";
@@ -65,57 +73,67 @@ public final class Te4j {
         }
     }
 
-    public static Filters getFilters() {
+    public static @NotNull Filters getFilters() {
         return FILTERS;
     }
 
     /**
      * @return Default template context
      */
-    public static TemplateContext defaults() {
+    public static @NotNull TemplateContext defaults() {
         return DEFAULTS;
     }
 
-    public static <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
+    public static @NotNull TemplateContext minimal() {
+        return MINIMAL;
+    }
+
+    public static @NotNull <BoundType> Template<BoundType> load(@NotNull TypeRef<BoundType> type,
+                                                                @NotNull String name) {
         return DEFAULTS.load(type, name);
     }
 
-    public static <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
+    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull TypeRef<BoundType> type,
+                                                                    @NotNull File file) {
         return DEFAULTS.loadFile(type, file);
     }
 
-    public static <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
+    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull TypeRef<BoundType> type,
+                                                                    @NotNull Path path) {
         return DEFAULTS.loadFile(type, path);
     }
 
-    public static <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
+    public static @NotNull <BoundType> Template<BoundType> load(@NotNull Class<BoundType> type,
+                                                                @NotNull String name) {
         return DEFAULTS.load(type, name);
     }
 
-    public static <BoundType> Template<BoundType> loadFile(Class<BoundType> type, File file) {
+    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull Class<BoundType> type,
+                                                                    @NotNull File file) {
         return DEFAULTS.loadFile(type, file);
     }
 
-    public static <BoundType> Template<BoundType> loadFile(Class<BoundType> type, Path path) {
+    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull Class<BoundType> type,
+                                                                    @NotNull Path path) {
         return DEFAULTS.loadFile(type, path);
     }
 
-    public static ParsedTemplate parse(String name) {
+    public static @NotNull ParsedTemplate parse(@NotNull String name) {
         return DEFAULTS.parse(name);
     }
 
-    public static ParsedTemplate parseFile(File file) {
+    public static @NotNull ParsedTemplate parseFile(@NotNull File file) {
         return DEFAULTS.parseFile(file);
     }
 
-    public static ParsedTemplate parseFile(Path path) {
+    public static @NotNull ParsedTemplate parseFile(@NotNull Path path) {
         return DEFAULTS.parseFile(path);
     }
 
     /**
      * @return New custom template context builder
      */
-    public static TemplateContextBuilder custom() {
+    public static @NotNull TemplateContextBuilder custom() {
         return new TemplateContextBuilder();
     }
 }

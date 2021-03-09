@@ -274,7 +274,7 @@ public class TemplateCompileProcess<BoundType> {
 
                 SwitchCase oldSwitchCase = currentSwitchCase;
 
-                SwitchCase switchCase = new SwitchCase(type, values);
+                SwitchCase switchCase = new SwitchCase(type);
                 currentSwitchCase = switchCase;
 
                 out.append("switch (").append(accessorValue).append(") {");
@@ -441,7 +441,7 @@ public class TemplateCompileProcess<BoundType> {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
+        sb.append("private void render(").append(type.getCanonicalName()).append(" object, ");
         sb.append(outputType == Te4j.STRING
                 ? TEMPLATE_OUTPUT_STRING_CLASS
                 : TEMPLATE_OUTPUT_CLASS);
@@ -499,12 +499,12 @@ public class TemplateCompileProcess<BoundType> {
         StringBuilder sb = new StringBuilder();
 
         sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
-        sb.append(OUTPUT_STREAM_CLASS).append(" out) throws java.io.IOException {");
+        sb.append(OUTPUT_STREAM_CLASS).append(" os) throws java.io.IOException {");
 
         if (hasBytesOptimization) {
-            sb.append("render(object, new ").append(TEMPLATE_OUTPUT_STREAM_CLASS).append("(out));");
+            sb.append("render(object, new ").append(TEMPLATE_OUTPUT_STREAM_CLASS).append("(os));");
         } else {
-            sb.append("out.write(renderAsBytes(object));");
+            sb.append("os.write(renderAsBytes(object));");
         }
 
         sb.append("}");

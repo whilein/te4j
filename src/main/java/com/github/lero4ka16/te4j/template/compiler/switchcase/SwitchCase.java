@@ -19,21 +19,14 @@ package com.github.lero4ka16.te4j.template.compiler.switchcase;
 public final class SwitchCase {
 
     private final Class<?> type;
-    private final Object[] values;
-
     private Object value;
 
-    public SwitchCase(Class<?> type, Object[] values) {
+    public SwitchCase(Class<?> type) {
         this.type = type;
-        this.values = values;
     }
 
     public Class<?> getType() {
         return type;
-    }
-
-    public Object[] getValues() {
-        return values;
     }
 
     public Object getValue() {

@@ -34,12 +34,12 @@ public class TemplateCompiler {
     }
 
     public <BoundType> Template<BoundType> compile(TemplateContext context, ParsedTemplate template, boolean hotReloading,
-                                                   TypeRef<BoundType> ref, String parentFile, String thatFile) {
+                                                   TypeRef<BoundType> ref, String parentFile, String file) {
         try {
             Template<BoundType> compiled = new TemplateCompileProcess<>(context, template, ref, parentFile).compile();
 
             if (hotReloading) {
-                compiled = new Template.HotReloadingWrapper<>(context, ref, compiled, thatFile);
+                compiled = compiled.enableHotReloading(context, ref, file);
             }
 
             return compiled;

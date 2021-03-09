@@ -16,6 +16,8 @@
 
 package com.github.lero4ka16.te4j.template;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -23,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
-public class PlainTemplate<BoundType> extends Template<BoundType> {
+public final class PlainTemplate<BoundType> extends Template<BoundType> {
 
     private final byte[] value;
 
@@ -41,22 +43,22 @@ public class PlainTemplate<BoundType> extends Template<BoundType> {
     }
 
     @Override
-    public String[] getIncludes() {
+    public @NotNull String[] getIncludes() {
         return new String[0];
     }
 
     @Override
-    public String renderAsString(BoundType object) {
+    public @NotNull String renderAsString(@NotNull BoundType object) {
         return chars;
     }
 
     @Override
-    public byte[] renderAsBytes(BoundType object) {
+    public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
         return Arrays.copyOfRange(value, offset, offset + length);
     }
 
     @Override
-    public void render(BoundType object, OutputStream os) throws IOException {
+    public void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
         os.write(value, offset, offset + length);
     }
 

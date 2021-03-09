@@ -19,10 +19,11 @@ package com.github.lero4ka16.te4j.template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
-import com.github.lero4ka16.te4j.util.EventLocker;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 import com.github.lero4ka16.te4j.watcher.FilesWatcherManager;
 import com.github.lero4ka16.te4j.watcher.Modifiable;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,37 +35,45 @@ import java.nio.file.Paths;
  */
 public abstract class Template<BoundType> {
 
+    @ApiStatus.Internal
     protected static final ThreadLocal<TemplateOutputBuffer> bytesOptimized
             = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+
+    @ApiStatus.Internal
     protected static final ThreadLocal<TemplateOutputString> stringOptimized
             = ThreadLocal.withInitial(TemplateOutputString::new);
 
-    public abstract String[] getIncludes();
+    public abstract @NotNull String[] getIncludes();
 
-    public abstract String renderAsString(BoundType object);
+    public abstract @NotNull String renderAsString(@NotNull BoundType object);
 
-    public abstract byte[] renderAsBytes(BoundType object);
+    public abstract @NotNull byte[] renderAsBytes(@NotNull BoundType object);
 
-    public abstract void render(BoundType object, OutputStream os) throws IOException;
+    public abstract void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
 
-    public static class HotReloadingWrapper<BoundType> extends Template<BoundType> implements Modifiable {
+    @ApiStatus.Internal
+    public HotReloadingWrapper<BoundType> enableHotReloading(TemplateContext context, TypeRef<BoundType> ref,
+                                                             String file) {
+        return new HotReloadingWrapper<>(context, ref, this, file);
+    }
+
+    private static class HotReloadingWrapper<BoundType> extends Template<BoundType> implements Modifiable {
 
         private final TemplateContext context;
         private final TypeRef<BoundType> ref;
-        private final String thatFile;
+        private final String file;
 
-        private final EventLocker locker;
-
+        private volatile boolean locked;
         private volatile boolean modified;
+
         private volatile Template<BoundType> handle;
 
         public HotReloadingWrapper(TemplateContext context, TypeRef<BoundType> ref,
-                                   Template<BoundType> handle, String thatFile) {
+                                   Template<BoundType> handle, String file) {
             this.handle = handle;
             this.context = context;
             this.ref = ref;
-            this.locker = new EventLocker();
-            this.thatFile = thatFile;
+            this.file = file;
 
             FilesWatcherManager.INSTANCE.register(this);
         }
@@ -74,22 +83,35 @@ public abstract class Template<BoundType> {
         }
 
         private void updateHandle() {
-            locker.lock();
-            handle = context.load(ref, thatFile);
-            locker.unlock();
+            locked = true;
+            handle = context.load(ref, file);
+            locked = false;
+
+            synchronized (this) {
+                notifyAll();
+            }
         }
 
         public void setModified() {
-            locker.awaitUnlock();
+            awaitUnlock();
             modified = true;
         }
 
-        private void awaitAndCheck() {
-            if (modified) {
-                modified = false;
-
-                updateHandle();
+        private void awaitUnlock() {
+            if (locked) {
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+        }
+
+        private void awaitAndCheck() {
+            awaitUnlock();
+            checkModified();
         }
 
         private void checkModified() {
@@ -105,7 +127,7 @@ public abstract class Template<BoundType> {
             String[] includes = getIncludes();
 
             Path[] files = new Path[includes.length + 1];
-            files[0] = Paths.get(thatFile);
+            files[0] = Paths.get(file);
 
             for (int i = 0; i < includes.length; i++) {
                 files[i + 1] = Paths.get(includes[i]);
@@ -115,28 +137,26 @@ public abstract class Template<BoundType> {
         }
 
         @Override
-        public String[] getIncludes() {
-            locker.awaitUnlock();
-            checkModified();
+        public @NotNull String[] getIncludes() {
+            awaitAndCheck();
             return getHandle().getIncludes();
         }
 
         @Override
-        public String renderAsString(BoundType object) {
-            locker.awaitUnlock();
-            checkModified();
+        public @NotNull String renderAsString(@NotNull BoundType object) {
+            awaitAndCheck();
             return getHandle().renderAsString(object);
         }
 
         @Override
-        public byte[] renderAsBytes(BoundType object) {
-            checkModified();
+        public @NotNull byte[] renderAsBytes(@NotNull BoundType object) {
+            awaitAndCheck();
             return getHandle().renderAsBytes(object);
         }
 
         @Override
-        public void render(BoundType object, OutputStream os) throws IOException {
-            checkModified();
+        public void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
+            awaitAndCheck();
             getHandle().render(object, os);
         }
 
