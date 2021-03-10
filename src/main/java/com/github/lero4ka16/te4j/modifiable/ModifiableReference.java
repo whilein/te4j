@@ -14,20 +14,22 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.watcher;
+package com.github.lero4ka16.te4j.modifiable;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
 
 /**
  * @author lero4ka16
  */
-public class ModifiableHolder extends WeakReference<Modifiable> {
+public class ModifiableReference extends WeakReference<Modifiable> {
 
     private Path[] lastFiles;
 
-    public ModifiableHolder(Modifiable referent) {
-        super(referent);
+    public ModifiableReference(Modifiable referent, ReferenceQueue<Modifiable> queue) {
+        super(referent, queue);
+        lastFiles = referent.getFiles();
     }
 
     public void handleModify() {
@@ -38,17 +40,9 @@ public class ModifiableHolder extends WeakReference<Modifiable> {
         }
     }
 
-    public boolean wasDeleted() {
-        return get() == null;
-    }
-
     public Path[] getFiles() {
         Modifiable modifiable = get();
+        return modifiable == null ? lastFiles : (lastFiles = modifiable.getFiles());
 
-        if (modifiable == null) {
-            return lastFiles;
-        }
-
-        return lastFiles = modifiable.getFiles();
     }
 }

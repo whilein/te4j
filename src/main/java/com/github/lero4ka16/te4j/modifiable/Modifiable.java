@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.watcher;
+package com.github.lero4ka16.te4j.modifiable;
 
 import java.nio.file.Path;
 

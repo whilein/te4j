@@ -16,12 +16,12 @@
 
 package com.github.lero4ka16.te4j.template;
 
+import com.github.lero4ka16.te4j.modifiable.Modifiable;
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
-import com.github.lero4ka16.te4j.watcher.FilesWatcherManager;
-import com.github.lero4ka16.te4j.watcher.Modifiable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public abstract class Template<BoundType> {
             this.ref = ref;
             this.file = file;
 
-            FilesWatcherManager.INSTANCE.register(this);
+            ModifyWatcherManager.INSTANCE.register(this);
         }
 
         private Template<BoundType> getHandle() {
