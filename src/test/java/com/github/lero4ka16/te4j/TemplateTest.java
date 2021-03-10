@@ -92,19 +92,19 @@ public class TemplateTest {
     @Test
     public void testTrim() {
         testTemplate(trimContext,
-                "WEB-INF/trim.html", "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n",
+                "WEB-INF/trim.txt", "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n",
                 new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), new ClassRef<>(Pojo_6.class));
     }
 
     @Test
     public void testPlainHotReload() throws InterruptedException {
-        Path plain = Paths.get("tests/hotreload_plain.html");
-        copyResource("WEB-INF/hotreload_plain_1.html", plain);
+        Path plain = Paths.get("tests/hotreload_plain.txt");
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain);
 
-        Template<Object> template = hotReloadContext.load(Object.class, "tests/hotreload_plain.html");
+        Template<Object> template = hotReloadContext.load(Object.class, "tests/hotreload_plain.txt");
         assertEquals("Before hot reload", template.renderAsString(dummy));
 
-        copyResource("WEB-INF/hotreload_plain_2.html", plain);
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain);
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
@@ -116,35 +116,35 @@ public class TemplateTest {
     @Test
     public void testPlain() {
         testTemplate(context,
-                "WEB-INF/plain.html", "Hello world!Привет мир!",
+                "WEB-INF/plain.txt", "Hello world!Привет мир!",
                 dummy, new ClassRef<>(Object.class));
     }
 
     @Test
     public void testValue() {
         testTemplate(context,
-                "WEB-INF/value.html", "Hello my friend!",
+                "WEB-INF/value.txt", "Hello my friend!",
                 new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
     }
 
     @Test
     public void testForeach() {
         testTemplate(context,
-                "WEB-INF/foreach.html", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
+                "WEB-INF/foreach.txt", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
                 new Pojo_2(10, 20, 30), new ClassRef<>(Pojo_2.class));
     }
 
     @Test
     public void testForeachCollection() {
         testTemplate(context,
-                "WEB-INF/foreach.html", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
+                "WEB-INF/foreach.txt", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
                 new Pojo_5(15, 25, 35), new ClassRef<>(Pojo_5.class));
     }
 
     @Test
     public void testForeachGeneric() {
         testTemplate(context,
-                "WEB-INF/foreach_generic.html", "<a>0: 50</a><a>1: 100</a><a>2: 200</a>",
+                "WEB-INF/foreach_generic.txt", "<a>0: 50</a><a>1: 100</a><a>2: 200</a>",
                 Arrays.asList(50, 100, 200), new TypeRef<List<Integer>>() {
                 });
     }
@@ -152,35 +152,35 @@ public class TemplateTest {
     @Test
     public void testConditionFalse() {
         testTemplate(context,
-                "WEB-INF/condition.html", "<a>Result is false</a>",
+                "WEB-INF/condition.txt", "<a>Result is false</a>",
                 new Pojo_3("Hello world", false), new ClassRef<>(Pojo_3.class));
     }
 
     @Test
     public void testConditionTrue() {
         testTemplate(context,
-                "WEB-INF/condition.html", "<a>Hello world</a>",
+                "WEB-INF/condition.txt", "<a>Hello world</a>",
                 new Pojo_3("Hello world", true), new ClassRef<>(Pojo_3.class));
     }
 
     @Test
     public void testSwitchCase_Condition() {
         testTemplate(context,
-                "WEB-INF/switchcase.html", "<a>Goodbye my friend</a>",
+                "WEB-INF/switchcase.txt", "<a>Goodbye my friend</a>",
                 new Pojo_4("Goodbye my friend", true), new ClassRef<>(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Foreach() {
         testTemplate(context,
-                "WEB-INF/switchcase.html", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
+                "WEB-INF/switchcase.txt", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
                 new Pojo_4(new int[]{5, 10, 15}), new ClassRef<>(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Value() {
         testTemplate(context,
-                "WEB-INF/switchcase.html", "Hello you!",
+                "WEB-INF/switchcase.txt", "Hello you!",
                 new Pojo_4("you"), new ClassRef<>(Pojo_4.class));
     }
 
