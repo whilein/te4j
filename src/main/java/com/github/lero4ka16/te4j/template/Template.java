@@ -49,7 +49,7 @@ public abstract class Template<BoundType> {
 
     public abstract @NotNull byte[] renderAsBytes(@NotNull BoundType object);
 
-    public abstract void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
+    public abstract void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
 
     @ApiStatus.Internal
     public static <BoundType> Template<BoundType> wrapHotReloading(TemplateContext context,
@@ -137,9 +137,9 @@ public abstract class Template<BoundType> {
         }
 
         @Override
-        public void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
+        public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
             awaitUnlock();
-            getHandle().render(object, os);
+            getHandle().renderTo(object, os);
         }
 
 

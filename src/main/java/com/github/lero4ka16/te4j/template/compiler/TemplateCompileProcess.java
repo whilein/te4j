@@ -498,7 +498,7 @@ public class TemplateCompileProcess<BoundType> {
     public void addRenderToStream(boolean hasBytesOptimization) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("public void render(").append(type.getCanonicalName()).append(" object, ");
+        sb.append("public void renderTo(").append(type.getCanonicalName()).append(" object, ");
         sb.append(OUTPUT_STREAM_CLASS).append(" os) throws java.io.IOException {");
 
         if (hasBytesOptimization) {

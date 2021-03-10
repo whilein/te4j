@@ -58,7 +58,7 @@ public final class PlainTemplate<BoundType> extends Template<BoundType> {
     }
 
     @Override
-    public void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
+    public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
         os.write(value, offset, offset + length);
     }
 
