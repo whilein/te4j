@@ -20,7 +20,7 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.compiler.TemplateCompiler;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -51,7 +51,7 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     @Override
     public <BoundType> Template<BoundType> compile(boolean hotReloading,
                                                    String parentFile, String file,
-                                                   TypeRef<BoundType> type) {
+                                                   ITypeRef<BoundType> type) {
         return TemplateCompiler.getInstance().compile(context, this, hotReloading, type, parentFile, file);
     }
 

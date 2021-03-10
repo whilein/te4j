@@ -19,6 +19,7 @@ package com.github.lero4ka16.te4j;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -201,7 +202,7 @@ public class TemplateTest {
     }
 
     private <T> void testTemplate(TemplateContext context, String resource, String expectText,
-                                  T object, TypeRef<T> type) {
+                                  T object, ITypeRef<T> type) {
         String result = context.load(type, resource).renderAsString(object);
         assertEquals(expectText, result);
     }

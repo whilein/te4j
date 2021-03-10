@@ -23,7 +23,7 @@ import java.nio.file.Path;
 /**
  * @author lero4ka16
  */
-public class ModifiableReference extends WeakReference<Modifiable> {
+public final class ModifiableReference extends WeakReference<Modifiable> {
 
     private Path[] lastFiles;
 

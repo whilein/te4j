@@ -33,7 +33,7 @@ import java.util.function.Function;
 /**
  * @author lero4ka16
  */
-public class Filters {
+public final class Filters {
 
     private static final String FILTERS_CLASS = Filters.class.getName();
     private static final String UTILS_CLASS = Utils.class.getName();

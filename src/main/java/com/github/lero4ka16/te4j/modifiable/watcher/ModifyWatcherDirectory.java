@@ -21,7 +21,7 @@ import java.nio.file.WatchKey;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ModifyWatcherDirectory {
+final class ModifyWatcherDirectory {
 
     private final WatchKey key;
     private final Set<Path> files = ConcurrentHashMap.newKeySet();

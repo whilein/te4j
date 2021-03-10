@@ -20,7 +20,7 @@ import com.github.lero4ka16.te4j.template.PlainTemplate;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -39,11 +39,11 @@ public final class PlainParsedTemplate extends ParsedTemplate {
     @Override
     public <BoundType> Template<BoundType> compile(boolean hotReloading,
                                                    String parentFile, String file,
-                                                   TypeRef<BoundType> type) {
+                                                   ITypeRef<BoundType> type) {
         Template<BoundType> result = new PlainTemplate<>(content, offset, length);
 
         if (hotReloading) {
-            result = result.enableHotReloading(context, type, file);
+            result = Template.wrapHotReloading(context, result, type, file);
         }
 
         return result;

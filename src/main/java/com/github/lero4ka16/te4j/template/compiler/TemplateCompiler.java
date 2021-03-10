@@ -20,7 +20,7 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 /**
  * @author lero4ka16
@@ -33,18 +33,23 @@ public class TemplateCompiler {
         return instance;
     }
 
-    public <BoundType> Template<BoundType> compile(TemplateContext context, ParsedTemplate template, boolean hotReloading,
-                                                   TypeRef<BoundType> ref, String parentFile, String file) {
+    public <BoundType> Template<BoundType> compile(TemplateContext context,
+                                                   ParsedTemplate template,
+                                                   boolean hotReloading,
+                                                   ITypeRef<BoundType> type,
+                                                   String parentFile,
+                                                   String file) {
         try {
-            Template<BoundType> compiled = new TemplateCompileProcess<>(context, template, ref, parentFile).compile();
+            Template<BoundType> compiled = new TemplateCompileProcess<>(context, template, type, parentFile)
+                    .compile();
 
             if (hotReloading) {
-                compiled = compiled.enableHotReloading(context, ref, file);
+                compiled = Template.wrapHotReloading(context, compiled, type, file);
             }
 
             return compiled;
         } catch (Exception e) {
-            throw new TemplateException("Cannot compile template for " + ref.getSimpleName(), e);
+            throw new TemplateException("Cannot compile template for " + type.getSimpleName(), e);
         }
     }
 

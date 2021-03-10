@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-public class IncludeFile {
+public final class IncludeFile {
 
     private final String path;
     private final List<IncludeParam> values;

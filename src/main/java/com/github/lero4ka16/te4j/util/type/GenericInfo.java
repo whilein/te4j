@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  * @author lero4ka16
  */
-public class GenericInfo implements TypeInfo {
+public final class GenericInfo implements TypeInfo {
 
     public static final GenericInfo STRING = new GenericInfo(String.class, String.class);
     public static final GenericInfo NUMBER = new GenericInfo(Number.class, Number.class);

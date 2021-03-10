@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,25 +52,27 @@ public abstract class Template<BoundType> {
     public abstract void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
 
     @ApiStatus.Internal
-    public HotReloadingWrapper<BoundType> enableHotReloading(TemplateContext context, TypeRef<BoundType> ref,
-                                                             String file) {
-        return new HotReloadingWrapper<>(context, ref, this, file);
+    public static <BoundType> Template<BoundType> wrapHotReloading(TemplateContext context,
+                                                                   Template<BoundType> template,
+                                                                   ITypeRef<BoundType> type,
+                                                                   String file) {
+        return new HotReloadingWrapper<>(context, type, template, file);
     }
 
     private static class HotReloadingWrapper<BoundType> extends Template<BoundType> implements Modifiable {
 
         private final TemplateContext context;
-        private final TypeRef<BoundType> ref;
+        private final ITypeRef<BoundType> type;
         private final String file;
 
         private volatile boolean locked;
         private volatile Template<BoundType> handle;
 
-        public HotReloadingWrapper(TemplateContext context, TypeRef<BoundType> ref,
+        public HotReloadingWrapper(TemplateContext context, ITypeRef<BoundType> type,
                                    Template<BoundType> handle, String file) {
             this.handle = handle;
             this.context = context;
-            this.ref = ref;
+            this.type = type;
             this.file = file;
 
             ModifyWatcherManager.INSTANCE.register(this);
@@ -82,7 +84,7 @@ public abstract class Template<BoundType> {
 
         public void handleModify() {
             locked = true;
-            handle = context.load(ref, file);
+            handle = context.load(type, file);
             locked = false;
 
             synchronized (this) {

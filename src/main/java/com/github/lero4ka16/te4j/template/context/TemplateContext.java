@@ -22,7 +22,7 @@ import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -78,14 +78,14 @@ public final class TemplateContext {
         return name.substring(0, separator);
     }
 
-    public <BoundType> Template<BoundType> load(TypeRef<BoundType> type, String name) {
+    public <BoundType> Template<BoundType> load(ITypeRef<BoundType> type, String name) {
         return parse(name).compile(
                 !useResources && enableHotReloading,
                 getParent(name), name, type
         );
     }
 
-    public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, File file) {
+    public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, File file) {
         return parseFile(file).compile(
                 enableHotReloading,
                 file.getAbsolutePath(),
@@ -94,7 +94,7 @@ public final class TemplateContext {
         );
     }
 
-    public <BoundType> Template<BoundType> loadFile(TypeRef<BoundType> type, Path path) {
+    public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, Path path) {
         return parseFile(path).compile(
                 enableHotReloading,
                 path.toAbsolutePath().toString(),

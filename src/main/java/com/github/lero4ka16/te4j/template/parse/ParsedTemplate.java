@@ -19,7 +19,7 @@ package com.github.lero4ka16.te4j.template.parse;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -125,7 +125,7 @@ public abstract class ParsedTemplate {
 
     public abstract <BoundType> Template<BoundType> compile(boolean hotReloading,
                                                             String parentFile, String file,
-                                                            TypeRef<BoundType> type);
+                                                            ITypeRef<BoundType> type);
 
     public abstract boolean hasPaths();
 

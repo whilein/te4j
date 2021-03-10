@@ -19,7 +19,7 @@ package com.github.lero4ka16.te4j.include;
 /**
  * @author lero4ka16
  */
-public class IncludeParam {
+public final class IncludeParam {
 
     private final IncludeFile file;
 

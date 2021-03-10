@@ -21,7 +21,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ModifyWatcherThread extends Thread {
+final class ModifyWatcherThread extends Thread {
 
     private static final AtomicInteger THREAD_ID = new AtomicInteger();
 

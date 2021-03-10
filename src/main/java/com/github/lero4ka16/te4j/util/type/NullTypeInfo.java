@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 /**
  * @author lero4ka16
  */
-public class NullTypeInfo implements TypeInfo {
+public final class NullTypeInfo implements TypeInfo {
 
     public static final NullTypeInfo INSTANCE = new NullTypeInfo();
 

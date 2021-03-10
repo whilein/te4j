@@ -22,17 +22,35 @@ import java.lang.reflect.Type;
 /**
  * @author lero4ka16
  */
-public abstract class TypeRef<T> {
+public abstract class TypeRef<T> implements ITypeRef<T> {
 
-    protected Type type;
-    protected Class<T> cls;
+    protected final Type type;
+    protected final Class<T> rawType;
 
     public TypeRef() {
-        initType();
+        this.type = ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
+        this.rawType = getClass(type);
     }
 
-    public String getSimpleName() {
-        return cls.getSimpleName();
+    @Override
+    public final String getSimpleName() {
+        return rawType.getSimpleName();
+    }
+
+    @Override
+    public final String getCanonicalName() {
+        return getCanonicalName(rawType, type);
+    }
+
+    @Override
+    public final Type getType() {
+        return type;
+    }
+
+    @Override
+    public final Class<T> getRawType() {
+        return rawType;
     }
 
     private static String getCanonicalName(Class<?> cls, Type type) {
@@ -60,9 +78,6 @@ public abstract class TypeRef<T> {
         return cls.getCanonicalName();
     }
 
-    public String getCanonicalName() {
-        return getCanonicalName(cls, type);
-    }
 
     @SuppressWarnings("unchecked")
     private static <T> Class<T> getClass(Type type) {
@@ -72,20 +87,6 @@ public abstract class TypeRef<T> {
             ParameterizedType genericType = (ParameterizedType) type;
             return (Class<T>) genericType.getRawType();
         }
-    }
-
-    protected void initType() {
-        this.type = ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0];
-        this.cls = getClass(type);
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public Class<T> getTypeClass() {
-        return cls;
     }
 
 }

@@ -52,7 +52,7 @@ import com.github.lero4ka16.te4j.util.RuntimeJavaCompiler;
 import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
 import com.github.lero4ka16.te4j.util.hash.Hash;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
-import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -91,7 +91,7 @@ public class TemplateCompileProcess<BoundType> {
     private final ParsedTemplate template;
     private final TemplateContext context;
 
-    private final TypeRef<BoundType> type;
+    private final ITypeRef<BoundType> type;
     private final String parentFile;
 
     private final RuntimeJavaCompiler javaCompiler;
@@ -109,11 +109,11 @@ public class TemplateCompileProcess<BoundType> {
     private SwitchCase currentSwitchCase;
 
     public TemplateCompileProcess(TemplateContext context, ParsedTemplate template,
-                                  TypeRef<BoundType> type, String parentFile) {
+                                  ITypeRef<BoundType> type, String parentFile) {
         this.type = type;
         this.parentFile = parentFile;
 
-        this.primaryEnvironment = new PrimaryEnvironment("object", type.getType(), type.getTypeClass());
+        this.primaryEnvironment = new PrimaryEnvironment("object", type.getType(), type.getRawType());
 
         this.context = context;
 
