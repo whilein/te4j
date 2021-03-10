@@ -4,8 +4,7 @@ Te4j (Template Engine For Java) - simple template engine written on Java
 
 There are no any dependencies in the jar, works really fast (`//todo benchmarks`), simple syntax
 
-## Examples
-
+## Example
 ```html
 <p>Message: ^^ message ^^</p>
 ```
@@ -44,19 +43,16 @@ Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
 
 ## Full Docs
-
 [Click me](https://github.com/lero4ka16/te4j/wiki)
 
 ## Add as dependency
 
 ### Maven
-
 ```xml
 <!-- WIP -->
 ```
 
 ### Gradle
-
 ```groovy
 // WIP
 ```
