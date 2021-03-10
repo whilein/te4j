@@ -32,13 +32,6 @@ import java.util.List;
  */
 public final class RuntimeJavaCompiler {
 
-    private static final File TMP = new File("tmp");
-
-    static {
-        TMP.mkdirs();
-        TMP.deleteOnExit();
-    }
-
     private final String pkg;
     private final String name;
 
@@ -70,7 +63,7 @@ public final class RuntimeJavaCompiler {
     }
 
     public Class<?> compile() throws IOException {
-        File dir = new File(TMP, String.valueOf(System.nanoTime()));
+        File dir = new File("tmp-" + System.nanoTime());
 
         if (!dir.mkdirs()) {
             throw new RuntimeException();
