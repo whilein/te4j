@@ -64,8 +64,6 @@ public abstract class Template<BoundType> {
         private final String file;
 
         private volatile boolean locked;
-        private volatile boolean modified;
-
         private volatile Template<BoundType> handle;
 
         public HotReloadingWrapper(TemplateContext context, TypeRef<BoundType> ref,
@@ -82,7 +80,7 @@ public abstract class Template<BoundType> {
             return handle;
         }
 
-        private void updateHandle() {
+        public void handleModify() {
             locked = true;
             handle = context.load(ref, file);
             locked = false;
@@ -90,11 +88,6 @@ public abstract class Template<BoundType> {
             synchronized (this) {
                 notifyAll();
             }
-        }
-
-        public void setModified() {
-            awaitUnlock();
-            modified = true;
         }
 
         private void awaitUnlock() {
@@ -106,19 +99,6 @@ public abstract class Template<BoundType> {
                         e.printStackTrace();
                     }
                 }
-            }
-        }
-
-        private void awaitAndCheck() {
-            awaitUnlock();
-            checkModified();
-        }
-
-        private void checkModified() {
-            if (modified) {
-                modified = false;
-
-                updateHandle();
             }
         }
 
@@ -138,25 +118,25 @@ public abstract class Template<BoundType> {
 
         @Override
         public @NotNull String[] getIncludes() {
-            awaitAndCheck();
+            awaitUnlock();
             return getHandle().getIncludes();
         }
 
         @Override
         public @NotNull String renderAsString(@NotNull BoundType object) {
-            awaitAndCheck();
+            awaitUnlock();
             return getHandle().renderAsString(object);
         }
 
         @Override
-        public @NotNull byte[] renderAsBytes(@NotNull BoundType object) {
-            awaitAndCheck();
+        public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
+            awaitUnlock();
             return getHandle().renderAsBytes(object);
         }
 
         @Override
         public void render(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
-            awaitAndCheck();
+            awaitUnlock();
             getHandle().render(object, os);
         }
 

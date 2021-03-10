@@ -30,11 +30,11 @@ public class ModifiableHolder extends WeakReference<Modifiable> {
         super(referent);
     }
 
-    public void setModified() {
+    public void handleModify() {
         Modifiable modifiable = get();
 
         if (modifiable != null) {
-            modifiable.setModified();
+            modifiable.handleModify();
         }
     }
 

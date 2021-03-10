@@ -34,7 +34,7 @@ public class FilesWatcherManager {
         return watcher;
     }
 
-    public synchronized void cleanup() {
+    private void cleanup() {
         files.entrySet().removeIf(entry -> {
             entry.getValue().removeIf(ModifiableHolder::wasDeleted);
 
@@ -62,7 +62,7 @@ public class FilesWatcherManager {
         if (set == null) return;
 
         for (ModifiableHolder holder : set) {
-            holder.setModified();
+            holder.handleModify();
         }
     }
 

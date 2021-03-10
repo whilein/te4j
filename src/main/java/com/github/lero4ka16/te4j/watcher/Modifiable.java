@@ -25,6 +25,6 @@ public interface Modifiable {
 
     Path[] getFiles();
 
-    void setModified();
+    void handleModify();
 
 }
