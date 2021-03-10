@@ -28,32 +28,36 @@ Also, you are able to create custom template context
 
 ```java
 TemplateContext ctx = Te4j.custom()
-    // deletes repeating spaces, tabs, cr and lf from output
-    .replace(Te4j.DEL_ALL)
-    // you can choose which output type will be used
-    //
-    // if you want to choose multiple output types
-    // you can use | operator
-    //
-    // BYTES - renderAsBytes and renderTo will be optimized
-    // STRING - renderAsString will be optimized
-    .outputTypes(Te4j.BYTES)
-    .build();
+        // deletes repeating spaces, tabs, cr and lf from output
+        .replace(Te4j.DEL_ALL)
+        // you can choose which output type will be used
+        // 
+        // if you want to choose multiple output types
+        // you can use | operator
+        //
+        // BYTES - renderAsBytes and renderTo will be optimized
+        // STRING - renderAsString will be optimized
+        .outputTypes(Te4j.BYTES | Te4j.STRING)
+        .build();
 
 Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
+
+## Full Docs
+
+[Click me](https://github.com/lero4ka16/te4j/wiki)
 
 ## Add as dependency
 
 ### Maven
 
-```
-// WIP
+```xml
+<!-- WIP -->
 ```
 
 ### Gradle
 
-```
+```groovy
 // WIP
 ```
 
@@ -62,8 +66,9 @@ Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 2. Output file located at `output/te4j.jar`
 
 ## Working on
-1. Documentation and javadocs
-2. Maven
+
+1. Docs
+2. Publish to maven central
 
 ## Contact
 [Vkontakte](https://vk.com/id623151994),
