@@ -17,7 +17,8 @@
 package com.github.lero4ka16.te4j.include;
 
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
-import com.github.lero4ka16.te4j.util.Utils;
+import com.github.lero4ka16.te4j.util.resolver.DefaultMethodResolver;
+import com.github.lero4ka16.te4j.util.resolver.MethodResolver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -75,17 +76,15 @@ public class IncludeFile {
         while (iterator.hasNext()) {
             String element = iterator.next();
 
-            String upperCamelCase = "get" + Utils.toCamelCase(true, element);
-            String lowerCamelCase = Utils.toCamelCase(false, element);
+            Method found = null;
 
-            Method found =  Utils.getMethod(object.getClass(), upperCamelCase);
-
-            if (found == null) {
-                found = Utils.getMethod(object.getClass(), lowerCamelCase);
+            for (MethodResolver resolver : DefaultMethodResolver.RESOLVERS) {
+                found = resolver.findMethod(element, object.getClass());
+                if (found != null) break;
             }
 
             if (found == null) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("No path found: " + path);
             }
 
             try {

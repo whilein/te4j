@@ -18,9 +18,13 @@ package com.github.lero4ka16.te4j.util.resolver;
 
 import java.lang.reflect.Method;
 
-import static com.github.lero4ka16.te4j.util.Utils.getMethod;
-
 public class DefaultMethodResolver implements MethodResolver {
+
+    public static final MethodResolver[] RESOLVERS = new MethodResolver[]{
+            new DefaultMethodResolver("get%s", MethodNameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("is%s", MethodNameCase.UPPER_CAMEL_CASE),
+            new DefaultMethodResolver("%s", MethodNameCase.LOWER_CAMEL_CASE),
+    };
 
     private final String format;
     private final MethodNameCase nameCase;
@@ -32,6 +36,10 @@ public class DefaultMethodResolver implements MethodResolver {
 
     @Override
     public Method findMethod(String value, Class<?> in) {
-        return getMethod(in, String.format(format, nameCase.apply(value)));
+        try {
+            return in.getMethod(String.format(format, nameCase.apply(value)));
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
     }
 }

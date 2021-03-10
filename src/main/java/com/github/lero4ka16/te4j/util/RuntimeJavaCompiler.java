@@ -41,6 +41,8 @@ public final class RuntimeJavaCompiler {
 
     private final StringBuilder content = new StringBuilder();
 
+    private static final File TMP = new File("tmp");
+
     public RuntimeJavaCompiler(String pkg, String name) {
         this.pkg = pkg;
         this.name = name;
@@ -63,81 +65,80 @@ public final class RuntimeJavaCompiler {
     }
 
     public Class<?> compile() throws IOException {
-        File dir = new File("tmp-" + System.nanoTime());
-
-        if (!dir.mkdirs()) {
-            throw new RuntimeException();
-        }
-
-        String uniqueName = name;
-        File tmp = new File(dir, uniqueName + ".java");
-
-        try (Writer writer = new FileWriter(tmp)) {
-            if (pkg != null) {
-                writer.write("package ");
-                writer.write(pkg);
-                writer.write(';');
+        synchronized (TMP) {
+            if (!TMP.mkdirs()) {
+                throw new RuntimeException();
             }
 
-            writer.write("public final class ");
-            writer.write(uniqueName);
+            File tmp = new File(TMP, name + ".java");
 
-            if (superclass != null) {
-                writer.append(" extends ").append(superclass);
+            try (Writer writer = new FileWriter(tmp)) {
+                if (pkg != null) {
+                    writer.write("package ");
+                    writer.write(pkg);
+                    writer.write(';');
+                }
+
+                writer.write("public final class ");
+                writer.write(name);
+
+                if (superclass != null) {
+                    writer.append(" extends ").append(superclass);
+                }
+
+                if (interfaces != null) {
+                    writer.write(" implements ");
+                    writer.write(String.join(", ", interfaces));
+                }
+
+                writer.write(" {");
+                writer.write(content.toString());
+                writer.write("}");
             }
 
-            if (interfaces != null) {
-                writer.write(" implements ");
-                writer.write(String.join(", ", interfaces));
-            }
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            compiler.run(null, null, null, tmp.getAbsolutePath());
 
-            writer.write(" {");
-            writer.write(content.toString());
-            writer.write("}");
-        }
-
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        compiler.run(null, null, null, tmp.getAbsolutePath());
-
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{dir.toURI().toURL()});
-        Class<?> cls;
-
-        try {
-            cls = classLoader.loadClass(uniqueName);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        File[] files = dir.listFiles();
-        assert files != null;
-
-        // Нужно подгрузить ещё synthetic файлы, прежде чем их удалить
-        for (File in : files) {
-            String fileName = in.getName();
-            if (fileName.indexOf('$') == -1) continue;
-
-            String className = fileName.substring(0, fileName.length() - 6);
+            URLClassLoader classLoader = new URLClassLoader(new URL[]{TMP.toURI().toURL()});
+            Class<?> cls;
 
             try {
-                classLoader.loadClass(className);
+                cls = classLoader.loadClass(name);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }
 
-        // Могут быть сгенерированы ещё synthetic файлы, которые помешают удалению папки
-        // так что удалением tmp и out не обойтись
-        for (File in : files) {
-            if (!in.delete()) {
-                throw new RuntimeException("Cannot delete file: " + in.getName());
+            File[] files = TMP.listFiles();
+            assert files != null;
+
+            // Нужно подгрузить ещё synthetic файлы, прежде чем их удалить
+            for (File in : files) {
+                String fileName = in.getName();
+                if (fileName.indexOf('$') == -1) continue;
+
+                String className = fileName.substring(0, fileName.length() - 6);
+
+                try {
+                    classLoader.loadClass(className);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
 
-        if (!dir.delete()) {
-            throw new RuntimeException("Cannot delete folder: " + dir.getName());
-        }
+            // Могут быть сгенерированы ещё synthetic файлы, которые помешают удалению папки
+            // так что удалением tmp и out не обойтись
+            for (File in : files) {
+                if (!in.delete()) {
+                    throw new RuntimeException("Cannot delete file: " + in.getName());
+                }
+            }
 
-        return cls;
+            if (!TMP.delete()) {
+                throw new RuntimeException("Cannot delete folder: " + TMP.getName());
+            }
+
+            return cls;
+        }
     }
 
 

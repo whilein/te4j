@@ -19,22 +19,14 @@ package com.github.lero4ka16.te4j.template.environment;
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import com.github.lero4ka16.te4j.util.resolver.DefaultMethodResolver;
-import com.github.lero4ka16.te4j.util.resolver.MethodNameCase;
 import com.github.lero4ka16.te4j.util.resolver.MethodResolver;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 public final class PrimaryEnvironment implements Environment {
-
-    private static final MethodResolver[] RESOLVERS = new MethodResolver[]{
-            new DefaultMethodResolver("get%s", MethodNameCase.UPPER_CAMEL_CASE),
-            new DefaultMethodResolver("is%s", MethodNameCase.UPPER_CAMEL_CASE),
-            new DefaultMethodResolver("%s", MethodNameCase.LOWER_CAMEL_CASE),
-    };
 
     private final String javaObject;
 
@@ -57,7 +49,6 @@ public final class PrimaryEnvironment implements Environment {
         Class<?> currentType = cls;
         StringBuilder sb = new StringBuilder(javaObject);
 
-        boolean stream;
         Method found = null;
 
         do {
@@ -65,7 +56,7 @@ public final class PrimaryEnvironment implements Environment {
 
             String element = iterator.next();
 
-            for (MethodResolver resolver : RESOLVERS) {
+            for (MethodResolver resolver : DefaultMethodResolver.RESOLVERS) {
                 found = resolver.findMethod(element, currentType);
                 if (found != null) break;
             }
@@ -74,16 +65,7 @@ public final class PrimaryEnvironment implements Environment {
                 return null;
             }
 
-            sb.append(found.getName());
-
-            stream = found.getParameterCount() == 1 && OutputStream.class.isAssignableFrom(found.getParameterTypes()[0]);
-
-            if (stream) {
-                sb.append("(out)");
-            } else {
-                sb.append("()");
-            }
-
+            sb.append(found.getName()).append("()");
             currentType = found.getReturnType();
         } while (iterator.hasNext());
 

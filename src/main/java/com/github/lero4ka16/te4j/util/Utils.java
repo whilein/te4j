@@ -21,11 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author lero4ka16
@@ -117,34 +113,6 @@ public final class Utils {
         }
 
         return false;
-    }
-
-    /**
-     * Найти метод без выбрасивания ошибки MethodNotFound
-     *
-     * @param cls  Класс,
-     * @param name Имя метода
-     * @return Метод, может быть null
-     */
-    public static Method getMethod(Class<?> cls, String name) {
-        List<Method> methods = new ArrayList<>(1);
-
-        for (Method method : cls.getMethods()) {
-            if (method.getName().equals(name)) { // методов может быть много
-                methods.add(method);
-            }
-        }
-
-        switch (methods.size()) {
-            case 0:
-                return null;
-            case 1:
-                return methods.get(0);
-            default:
-                return methods.stream() // получаем метод с минимальным количеством параметров
-                        .min(Comparator.comparingInt(Method::getParameterCount))
-                        .orElse(null);
-        }
     }
 
     public static String stripTags(String s) {
