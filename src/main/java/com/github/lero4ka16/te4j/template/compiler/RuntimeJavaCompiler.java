@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.rmi.RemoteException;
@@ -47,6 +48,16 @@ final class RuntimeJavaCompiler {
 
     private static final File TMP = new File("tmp");
     private static final Lock LOCK = new Lock();
+
+    private static final URL[] URL;
+
+    static {
+        try {
+            URL = new URL[]{TMP.toURI().toURL()};
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     RuntimeJavaCompiler(String pkg, String name) {
         this.pkg = pkg;
@@ -98,9 +109,9 @@ final class RuntimeJavaCompiler {
                     writer.write(String.join(", ", interfaces));
                 }
 
-                writer.write(" {");
+                writer.write('{');
                 writer.write(content.toString());
-                writer.write("}");
+                writer.write('}');
             }
 
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -110,7 +121,7 @@ final class RuntimeJavaCompiler {
                 throw new RemoteException("Cannot compile class: " + result);
             }
 
-            URLClassLoader classLoader = new URLClassLoader(new URL[]{TMP.toURI().toURL()});
+            URLClassLoader classLoader = new URLClassLoader(URL);
             Class<?> cls;
 
             try {
