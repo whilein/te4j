@@ -49,11 +49,11 @@ final class RuntimeJavaCompiler {
     private static final File TMP = new File("tmp");
     private static final Lock LOCK = new Lock();
 
-    private static final URL[] URL;
+    private static final URL[] URLS;
 
     static {
         try {
-            URL = new URL[]{TMP.toURI().toURL()};
+            URLS = new URL[]{TMP.toURI().toURL()};
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -121,7 +121,7 @@ final class RuntimeJavaCompiler {
                 throw new RemoteException("Cannot compile class: " + result);
             }
 
-            URLClassLoader classLoader = new URLClassLoader(URL);
+            URLClassLoader classLoader = new URLClassLoader(URLS);
             Class<?> cls;
 
             try {
