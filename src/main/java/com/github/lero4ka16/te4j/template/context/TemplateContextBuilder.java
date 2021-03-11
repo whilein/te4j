@@ -17,6 +17,7 @@
 package com.github.lero4ka16.te4j.template.context;
 
 import com.github.lero4ka16.te4j.Te4j;
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 
 /**
  * @author lero4ka16
@@ -24,7 +25,7 @@ import com.github.lero4ka16.te4j.Te4j;
 public final class TemplateContextBuilder {
 
     private boolean useResources;
-    private boolean enableHotReloading;
+    private ModifyWatcherManager modifyWatcherManager;
 
     private int outputTypes;
     private int replace;
@@ -34,9 +35,13 @@ public final class TemplateContextBuilder {
         return this;
     }
 
-    public TemplateContextBuilder enableHotReloading() {
-        this.enableHotReloading = true;
+    public TemplateContextBuilder enableHotReloading(ModifyWatcherManager modifyWatcherManager) {
+        this.modifyWatcherManager = modifyWatcherManager;
         return this;
+    }
+
+    public TemplateContextBuilder enableHotReloading() {
+        return enableHotReloading(Te4j.getDefaultModifyWatcher());
     }
 
     public TemplateContextBuilder useResources() {
@@ -54,7 +59,7 @@ public final class TemplateContextBuilder {
             outputTypes(Te4j.STRING | Te4j.BYTES);
         }
 
-        return new TemplateContext(useResources, enableHotReloading, outputTypes, replace);
+        return new TemplateContext(useResources, modifyWatcherManager, outputTypes, replace);
     }
 
 }

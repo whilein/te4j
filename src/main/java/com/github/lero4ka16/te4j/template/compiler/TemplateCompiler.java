@@ -35,19 +35,11 @@ public class TemplateCompiler {
 
     public <BoundType> Template<BoundType> compile(TemplateContext context,
                                                    ParsedTemplate template,
-                                                   boolean hotReloading,
                                                    ITypeRef<BoundType> type,
-                                                   String parentFile,
-                                                   String file) {
+                                                   String parentFile) {
         try {
-            Template<BoundType> compiled = new TemplateCompileProcess<>(context, template, type, parentFile)
+            return new TemplateCompileProcess<>(context, template, type, parentFile)
                     .compile();
-
-            if (hotReloading) {
-                compiled = Template.wrapHotReloading(context, compiled, type, file);
-            }
-
-            return compiled;
         } catch (Exception e) {
             throw new TemplateException("Cannot compile template for " + type.getSimpleName(), e);
         }

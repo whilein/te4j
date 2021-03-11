@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.parse;
 
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.compiler.TemplateCompiler;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
@@ -49,10 +50,16 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(boolean hotReloading,
+    public <BoundType> Template<BoundType> compile(ModifyWatcherManager modifyWatcherManager,
                                                    String parentFile, String file,
                                                    ITypeRef<BoundType> type) {
-        return TemplateCompiler.getInstance().compile(context, this, hotReloading, type, parentFile, file);
+        Template<BoundType> result = TemplateCompiler.getInstance().compile(context, this, type, parentFile);
+
+        if (modifyWatcherManager != null) {
+            result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, file);
+        }
+
+        return result;
     }
 
     @Override

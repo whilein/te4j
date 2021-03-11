@@ -69,7 +69,6 @@ import java.util.stream.Collectors;
  */
 public class TemplateCompileProcess<BoundType> {
 
-
     private static final String OUTPUT_STREAM_CLASS
             = OutputStream.class.getName();
 

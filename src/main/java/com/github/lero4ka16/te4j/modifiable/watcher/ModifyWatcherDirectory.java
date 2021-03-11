@@ -16,15 +16,17 @@
 
 package com.github.lero4ka16.te4j.modifiable.watcher;
 
+import com.github.lero4ka16.te4j.modifiable.ModifiableReference;
+
 import java.nio.file.Path;
 import java.nio.file.WatchKey;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class ModifyWatcherDirectory {
 
     private final WatchKey key;
-    private final Set<Path> files = ConcurrentHashMap.newKeySet();
+    private final Map<Path, ModifiableReference> files = new ConcurrentHashMap<>();
 
     public ModifyWatcherDirectory(WatchKey key) {
         this.key = key;
@@ -42,7 +44,12 @@ final class ModifyWatcherDirectory {
         key.reset();
     }
 
-    public void addFile(Path path) {
-        files.add(path);
+    public ModifiableReference getFile(Path path) {
+        return files.get(path);
     }
+
+    public void addFile(Path path, ModifiableReference reference) {
+        files.put(path, reference);
+    }
+
 }

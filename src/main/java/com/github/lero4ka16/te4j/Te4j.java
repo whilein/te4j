@@ -17,6 +17,7 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.filter.Filters;
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
@@ -45,16 +46,24 @@ public final class Te4j {
 
     public static final int[] OUTPUT_TYPES = new int[]{STRING, BYTES};
 
-    private static final Filters FILTERS = new Filters();
+    private static final Filters FILTERS
+            = new Filters();
+
+    private static final ModifyWatcherManager DEFAULT_MODIFY_WATCHER
+            = new ModifyWatcherManager();
 
     private static final TemplateContext DEFAULTS = custom()
             .replace(DEL_ALL)
             .outputTypes(STRING | BYTES)
-            .enableHotReloading()
+            .enableHotReloading(DEFAULT_MODIFY_WATCHER)
             .build();
 
     private Te4j() {
         throw new UnsupportedOperationException();
+    }
+
+    public static ModifyWatcherManager getDefaultModifyWatcher() {
+        return DEFAULT_MODIFY_WATCHER;
     }
 
     @ApiStatus.Internal

@@ -21,7 +21,6 @@ import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
-import com.github.lero4ka16.te4j.util.Lock;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -53,11 +52,12 @@ public abstract class Template<BoundType> {
     public abstract void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
 
     @ApiStatus.Internal
-    public static <BoundType> Template<BoundType> wrapHotReloading(TemplateContext context,
+    public static <BoundType> Template<BoundType> wrapHotReloading(ModifyWatcherManager modifyWatcherManager,
+                                                                   TemplateContext context,
                                                                    Template<BoundType> template,
                                                                    ITypeRef<BoundType> type,
                                                                    String file) {
-        return new HotReloadingWrapper<>(context, type, template, file);
+        return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, file);
     }
 
     private static class HotReloadingWrapper<BoundType> extends Template<BoundType> implements Modifiable {
@@ -66,20 +66,18 @@ public abstract class Template<BoundType> {
         private final ITypeRef<BoundType> type;
         private final String file;
 
-        private final Lock lock;
-
+        private volatile boolean locked;
         private volatile Template<BoundType> handle;
 
-        public HotReloadingWrapper(TemplateContext context, ITypeRef<BoundType> type,
+        public HotReloadingWrapper(ModifyWatcherManager modifyWatcherManager,
+                                   TemplateContext context, ITypeRef<BoundType> type,
                                    Template<BoundType> handle, String file) {
             this.handle = handle;
             this.context = context;
             this.type = type;
             this.file = file;
 
-            this.lock = new Lock();
-
-            ModifyWatcherManager.INSTANCE.register(this);
+            modifyWatcherManager.register(this);
         }
 
         private Template<BoundType> getHandle() {
@@ -87,12 +85,24 @@ public abstract class Template<BoundType> {
         }
 
         public void handleModify() {
-            lock.lock();
+            locked = true;
             handle = context.load(type, file);
-            lock.unlock();
+            locked = false;
 
             synchronized (this) {
                 notifyAll();
+            }
+        }
+
+        private void awaitUnlock() {
+            if (locked) {
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
@@ -112,25 +122,25 @@ public abstract class Template<BoundType> {
 
         @Override
         public @NotNull String[] getIncludes() {
-            lock.awaitUnlock();
+            awaitUnlock();
             return getHandle().getIncludes();
         }
 
         @Override
         public @NotNull String renderAsString(@NotNull BoundType object) {
-            lock.awaitUnlock();
+            awaitUnlock();
             return getHandle().renderAsString(object);
         }
 
         @Override
         public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
-            lock.awaitUnlock();
+            awaitUnlock();
             return getHandle().renderAsBytes(object);
         }
 
         @Override
         public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
-            lock.awaitUnlock();
+            awaitUnlock();
             getHandle().renderTo(object, os);
         }
 

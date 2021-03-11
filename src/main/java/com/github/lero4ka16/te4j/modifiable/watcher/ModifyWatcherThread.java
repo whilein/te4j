@@ -19,19 +19,15 @@ package com.github.lero4ka16.te4j.modifiable.watcher;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
-import java.util.concurrent.atomic.AtomicInteger;
 
 final class ModifyWatcherThread extends Thread {
-
-    private static final AtomicInteger THREAD_ID = new AtomicInteger();
 
     private final ModifyWatcherManager service;
 
     public ModifyWatcherThread(ModifyWatcherManager service) {
-        super("FileWatcher #" + THREAD_ID.incrementAndGet());
+        super("ModifyWatcher");
 
         this.service = service;
-
         setDaemon(true);
     }
 

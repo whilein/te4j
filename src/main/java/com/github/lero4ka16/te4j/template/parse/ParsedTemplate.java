@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.parse;
 
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
@@ -123,7 +124,7 @@ public abstract class ParsedTemplate {
         return _content;
     }
 
-    public abstract <BoundType> Template<BoundType> compile(boolean hotReloading,
+    public abstract <BoundType> Template<BoundType> compile(ModifyWatcherManager modifyWatcherManager,
                                                             String parentFile, String file,
                                                             ITypeRef<BoundType> type);
 

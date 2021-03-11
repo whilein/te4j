@@ -24,23 +24,18 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchService;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public final class ModifyWatcherManager {
 
     private final WatchService watcher;
 
     private final ReferenceQueue<Modifiable> queue = new ReferenceQueue<>();
-
     private final Map<Path, ModifyWatcherDirectory> directories = new HashMap<>();
-    private final Map<Path, Set<ModifiableReference>> files = new HashMap<>();
-
-    public static final ModifyWatcherManager INSTANCE = new ModifyWatcherManager();
 
     public ModifyWatcherManager() {
         try {
@@ -64,24 +59,15 @@ public final class ModifyWatcherManager {
             ModifiableReference modifiable = (ModifiableReference) reference;
 
             for (Path path : modifiable.getFiles()) {
-                Set<ModifiableReference> references = files.get(path);
-                references.remove(modifiable);
+                Path abs = path.toAbsolutePath();
+                Path absParent = abs.getParent();
 
-                if (references.isEmpty()) {
-                    files.remove(path);
+                ModifyWatcherDirectory directory = directories.get(absParent);
+                directory.removeFile(abs);
 
-                    Path parent = path.getParent();
-                    ModifyWatcherDirectory directory = directories.get(parent);
-
-                    if (directory != null) {
-                        directory.removeFile(path);
-
-                        if (!directory.hasFiles()) {
-                            directory.remove();
-
-                            directories.remove(parent);
-                        }
-                    }
+                if (!directory.hasFiles()) {
+                    directory.remove();
+                    directories.remove(absParent);
                 }
             }
         }
@@ -90,29 +76,33 @@ public final class ModifyWatcherManager {
     public synchronized void handle(Path path) {
         cleanup();
 
-        Set<ModifiableReference> set = files.get(path.toAbsolutePath());
-        if (set == null) return;
+        Path abs = path.toAbsolutePath();
+        Path absParent = abs.getParent();
 
-        for (ModifiableReference holder : set) {
-            holder.handleModify();
-        }
+        ModifyWatcherDirectory directory = directories.get(absParent);
+        if (directory == null) return;
+
+        ModifiableReference file = directory.getFile(abs);
+        if (file == null) return;
+
+        file.handleModify();
     }
 
     public synchronized void register(Modifiable modifiable) {
+        ModifiableReference reference = new ModifiableReference(modifiable, queue);
+
         for (Path path : modifiable.getFiles()) {
             Path abs = path.toAbsolutePath();
+            Path absParent = abs.getParent();
 
-            files.computeIfAbsent(abs, x -> new HashSet<>())
-                    .add(new ModifiableReference(modifiable, queue));
-
-            directories.computeIfAbsent(abs.getParent(), parent -> {
+            directories.computeIfAbsent(absParent, parent -> {
                 try {
-                    return new ModifyWatcherDirectory(parent.register(this.watcher, StandardWatchEventKinds.ENTRY_MODIFY));
+                    return new ModifyWatcherDirectory(parent.register(this.watcher, ENTRY_MODIFY));
                 } catch (IOException e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }
-            }).addFile(abs);
+            }).addFile(abs, reference);
         }
     }
 

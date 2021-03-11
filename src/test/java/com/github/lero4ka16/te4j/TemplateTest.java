@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.util.Utils;
@@ -36,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -74,7 +76,7 @@ public class TemplateTest {
 
         hotReloadContext = Te4j.custom()
                 .replace(Te4j.DEL_ALL)
-                .enableHotReloading()
+                .enableHotReloading(new ModifyWatcherManager())
                 .build();
 
         tests = new File("tests");
@@ -82,8 +84,54 @@ public class TemplateTest {
     }
 
     @Test
-    public void testHotReloadConcurrency() {
-        // todo
+    public void testHotReloadConcurrency() throws InterruptedException {
+        Path path = Paths.get("tests/concurrency.txt");
+        copyResource("WEB-INF/greeting.txt", path);
+
+        Thread.sleep(100);
+
+        Template<Pojo_1> template = hotReloadContext.load(Pojo_1.class, "tests/concurrency.txt");
+
+        AtomicReference<String> expect = new AtomicReference<>("Hello");
+
+        Thread root = new Thread(() -> {
+            Thread[] threads = new Thread[16];
+
+            for (int i = 0; i < 16; i++) {
+                Thread thread = new Thread(() -> {
+                    String value = expect.get();
+                    assertEquals(value + " my girlfriend!", template.renderAsString(new Pojo_1("my girlfriend")));
+                });
+
+                thread.start();
+
+                threads[i] = thread;
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (Thread thread : threads) {
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        root.start();
+
+        copyResource("WEB-INF/farewell.txt", path);
+
+        Thread.sleep(10);
+
+        expect.set("Goodbye");
+
+        root.join();
     }
 
     @Test
@@ -95,7 +143,7 @@ public class TemplateTest {
             Thread thread = new Thread(() -> {
                 try {
                     testTemplate(context,
-                            "WEB-INF/value.txt", "Hello my friend!",
+                            "WEB-INF/greeting.txt", "Hello my friend!",
                             new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
                 } catch (Throwable cause) {
                     fail(cause);
@@ -124,20 +172,30 @@ public class TemplateTest {
     }
 
     @Test
-    public void testPlainHotReload() throws InterruptedException {
-        Path plain = Paths.get("tests/hotreload_plain.txt");
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain);
+    public void testHotReload() throws InterruptedException {
+        Path plain_1 = Paths.get("tests/hotreload_plain_1.txt");
+        Path plain_2 = Paths.get("tests/hotreload_plain_2.txt");
 
-        Template<Object> template = hotReloadContext.load(Object.class, "tests/hotreload_plain.txt");
-        assertEquals("Before hot reload", template.renderAsString(dummy));
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain_1);
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain_2);
 
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain);
+        Thread.sleep(10);
+
+        Template<Object> template_1 = hotReloadContext.loadFile(Object.class, plain_1);
+        Template<Object> template_2 = hotReloadContext.loadFile(Object.class, plain_2);
+
+        assertEquals("Before hot reload", template_1.renderAsString(dummy));
+        assertEquals("Before hot reload", template_2.renderAsString(dummy));
+
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain_1);
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain_2);
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
         Thread.sleep(10);
 
-        assertEquals("After hot reload", template.renderAsString(dummy));
+        assertEquals("After hot reload", template_1.renderAsString(dummy));
+        assertEquals("After hot reload", template_2.renderAsString(dummy));
     }
 
     @Test
@@ -150,7 +208,7 @@ public class TemplateTest {
     @Test
     public void testValue() {
         testTemplate(context,
-                "WEB-INF/value.txt", "Hello my friend!",
+                "WEB-INF/greeting.txt", "Hello my friend!",
                 new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
     }
 
@@ -292,7 +350,7 @@ public class TemplateTest {
         }
 
         public Pojo_4(String name) {
-            this(Check.VALUE, name, null, null, false);
+            this(Check.GREETING, name, null, null, false);
         }
 
         public Pojo_4(int[] elements) {
@@ -356,7 +414,7 @@ public class TemplateTest {
 
     public enum Check {
 
-        CONDITION, FOREACH, VALUE;
+        CONDITION, FOREACH, GREETING;
 
         public String getName() {
             return name().toLowerCase();

@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.context;
 
+import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
@@ -38,15 +39,15 @@ import java.nio.file.Paths;
 public final class TemplateContext {
 
     private final boolean useResources;
-    private final boolean enableHotReloading;
+    private final ModifyWatcherManager modifyWatcherManager;
 
     private final int outputTypes;
     private final int replace;
 
-    public TemplateContext(boolean useResources, boolean enableHotReloading,
+    public TemplateContext(boolean useResources, ModifyWatcherManager modifyWatcherManager,
                            int outputTypes, int replace) {
         this.useResources = useResources;
-        this.enableHotReloading = enableHotReloading;
+        this.modifyWatcherManager = modifyWatcherManager;
         this.outputTypes = outputTypes;
         this.replace = replace;
     }
@@ -80,25 +81,25 @@ public final class TemplateContext {
 
     public <BoundType> Template<BoundType> load(ITypeRef<BoundType> type, String name) {
         return parse(name).compile(
-                !useResources && enableHotReloading,
+                useResources ? null : modifyWatcherManager,
                 getParent(name), name, type
         );
     }
 
     public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, File file) {
         return parseFile(file).compile(
-                enableHotReloading,
+                modifyWatcherManager,
+                file.getAbsoluteFile().getParent(),
                 file.getAbsolutePath(),
-                file.getParentFile().getAbsolutePath(),
                 type
         );
     }
 
     public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, Path path) {
         return parseFile(path).compile(
-                enableHotReloading,
-                path.toAbsolutePath().toString(),
+                modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
+                path.toAbsolutePath().toString(),
                 type
         );
     }
