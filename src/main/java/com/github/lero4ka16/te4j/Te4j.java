@@ -53,10 +53,6 @@ public final class Te4j {
             .enableHotReloading()
             .build();
 
-    private static final TemplateContext MINIMAL = custom()
-            .outputTypes(STRING | BYTES)
-            .build();
-
     private Te4j() {
         throw new UnsupportedOperationException();
     }
@@ -82,10 +78,6 @@ public final class Te4j {
      */
     public static @NotNull TemplateContext defaults() {
         return DEFAULTS;
-    }
-
-    public static @NotNull TemplateContext minimal() {
-        return MINIMAL;
     }
 
     public static @NotNull <BoundType> Template<BoundType> load(@NotNull TypeRef<BoundType> type,
