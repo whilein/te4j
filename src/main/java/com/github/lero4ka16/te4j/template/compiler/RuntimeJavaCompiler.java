@@ -14,7 +14,10 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util;
+package com.github.lero4ka16.te4j.template.compiler;
+
+import com.github.lero4ka16.te4j.util.Lock;
+import com.github.lero4ka16.te4j.util.Utils;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -31,7 +34,7 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-public final class RuntimeJavaCompiler {
+final class RuntimeJavaCompiler {
 
     private final String pkg;
     private final String name;
@@ -45,16 +48,16 @@ public final class RuntimeJavaCompiler {
     private static final File TMP = new File("tmp");
     private static final Lock LOCK = new Lock();
 
-    public RuntimeJavaCompiler(String pkg, String name) {
+    RuntimeJavaCompiler(String pkg, String name) {
         this.pkg = pkg;
         this.name = name;
     }
 
-    public void setSuperclass(String superclass) {
+    void setSuperclass(String superclass) {
         this.superclass = superclass;
     }
 
-    public void addInterface(String cls) {
+    void addInterface(String cls) {
         if (interfaces == null) {
             interfaces = new ArrayList<>();
         }
@@ -62,11 +65,11 @@ public final class RuntimeJavaCompiler {
         interfaces.add(cls);
     }
 
-    public void addContent(String content) {
+    void addContent(String content) {
         this.content.append(content);
     }
 
-    public Class<?> compile() throws IOException {
+    Class<?> compile() throws IOException {
         LOCK.lock();
 
         try {
