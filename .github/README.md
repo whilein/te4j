@@ -31,15 +31,21 @@ TemplateContext ctx = Te4j.custom()
         .replace(Te4j.DEL_ALL)
         // you can choose which output type will be used
         // 
-        // if you want to choose multiple output types
+        // if you want to choose multiple output types,
         // you can use | operator
         //
         // BYTES - renderAsBytes and renderTo will be optimized
         // STRING - renderAsString will be optimized
         .outputTypes(Te4j.BYTES | Te4j.STRING)
+        // btw you can enable hot reloading
+        //
+        // it does not impact performance,
+        // but I recommend disabling it in production
+        // for max. performance
+        .enableHotReloading()
         .build();
 
-Template<Pojo> template = ctx.load(Pojo.class, "index.html");
+Template<Pojo> template = ctx.load(Pojo.class,"index.html");
 ```
 
 ## Full Docs
