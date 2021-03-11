@@ -47,7 +47,7 @@ public abstract class Template<BoundType> {
 
     public abstract @NotNull String renderAsString(@NotNull BoundType object);
 
-    public abstract @NotNull byte[] renderAsBytes(@NotNull BoundType object);
+    public abstract byte @NotNull [] renderAsBytes(@NotNull BoundType object);
 
     public abstract void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
 
