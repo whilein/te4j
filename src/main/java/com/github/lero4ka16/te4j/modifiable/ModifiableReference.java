@@ -25,11 +25,12 @@ import java.nio.file.Path;
  */
 public final class ModifiableReference extends WeakReference<Modifiable> {
 
-    private Path[] lastFiles;
+    private volatile Path[] files;
 
     public ModifiableReference(Modifiable referent, ReferenceQueue<Modifiable> queue) {
         super(referent, queue);
-        lastFiles = referent.getFiles();
+
+        files = referent.getFiles();
     }
 
     public void handleModify() {
@@ -37,12 +38,12 @@ public final class ModifiableReference extends WeakReference<Modifiable> {
 
         if (modifiable != null) {
             modifiable.handleModify();
+
+            files = modifiable.getFiles();
         }
     }
 
     public Path[] getFiles() {
-        Modifiable modifiable = get();
-        return modifiable == null ? lastFiles : (lastFiles = modifiable.getFiles());
-
+        return files;
     }
 }

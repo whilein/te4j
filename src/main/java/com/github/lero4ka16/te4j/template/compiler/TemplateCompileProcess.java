@@ -69,8 +69,6 @@ import java.util.stream.Collectors;
  */
 public class TemplateCompileProcess<BoundType> {
 
-    private static final String COMPILED_TEMPLATE_CLASS
-            = Template.class.getName();
 
     private static final String OUTPUT_STREAM_CLASS
             = OutputStream.class.getName();
@@ -93,7 +91,7 @@ public class TemplateCompileProcess<BoundType> {
     private final ITypeRef<BoundType> type;
     private final String parentFile;
 
-    private final RuntimeJavaCompiler javaCompiler;
+    private final TemplateClassCompiler javaCompiler;
 
     private final Set<String> includes;
 
@@ -119,8 +117,8 @@ public class TemplateCompileProcess<BoundType> {
         this.template = template;
         this.expressionParser = new ExpressionParser(this::compilePathAccessor);
 
-        String simpleName = "GeneratedTemplate";
-        this.javaCompiler = new RuntimeJavaCompiler(null, simpleName);
+        this.javaCompiler = TemplateClassCompiler.current();
+        this.javaCompiler.setTemplateType(type.getCanonicalName());
 
         this.includes = new HashSet<>();
 
@@ -135,8 +133,6 @@ public class TemplateCompileProcess<BoundType> {
                 includes.add(parentFile + "/" + includeMethod.getFile().format());
             }
         }
-
-        this.javaCompiler.setSuperclass(COMPILED_TEMPLATE_CLASS + "<" + type.getCanonicalName() + ">");
     }
 
     public Environment setEnvironment(String name, Environment environment) {

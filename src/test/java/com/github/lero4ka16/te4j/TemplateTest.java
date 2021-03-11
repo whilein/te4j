@@ -40,12 +40,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author lero4ka16
  */
 public class TemplateTest {
-
     private Object dummy;
 
     private TemplateContext context;
@@ -55,12 +55,12 @@ public class TemplateTest {
     private File tests;
 
     @AfterEach
-    public void clean() throws IOException {
+    public void clean() {
         Utils.deleteDirectory(tests);
     }
 
     @BeforeEach
-    public void init() throws IOException {
+    public void init() {
         dummy = new Object();
 
         context = Te4j.custom()
@@ -79,6 +79,41 @@ public class TemplateTest {
 
         tests = new File("tests");
         tests.mkdirs();
+    }
+
+    @Test
+    public void testHotReloadConcurrency() {
+        // todo
+    }
+
+    @Test
+    public void testConcurrency() {
+        int nThreads = Runtime.getRuntime().availableProcessors() * 2;
+        Thread[] threads = new Thread[nThreads];
+
+        for (int i = 0; i < nThreads; i++) {
+            Thread thread = new Thread(() -> {
+                try {
+                    testTemplate(context,
+                            "WEB-INF/value.txt", "Hello my friend!",
+                            new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
+                } catch (Throwable cause) {
+                    fail(cause);
+                }
+            });
+
+            thread.start();
+
+            threads[i] = thread;
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
