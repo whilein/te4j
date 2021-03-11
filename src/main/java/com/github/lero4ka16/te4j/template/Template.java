@@ -21,6 +21,7 @@ import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
+import com.github.lero4ka16.te4j.util.Lock;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,8 @@ public abstract class Template<BoundType> {
         private final ITypeRef<BoundType> type;
         private final String file;
 
-        private volatile boolean locked;
+        private final Lock lock;
+
         private volatile Template<BoundType> handle;
 
         public HotReloadingWrapper(TemplateContext context, ITypeRef<BoundType> type,
@@ -75,6 +77,8 @@ public abstract class Template<BoundType> {
             this.type = type;
             this.file = file;
 
+            this.lock = new Lock();
+
             ModifyWatcherManager.INSTANCE.register(this);
         }
 
@@ -83,24 +87,12 @@ public abstract class Template<BoundType> {
         }
 
         public void handleModify() {
-            locked = true;
+            lock.lock();
             handle = context.load(type, file);
-            locked = false;
+            lock.unlock();
 
             synchronized (this) {
                 notifyAll();
-            }
-        }
-
-        private void awaitUnlock() {
-            if (locked) {
-                synchronized (this) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
 
@@ -120,25 +112,25 @@ public abstract class Template<BoundType> {
 
         @Override
         public @NotNull String[] getIncludes() {
-            awaitUnlock();
+            lock.awaitUnlock();
             return getHandle().getIncludes();
         }
 
         @Override
         public @NotNull String renderAsString(@NotNull BoundType object) {
-            awaitUnlock();
+            lock.awaitUnlock();
             return getHandle().renderAsString(object);
         }
 
         @Override
         public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
-            awaitUnlock();
+            lock.awaitUnlock();
             return getHandle().renderAsBytes(object);
         }
 
         @Override
         public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
-            awaitUnlock();
+            lock.awaitUnlock();
             getHandle().renderTo(object, os);
         }
 

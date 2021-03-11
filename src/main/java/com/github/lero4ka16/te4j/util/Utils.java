@@ -105,6 +105,24 @@ public final class Utils {
         return sb.toString();
     }
 
+    public static boolean deleteDirectory(File dir) {
+        File[] files = dir.listFiles();
+
+        for (File file : files) {
+            boolean result;
+
+            if (file.isDirectory()) {
+                result = deleteDirectory(file);
+            } else {
+                result = file.delete();
+            }
+
+            if (!result) return false;
+        }
+
+        return dir.delete();
+    }
+
     public static boolean isJUnitTest() {
         for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
             if (element.getClassName().startsWith("org.junit.")) {

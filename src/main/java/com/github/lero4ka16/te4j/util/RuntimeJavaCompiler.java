@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public final class RuntimeJavaCompiler {
     private final StringBuilder content = new StringBuilder();
 
     private static final File TMP = new File("tmp");
+    private static final Lock LOCK = new Lock();
 
     public RuntimeJavaCompiler(String pkg, String name) {
         this.pkg = pkg;
@@ -65,9 +67,11 @@ public final class RuntimeJavaCompiler {
     }
 
     public Class<?> compile() throws IOException {
-        synchronized (TMP) {
+        LOCK.lock();
+
+        try {
             if (!TMP.mkdirs()) {
-                throw new RuntimeException();
+                throw new RuntimeException("Cannot create directory: " + TMP.getName());
             }
 
             File tmp = new File(TMP, name + ".java");
@@ -97,7 +101,11 @@ public final class RuntimeJavaCompiler {
             }
 
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            compiler.run(null, null, null, tmp.getAbsolutePath());
+            int result = compiler.run(null, null, null, tmp.getAbsolutePath());
+
+            if (result != 0) {
+                throw new RemoteException("Cannot compile class: " + result);
+            }
 
             URLClassLoader classLoader = new URLClassLoader(new URL[]{TMP.toURI().toURL()});
             Class<?> cls;
@@ -111,12 +119,13 @@ public final class RuntimeJavaCompiler {
             File[] files = TMP.listFiles();
             assert files != null;
 
-            // Нужно подгрузить ещё synthetic файлы, прежде чем их удалить
             for (File in : files) {
                 String fileName = in.getName();
+
+                // load only synthetic file
                 if (fileName.indexOf('$') == -1) continue;
 
-                String className = fileName.substring(0, fileName.length() - 6);
+                String className = fileName.substring(0, fileName.length() - 6); // .class
 
                 try {
                     classLoader.loadClass(className);
@@ -125,21 +134,11 @@ public final class RuntimeJavaCompiler {
                 }
             }
 
-            // Могут быть сгенерированы ещё synthetic файлы, которые помешают удалению папки
-            // так что удалением tmp и out не обойтись
-            for (File in : files) {
-                if (!in.delete()) {
-                    throw new RuntimeException("Cannot delete file: " + in.getName());
-                }
-            }
-
-            if (!TMP.delete()) {
-                throw new RuntimeException("Cannot delete folder: " + TMP.getName());
-            }
-
             return cls;
+        } finally {
+            Utils.deleteDirectory(TMP);
+            LOCK.unlock();
         }
     }
-
 
 }

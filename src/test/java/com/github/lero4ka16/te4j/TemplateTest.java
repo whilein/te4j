@@ -18,6 +18,7 @@ package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
+import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,20 +52,11 @@ public class TemplateTest {
     private TemplateContext trimContext;
     private TemplateContext hotReloadContext;
 
-    private Path tests;
+    private File tests;
 
     @AfterEach
     public void clean() throws IOException {
-        Files.walk(tests).sorted(Comparator.reverseOrder())
-                .forEach(this::deleteSilently);
-    }
-
-    private void deleteSilently(Path path) {
-        try {
-            Files.delete(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Utils.deleteDirectory(tests);
     }
 
     @BeforeEach
@@ -85,9 +77,8 @@ public class TemplateTest {
                 .enableHotReloading()
                 .build();
 
-        tests = Paths.get("tests");
-
-        Files.createDirectories(tests);
+        tests = new File("tests");
+        tests.mkdirs();
     }
 
     @Test
