@@ -5,7 +5,15 @@
   </a>
 
   <a href="https://discord.gg/ANEHruraCc">
-    <img src="https://img.shields.io/discord/819859288049844224">
+    <img src="https://img.shields.io/discord/819859288049844224?logo=discord">
+  </a>
+
+  <a href="https://github.com/lero4ka16/te4j/issues">
+    <img src="https://img.shields.io/github/issues/lero4ka16/te4j">
+  </a>
+
+  <a href="https://github.com/lero4ka16/te4j/pulls">
+    <img src="https://img.shields.io/github/issues-pr/lero4ka16/te4j">
   </a>
 </div>
 
