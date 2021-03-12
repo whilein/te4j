@@ -71,6 +71,7 @@ TemplateContext ctx = Te4j.custom()
 Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
 
+More examples in docs
 ## Full Docs
 [Click me](https://github.com/lero4ka16/te4j/wiki)
 
@@ -97,10 +98,6 @@ dependencies {
 ## Build the project
 1. Execute `./gradlew build`
 2. Output file located at `output/te4j.jar`
-
-## Working on
-1. Docs
-2. Publish to maven central
 
 ## Contact
 [Vkontakte](https://vk.com/id623151994),
