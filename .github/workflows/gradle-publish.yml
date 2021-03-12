@@ -31,7 +31,7 @@ jobs:
         uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: current
-          arguments: test publish -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
+          arguments: test publish -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password="${{secrets.SONATYPE_PASSWORD}}"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
