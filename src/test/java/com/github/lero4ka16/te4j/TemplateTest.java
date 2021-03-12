@@ -188,7 +188,7 @@ public class TemplateTest {
         copyResource("WEB-INF/hotreload_plain_1.txt", plain_1);
         copyResource("WEB-INF/hotreload_plain_1.txt", plain_2);
 
-        Thread.sleep(10);
+        Thread.sleep(100);
 
         Template<Object> template_1 = hotReloadContext.loadFile(Object.class, plain_1);
         Template<Object> template_2 = hotReloadContext.loadFile(Object.class, plain_2);
@@ -201,7 +201,7 @@ public class TemplateTest {
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
-        Thread.sleep(10);
+        Thread.sleep(100);
 
         assertEquals("After hot reload", template_1.renderAsString(dummy));
         assertEquals("After hot reload", template_2.renderAsString(dummy));
