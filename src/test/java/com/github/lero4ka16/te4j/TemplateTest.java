@@ -167,8 +167,16 @@ public class TemplateTest {
 
     @Test
     public void testTrim() {
+        String expect;
+
+        if (System.getProperty("os.name").contains("Windows")) {
+            expect = "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n";
+        } else {
+            expect = "Inline if: Yes\n\nMultiline list:\n  - ^Hi\n  - ^Hello\n  - ^Bye\n  - ^Goodbye\n";
+        }
+
         testTemplate(trimContext,
-                "WEB-INF/trim.txt", "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n",
+                "WEB-INF/trim.txt", expect,
                 new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), new ClassRef<>(Pojo_6.class));
     }
 
