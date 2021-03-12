@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/github/issues-pr/lero4ka16/te4j">
   </a>
 
-  <a href="https://search.maven.org/artifact/com.github.lero4ka/te4j">
+  <a href="https://search.maven.org/artifact/com.github.lero4ka16/te4j">
     <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
   </a>
 </div>
