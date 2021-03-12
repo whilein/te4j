@@ -15,6 +15,10 @@
   <a href="https://github.com/lero4ka16/te4j/pulls">
     <img src="https://img.shields.io/github/issues-pr/lero4ka16/te4j">
   </a>
+
+  <a href="https://search.maven.org/artifact/com.github.lero4ka/te4j">
+    <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
+  </a>
 </div>
 
 ## About the project
@@ -74,12 +78,20 @@ Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 
 ### Maven
 ```xml
-<!-- WIP -->
+<dependencies>
+    <dependency>
+        <groupId>com.github.lero4ka16</groupId>
+        <artifactId>te4j</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
 ```
 
 ### Gradle
 ```groovy
-// WIP
+dependencies {
+    implementation 'com.github.lero4ka16:te4j:1.0.0'
+}
 ```
 
 ## Build the project
