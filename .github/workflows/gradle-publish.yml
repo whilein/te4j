@@ -1,0 +1,74 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle  
+      - name: Prepare to publish
+        run: |
+          echo "${{secrets.GPG_KEY_CONTENTS}}" | base64 -d > publish_key.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{secrets.SECRET_PASSPHRASE}}" --output secret.gpg publish_key.gpg
+      - name: Retrieve github tag
+        id: github_tag
+        run: echo ::set-output name=RESULT::$(echo $GITHUB_REF | cut -d / -f 3)
+      - name: Publish with Gradle
+        uses: eskatos/gradle-command-action@v1
+        with:
+          gradle-version: current
+          arguments: test publish -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: ${{ endsWith(github.ref, '-SNAPSHOT') }}
+      - name: Upload te4j.jar
+        id: upload-te4j-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/te4j-${{ steps.github_tag.outputs.RESULT }}.jar
+          asset_name: te4j.jar
+          asset_content_type: application/java-archive
+      - name: Upload te4j-javadoc.jar
+        id: upload-te4j-javadoc-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/te4j-${{ steps.github_tag.outputs.RESULT }}-javadoc.jar
+          asset_name: te4j-javadoc.jar
+          asset_content_type: application/java-archive
+      - name: Upload te4j-sources.jar
+        id: upload-te4j-sources-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/te4j-${{ steps.github_tag.outputs.RESULT }}-sources.jar
+          asset_name: te4j-sources.jar
+          asset_content_type: application/java-archive  

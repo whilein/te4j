@@ -1,10 +1,14 @@
 plugins {
     id 'java'
+
     id 'maven-publish'
+    id 'signing'
 }
 
 group 'com.github.lero4ka16'
-version '1.0.0-SNAPSHOT'
+description 'Fast, lightweight and easy template engine'
+version findProperty('github.tag') ?: ''
+archivesBaseName = 'te4j'
 
 repositories {
     mavenCentral()
@@ -17,25 +21,89 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
-test {
-    useJUnitPlatform()
-}
-
-compileJava {
-    options.encoding = 'UTF-8'
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components['java']
+            pom {
+                name = project.name
+                description = project.description
+
+                url = 'https://github.com/lero4ka16/te4j'
+
+                organization {
+                    name = 'com.github.lero4ka16'
+                    url = 'https://github.com/lero4ka16'
+                }
+
+                issueManagement {
+                    system = 'GitHub'
+                    url = 'https://github.com/lero4ka16/te4j/issues'
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/lero4ka16/te4j'
+                    connection = 'scm:https://github.com/lero4ka16/te4j.git'
+                    developerConnection = 'scm:git://github.com/lero4ka16/te4j.git'
+                }
+
+                developers {
+                    developer {
+                        id = 'lero4ka16'
+                        name = 'Lero4ka16'
+                        email = 'lero4ka6916@gmail.com'
+                    }
+                }
+            }
+
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            if (project.version.endsWith("-SNAPSHOT")) {
+                url = "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
+
+            credentials {
+                username = findProperty('sonatype.user')
+                password = findProperty('sonatype.password')
+            }
         }
     }
 }
 
-jar {
-    destinationDirectory = file("$rootDir/output")
-    archiveFileName = "te4j.jar"
+
+signing {
+    sign publishing.publications
+}
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+test {
+    useJUnitPlatform()
 }
