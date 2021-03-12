@@ -25,3 +25,8 @@ jobs:
       with:
         gradle-version: current
         arguments: build
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1.9
+      if: always()
+      with:
+        files: build/test-results/**/*.xml
