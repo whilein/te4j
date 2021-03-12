@@ -1,3 +1,14 @@
+# Te4j
+<div align="center">
+  <a href="https://github.com/lero4ka16/te4j/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/lero4ka16/te4j">
+  </a>
+
+  <a href="https://discord.gg/ANEHruraCc">
+    <img src="https://img.shields.io/discord/819859288049844224">
+  </a>
+</div>
+
 ## About the project
 
 Te4j (Template Engine For Java) - simple template engine written on Java
@@ -45,7 +56,7 @@ TemplateContext ctx = Te4j.custom()
         .enableHotReloading()
         .build();
 
-Template<Pojo> template = ctx.load(Pojo.class,"index.html");
+Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
 
 ## Full Docs
@@ -68,7 +79,6 @@ Template<Pojo> template = ctx.load(Pojo.class,"index.html");
 2. Output file located at `output/te4j.jar`
 
 ## Working on
-
 1. Docs
 2. Publish to maven central
 
