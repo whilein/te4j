@@ -320,12 +320,8 @@ internal class TemplateTest {
     }
 
     class Pojo5(vararg elements: Int) {
-        private val elements: List<Int?> = IntStream.of(*elements).boxed().collect(Collectors.toList())
-
-        fun getElements(): Collection<Int?> {
-            return elements
-        }
-
+        val elements: List<Int?> = IntStream.of(*elements).boxed()
+            .collect(Collectors.toList())
     }
 
     class Pojo6(val isCondition: Boolean, val list: List<String>)
