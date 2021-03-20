@@ -7,7 +7,7 @@ plugins {
 val gitTag: String = (findProperty("github.tag") ?: "") as String
 
 group = "com.github.lero4ka16"
-description = "Fast, lightweight and easy template engine"
+description = "Fast and easy template engine"
 version = gitTag
 
 repositories {
