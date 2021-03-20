@@ -20,9 +20,10 @@ import com.github.lero4ka16.te4j.util.type.NullTypeInfo
 import com.github.lero4ka16.te4j.util.type.TypeInfo
 
 class ExpValue(val accessor: PathAccessor, negation: ExpNegation) : Exp() {
-    private val value: String = negation.prefix + accessor.accessor
-    override val objectType: TypeInfo = accessor.returnType
 
+    private val value: String = negation.prefix + accessor.accessor
+
+    override val objectType: TypeInfo = accessor.returnType
     override var returnType: ExpReturnType? = null
 
     override fun compile(compile: ExpCompile) {

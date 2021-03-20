@@ -56,8 +56,6 @@ abstract class Template<BoundType> {
             handle = context.load(type, file)
             locked = false
 
-            println("Handle modify")
-
             synchronized(lock) { lock.notifyAll() }
         }
 

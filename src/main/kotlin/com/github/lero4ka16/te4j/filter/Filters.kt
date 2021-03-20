@@ -32,14 +32,16 @@ class Filters {
         filters[filter.name] = filter
     }
 
-    fun applyFilters(filters: String?, value: String): String {
+    fun applyFilters(filters: String?, arg: String): String {
+        var value = arg
+
         if (filters == null) {
             return value
         }
 
         for (filterName in filters.split(":")) {
             val filter = search(filterName) ?: throw IllegalStateException("Filter not found: $filterName")
-            return filter.apply(value)
+            value = filter.apply(value)
         }
 
         return value

@@ -18,18 +18,27 @@ package com.github.lero4ka16.te4j.expression
 import java.util.*
 
 enum class Operator(val operator: String) {
-    MULTIPLY("*"), PLUS("+"), MINUS("-"), DIVIDE("/"), OR("||"), AND("&&"), BITWISE_OR("|"), BITWISE_XOR("^"), BITWISE_AND(
-        "&"
-    ),
-    BITWISE_LSHIFT("<<"), BITWISE_RSHIFT(">>"), EQUAL("=="), MORE_THAN(">"), MORE_THAN_OR_EQUAL(">="), LESS_THAN("<"), LESS_THAN_OR_EQUAL(
-        "<="
-    ),
-    NOT_EQUAL("!="), REMAINDER("%");
+    MULTIPLY("*"),
+    PLUS("+"),
+    MINUS("-"),
+    DIVIDE("/"),
+    OR("||"),
+    AND("&&"),
+    BITWISE_OR("|"),
+    BITWISE_XOR("^"),
+    BITWISE_AND("&"),
+    BITWISE_LSHIFT("<<"),
+    BITWISE_RSHIFT(">>"),
+    EQUAL("=="),
+    MORE_THAN(">"),
+    MORE_THAN_OR_EQUAL(">="),
+    LESS_THAN("<"),
+    LESS_THAN_OR_EQUAL("<="),
+    NOT_EQUAL("!="),
+    REMAINDER("%");
 
     val isComparison: Boolean
         get() = this == EQUAL || this == NOT_EQUAL
-    val isLogical: Boolean
-        get() = this == OR || this == AND
     val isNumerical: Boolean
         get() = this == MULTIPLY || this == DIVIDE || this == PLUS || this == MINUS || this == BITWISE_OR || this == BITWISE_AND || this == BITWISE_LSHIFT || this == BITWISE_RSHIFT || this == BITWISE_XOR
 

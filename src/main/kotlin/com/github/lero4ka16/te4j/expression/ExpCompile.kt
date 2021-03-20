@@ -18,7 +18,10 @@ package com.github.lero4ka16.te4j.expression
 import com.github.lero4ka16.te4j.Te4j.Companion.getFilters
 import java.util.*
 
-class ExpCompile(val expression: Array<Exp>, val tokens: LinkedList<String>) {
+class ExpCompile(
+    val expression: Array<Exp>,
+    val tokens: LinkedList<String>
+) {
     var position = 0
         private set
 

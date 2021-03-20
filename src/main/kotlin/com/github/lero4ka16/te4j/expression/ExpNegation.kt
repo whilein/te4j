@@ -20,7 +20,9 @@ package com.github.lero4ka16.te4j.expression
  * @author lero4ka16
  */
 enum class ExpNegation(val prefix: String) {
-    LOGICAL("!"), NUMERICAL("-"), NONE("");
+    LOGICAL("!"),
+    NUMERICAL("-"),
+    NONE("");
 
     companion object {
         fun byChar(ch: Char): ExpNegation {

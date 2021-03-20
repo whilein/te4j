@@ -179,18 +179,12 @@ internal class TemplateTest {
         assertEquals("Before hot reload", template1.renderAsString(dummy))
         assertEquals("Before hot reload", template2.renderAsString(dummy))
 
-        println("Before modify")
-
         copyResource("WEB-INF/hotreload_plain_2.txt", plain1)
         copyResource("WEB-INF/hotreload_plain_2.txt", plain2)
-
-        println("After modify wait")
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
         Thread.sleep(100)
-
-        println("Check")
 
         assertEquals("After hot reload", template1.renderAsString(dummy))
         assertEquals("After hot reload", template2.renderAsString(dummy))

@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+import com.github.lero4ka16.te4j.Te4j
 import com.github.lero4ka16.te4j.filter.impl.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -22,6 +23,19 @@ import org.junit.jupiter.api.Test
  * @author lero4ka16
  */
 internal class FiltersTest {
+
+    class Pojo {
+        val message = "Hello world!"
+    }
+
+    @Test
+    fun testFilterInTemplate() {
+        val ctx = Te4j.custom().useResources().build()
+        val template = ctx.load(Pojo::class.java, "WEB-INF/filters.txt")
+
+        assertEquals("68656C6C6F20776F726C6421", template.renderAsString(Pojo()))
+    }
+
     @Test
     fun testByteShuffle() {
         assertFalse(SORTED_BYTE_ARRAY.contentEquals(Shuffle.process(SORTED_BYTE_ARRAY)))

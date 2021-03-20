@@ -40,11 +40,11 @@ class Pojo {
     }
 }
 
-Pojo pojo = new Pojo();
-
 Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
-String result = template.renderAsString(pojo);
-// result = <p>Message: Hello world!</p>
+
+public String render(Pojo pojo) {
+    return template.renderAsString(pojo); // <p>Message: Hello world!</p>
+}
 ```
 
 or Kotlin: 
@@ -53,10 +53,11 @@ class Pojo {
     val message = "Hello world!"
 }
 
-val pojo = Pojo()
 val template = Te4j.load(Pojo::class.java, "index.html")
-val result = template.renderAsString(pojo)
-// result = <p>Message: Hello world!</p>
+
+fun render(pojo: Pojo): String {
+    return template.renderAsString(pojo) // <p>Message: Hello world!</p>
+}
 ```
 
 Also, you are able to create custom template context
