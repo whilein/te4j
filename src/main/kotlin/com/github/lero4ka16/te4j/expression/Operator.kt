@@ -15,7 +15,8 @@
  */
 package com.github.lero4ka16.te4j.expression
 
-import java.util.*
+import java.util.Arrays
+import java.util.Optional
 
 enum class Operator(val operator: String) {
     MULTIPLY("*"),

@@ -18,7 +18,8 @@ package com.github.lero4ka16.te4j.filter.impl
 
 import com.github.lero4ka16.te4j.filter.Filter
 import com.github.lero4ka16.te4j.util.Utils
-import java.util.*
+import java.util.ArrayList
+import java.util.Random
 
 /**
  * @author lero4ka16

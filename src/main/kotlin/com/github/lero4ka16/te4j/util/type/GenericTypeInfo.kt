@@ -19,7 +19,7 @@ import com.github.lero4ka16.te4j.annotation.ReturnsArrayList
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.*
+import java.util.ArrayList
 
 /**
  * @author lero4ka16

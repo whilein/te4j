@@ -15,7 +15,11 @@
  */
 package com.github.lero4ka16.te4j.util
 
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
 
 /**
  * @author lero4ka16

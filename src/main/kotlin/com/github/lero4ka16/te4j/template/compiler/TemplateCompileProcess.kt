@@ -35,7 +35,11 @@ import com.github.lero4ka16.te4j.template.environment.LoopEnvironment
 import com.github.lero4ka16.te4j.template.environment.PrimaryEnvironment
 import com.github.lero4ka16.te4j.template.exception.TemplateException
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType
-import com.github.lero4ka16.te4j.template.method.impl.*
+import com.github.lero4ka16.te4j.template.method.impl.Condition
+import com.github.lero4ka16.te4j.template.method.impl.Foreach
+import com.github.lero4ka16.te4j.template.method.impl.Include
+import com.github.lero4ka16.te4j.template.method.impl.SwitchCase
+import com.github.lero4ka16.te4j.template.method.impl.Value
 import com.github.lero4ka16.te4j.template.output.TemplateOutput
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer
 import com.github.lero4ka16.te4j.template.output.TemplateOutputStream
@@ -46,11 +50,9 @@ import com.github.lero4ka16.te4j.template.path.TemplatePathIterator
 import com.github.lero4ka16.te4j.util.formatter.TextFormatter
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef
 import java.io.OutputStream
-import java.util.*
+import java.util.ArrayList
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.collections.set
 
 /**

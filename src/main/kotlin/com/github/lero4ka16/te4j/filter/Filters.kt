@@ -15,7 +15,22 @@
  */
 package com.github.lero4ka16.te4j.filter
 
-import com.github.lero4ka16.te4j.filter.impl.*
+import com.github.lero4ka16.te4j.filter.impl.Average
+import com.github.lero4ka16.te4j.filter.impl.Capitalize
+import com.github.lero4ka16.te4j.filter.impl.Ceil
+import com.github.lero4ka16.te4j.filter.impl.EscapeTags
+import com.github.lero4ka16.te4j.filter.impl.Floor
+import com.github.lero4ka16.te4j.filter.impl.Hex
+import com.github.lero4ka16.te4j.filter.impl.Lower
+import com.github.lero4ka16.te4j.filter.impl.Max
+import com.github.lero4ka16.te4j.filter.impl.Min
+import com.github.lero4ka16.te4j.filter.impl.Round
+import com.github.lero4ka16.te4j.filter.impl.Shuffle
+import com.github.lero4ka16.te4j.filter.impl.Sort
+import com.github.lero4ka16.te4j.filter.impl.StripTags
+import com.github.lero4ka16.te4j.filter.impl.Sum
+import com.github.lero4ka16.te4j.filter.impl.Trim
+import com.github.lero4ka16.te4j.filter.impl.Upper
 import java.util.concurrent.ConcurrentHashMap
 
 /**

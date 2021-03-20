@@ -21,7 +21,11 @@ import com.github.lero4ka16.te4j.template.exception.TemplateException
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException
 import com.github.lero4ka16.te4j.template.method.TemplateMethod
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType
-import com.github.lero4ka16.te4j.template.method.impl.*
+import com.github.lero4ka16.te4j.template.method.impl.Condition
+import com.github.lero4ka16.te4j.template.method.impl.Foreach
+import com.github.lero4ka16.te4j.template.method.impl.Include
+import com.github.lero4ka16.te4j.template.method.impl.SwitchCase
+import com.github.lero4ka16.te4j.template.method.impl.Value
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate
 import com.github.lero4ka16.te4j.template.parse.PlainParsedTemplate
 import com.github.lero4ka16.te4j.template.parse.StandardParsedTemplate
@@ -31,7 +35,7 @@ import com.github.lero4ka16.te4j.template.reader.token.TemplateTokenType
 import com.github.lero4ka16.te4j.util.formatter.TextFormatter
 import com.github.lero4ka16.te4j.util.io.BytesReader
 import com.github.lero4ka16.te4j.util.io.DataReader
-import java.util.*
+import java.util.ArrayList
 
 class TemplateReader(private val context: TemplateContext, private val value: ByteArray) {
     private val reader: DataReader

@@ -18,7 +18,7 @@ package com.github.lero4ka16.te4j.expression
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor
 import com.github.lero4ka16.te4j.util.io.CharsReader
 import com.github.lero4ka16.te4j.util.io.DataReader
-import java.util.*
+import java.util.ArrayList
 import java.util.function.Function
 
 class ExpParser(private val mapper: Function<String, PathAccessor?>) {

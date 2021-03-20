@@ -17,7 +17,7 @@ package com.github.lero4ka16.te4j.expression
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo
 import com.github.lero4ka16.te4j.util.type.TypeInfo
-import java.util.*
+import java.util.EnumSet
 
 class ExpParentheses(private val inner: Array<Exp>) : Exp() {
     override val objectType: TypeInfo

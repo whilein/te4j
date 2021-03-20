@@ -16,7 +16,7 @@
 package com.github.lero4ka16.te4j.expression
 
 import com.github.lero4ka16.te4j.Te4j.Companion.getFilters
-import java.util.*
+import java.util.LinkedList
 
 class ExpCompile(
     val expression: Array<Exp>,

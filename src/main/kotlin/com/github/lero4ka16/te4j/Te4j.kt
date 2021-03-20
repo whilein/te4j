@@ -86,20 +86,6 @@ class Te4j {
             return DEFAULTS.parseFile(path);
         }
 
-        /*
-        fun <T : Any> loadFile(type: KClass<T>, file: File): Template<T> {
-            return DEFAULTS.loadFile(type, file)
-        }
-
-        fun <T : Any> loadFile(type: KClass<T>, file: Path): Template<T> {
-            return DEFAULTS.loadFile(type, file)
-        }
-
-        fun <T : Any> load(type: KClass<T>, file: File): Template<T> {
-            return DEFAULTS.loadFile(type, file)
-        }
-        */
-
         @JvmStatic
         fun <T> load(type: Class<T>, name: String): Template<T> {
             return DEFAULTS.load(type, name)

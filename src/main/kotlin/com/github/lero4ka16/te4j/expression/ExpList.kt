@@ -18,7 +18,6 @@ package com.github.lero4ka16.te4j.expression
 import com.github.lero4ka16.te4j.util.formatter.TextFormatter
 import com.github.lero4ka16.te4j.util.type.GenericInfo
 import com.github.lero4ka16.te4j.util.type.TypeInfo
-import java.lang.StringBuilder
 
 class ExpList(type: Class<*>, inner: Array<Exp>) : Exp() {
     override val objectType: TypeInfo
