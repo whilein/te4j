@@ -23,7 +23,7 @@
 
 ## About the project
 
-Te4j (Template Engine For Java) - Fast, lightweight and easy template engine
+Te4j (Template Engine For Java/Kotlin) - Fast, lightweight and easy template engine
 
 There are no any dependencies in the jar, works really fast (`//todo benchmarks`), simple syntax
 
