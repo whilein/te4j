@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.lero4ka16.te4j
 
 import com.github.lero4ka16.te4j.filter.impl.*
 import org.junit.jupiter.api.Assertions.*
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.Test
 /**
  * @author lero4ka16
  */
-class FiltersTest {
+internal class FiltersTest {
     @Test
     fun testByteShuffle() {
         assertFalse(SORTED_BYTE_ARRAY.contentEquals(Shuffle.process(SORTED_BYTE_ARRAY)))

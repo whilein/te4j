@@ -31,7 +31,7 @@ import java.nio.file.Path
  */
 class Te4j {
 
-    companion object {
+    internal companion object {
         const val DEL_CR = 1
         const val DEL_LF = 2
         const val DEL_REPEATING_SPACES = 3
@@ -101,17 +101,17 @@ class Te4j {
         */
 
         @JvmStatic
+        fun <T> load(type: Class<T>, name: String): Template<T> {
+            return DEFAULTS.load(type, name)
+        }
+
+        @JvmStatic
+        fun <T> load(type: ITypeRef<T>, name: String): Template<T> {
+            return DEFAULTS.load(type, name)
+        }
+
+        @JvmStatic
         fun <T> loadFile(type: Class<T>, file: File): Template<T> {
-            return DEFAULTS.loadFile(type, file)
-        }
-
-        @JvmStatic
-        fun <T> loadFile(type: Class<T>, file: Path): Template<T> {
-            return DEFAULTS.loadFile(type, file)
-        }
-
-        @JvmStatic
-        fun <T> load(type: Class<T>, file: File): Template<T> {
             return DEFAULTS.loadFile(type, file)
         }
 
@@ -121,12 +121,12 @@ class Te4j {
         }
 
         @JvmStatic
-        fun <T> loadFile(type: ITypeRef<T>, file: Path): Template<T> {
+        fun <T> loadFile(type: Class<T>, file: Path): Template<T> {
             return DEFAULTS.loadFile(type, file)
         }
 
         @JvmStatic
-        fun <T> load(type: ITypeRef<T>, file: File): Template<T> {
+        fun <T> loadFile(type: ITypeRef<T>, file: Path): Template<T> {
             return DEFAULTS.loadFile(type, file)
         }
 

@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.lero4ka16.te4j
 
 import com.github.lero4ka16.te4j.expression.*
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor
@@ -24,19 +23,18 @@ import org.junit.jupiter.api.Test
 /**
  * @author lero4ka16
  */
-class ExpTest {
-    private val parser: ExpParser = ExpParser label@
-    {
-        if (it == "message") {
-            return@label PathAccessor(GenericInfo.STRING, "getMessage()")
+internal class ExpTest {
+    private val parser: ExpParser = ExpParser(fun(name: String): PathAccessor? {
+        if (name == "message") {
+            return PathAccessor(GenericInfo.STRING, "getMessage()")
         }
 
-        if (it == "condition") {
-            return@label PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "isCondition()")
+        if (name == "condition") {
+            return PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "isCondition()")
         }
 
-        null
-    }
+        return null
+    })
 
     @Test
     fun expBooleanNegate() {

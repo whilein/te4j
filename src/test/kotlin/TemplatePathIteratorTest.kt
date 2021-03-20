@@ -13,8 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.lero4ka16.te4j.template.path
 
+import com.github.lero4ka16.te4j.template.path.TemplatePathIterator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

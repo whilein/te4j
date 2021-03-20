@@ -32,6 +32,7 @@ There are no any dependencies in the jar, works really fast (`//todo benchmarks`
 <p>Message: ^^ message ^^</p>
 ```
 
+Java:
 ```java
 class Pojo {
     String getMessage() {
@@ -43,6 +44,18 @@ Pojo pojo = new Pojo();
 
 Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
 String result = template.renderAsString(pojo);
+// result = <p>Message: Hello world!</p>
+```
+
+or Kotlin: 
+```kotlin
+class Pojo {
+    val message = "Hello world!"
+}
+
+val pojo = Pojo()
+val template = Te4j.load(Pojo::class.java, "index.html")
+val result = template.renderAsString(pojo)
 // result = <p>Message: Hello world!</p>
 ```
 

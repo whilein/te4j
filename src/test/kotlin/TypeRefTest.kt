@@ -13,8 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.github.lero4ka16.te4j.util.type.ref
 
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
