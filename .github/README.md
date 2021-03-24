@@ -32,10 +32,9 @@ Te4j (Template Engine For Java) - Fast, lightweight and easy template engine
 There are no any dependencies in the jar, works really fast, simple syntax
 
 ## Benchmarks
-<div>
-    <img src="https://github.com/lero4ka16/template-benchmark/raw/master/results.png">
-    <a href="https://github.com/lero4ka16/template-benchmark">Click to open benchmarks sourcecode</a>
-</div>
+![](https://github.com/lero4ka16/template-benchmark/raw/master/results.png)
+
+[Click to open sourcecode](https://github.com/lero4ka16/template-benchmark)
 
 
 ## Example
