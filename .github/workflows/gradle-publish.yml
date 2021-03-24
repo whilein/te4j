@@ -15,11 +15,7 @@ jobs:
         with:
           java-version: 8
       - name: Cache Gradle packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle  
+        uses: burrunan/gradle-cache-action@v1
       - name: Prepare to publish
         run: |
           echo "${{secrets.GPG_KEY_CONTENTS}}" | base64 -d > publish_key.gpg
@@ -28,10 +24,7 @@ jobs:
         id: github_tag
         run: echo ::set-output name=RESULT::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: Publish with Gradle
-        uses: eskatos/gradle-command-action@v1
-        with:
-          gradle-version: current
-          arguments: test publish -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
+        run: ./gradlew test publish --no-parallel --no-daemon --build-cache -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
