@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets;
  */
 public final class Utils {
 
-    private static final char[] HEX = "0123456789ABCDEF".toCharArray();
     private static final byte[] EMPTY_BYTES = new byte[0];
 
     private Utils() {
@@ -131,50 +130,6 @@ public final class Utils {
         }
 
         return false;
-    }
-
-    public static String stripTags(String s) {
-        return s.replaceAll("<.*?>", "");
-    }
-
-    public static String escapeTags(String s) {
-        StringBuilder out = null;
-
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-
-            if (c == '"' || c == '\'' || c == '<' || c == '>' || c == '&') {
-                if (out == null) {
-                    out = new StringBuilder(s.length());
-                    out.append(s, 0, i);
-                }
-
-                out.append("&#");
-                out.append((int) c);
-                out.append(';');
-            } else {
-                if (out != null) {
-                    out.append(c);
-                }
-            }
-        }
-
-        return out == null ? s : out.toString();
-    }
-
-    public static String toHexString(String value) {
-        return toHexString(value.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public static String toHexString(byte[] value) {
-        StringBuilder result = new StringBuilder(value.length * 2);
-
-        for (byte b : value) {
-            result.append(HEX[(b >> 4) & 0xF]);
-            result.append(HEX[b & 0xF]);
-        }
-
-        return result.toString();
     }
 
 }

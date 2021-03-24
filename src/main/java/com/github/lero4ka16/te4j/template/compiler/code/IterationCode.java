@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.compiler.code;
 
+import com.github.lero4ka16.te4j.template.environment.LoopEnvironment;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 
 /**
@@ -23,66 +24,47 @@ import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
  */
 public final class IterationCode {
 
-    private String elementType;
-    private String as;
-    private String from;
-    private ParsedTemplate content;
+    private final String namespace;
+    private final String counterFieldName;
+    
+    private final LoopEnvironment loop;
+    
+    private final String elementType;
+    private final String from;
+    private final ParsedTemplate content;
+    
+    private final boolean arrayList;
+    private final boolean array;
 
-    private boolean insertCounter;
+    private final boolean castArrayList;
 
-    private boolean arrayList;
-    private boolean array;
-
-    private boolean castArrayList;
-
-    public String getCounterFieldName() {
-        return "__counter_" + as;
+    public IterationCode(String namespace, String elementType, String from,
+                         String counterFieldName, ParsedTemplate content, LoopEnvironment loop,
+                         boolean arrayList, boolean array, boolean castArrayList) {
+        this.namespace = namespace;
+        this.elementType = elementType;
+        this.from = from;
+        this.content = content;
+        this.loop = loop;
+        this.arrayList = arrayList;
+        this.array = array;
+        this.castArrayList = castArrayList;
+        
+        this.counterFieldName = counterFieldName;
     }
-
-    public String getElementName() {
-        return "__element_" + as;
+    
+    public String getElementFieldName() {
+        return "__element_" + namespace;
     }
 
     public String getArrayFieldName() {
-        return "__array_" + as;
+        return "__array_" + namespace;
     }
 
     public String getCountFieldName() {
-        return "__count_" + as;
+        return "__count_" + namespace;
     }
-
-    public void setElementType(String elementType) {
-        this.elementType = elementType;
-    }
-
-    public void setAs(String as) {
-        this.as = as;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public void setContent(ParsedTemplate content) {
-        this.content = content;
-    }
-
-    public void setInsertCounter(boolean insertCounter) {
-        this.insertCounter = insertCounter;
-    }
-
-    public void setArray(boolean array) {
-        this.array = array;
-    }
-
-    public void setArrayList(boolean arrayList) {
-        this.arrayList = arrayList;
-    }
-
-    public void setCastArrayList(boolean castArrayList) {
-        this.castArrayList = castArrayList;
-    }
-
+    
     public void write(RenderCode out) {
         boolean arrayOrArrayList = arrayList || array;
 
@@ -97,7 +79,7 @@ public final class IterationCode {
 
             out.append(getArrayFieldName()).append("=");
 
-            if (castArrayList) {
+            if (!array && castArrayList) {
                 out.append("(java.util.List<").append(elementType).append(">) ");
             }
 
@@ -112,30 +94,30 @@ public final class IterationCode {
             }
 
             out.append("for(int ");
-            out.append(getCounterFieldName()).append("=0;");
-            out.append(getCounterFieldName()).append("<").append(getCountFieldName()).append(";");
-            out.append(getCounterFieldName()).append("++)");
+            out.append(counterFieldName).append("=0;");
+            out.append(counterFieldName).append("<").append(getCountFieldName()).append(";");
+            out.append(counterFieldName).append("++)");
 
             out.append("{");
-            out.append(elementType).append(" ").append(getElementName()).append("=");
+            out.append(elementType).append(" ").append(getElementFieldName()).append("=");
 
             out.append(getArrayFieldName())
                     .append(arrayList ? ".get(" : "[")
-                    .append(getCounterFieldName())
+                    .append(counterFieldName)
                     .append(arrayList ? ");" : "];");
         } else {
-            out.append("for(").append(elementType).append(" ").append(getElementName()).append(":").append(from).append(")");
+            out.append("for(").append(elementType).append(" ").append(getElementFieldName()).append(":").append(from).append(")");
             out.append("{");
         }
 
         out.appendTemplate(content);
 
-        if (!arrayOrArrayList && insertCounter) {
+        if (!arrayOrArrayList && loop.hasCounter()) {
             out.setPosition(counterPosition);
-            out.append("int ").append(getCounterFieldName()).append("=0;");
+            out.append("int ").append(counterFieldName).append("=0;");
             out.resetPosition();
 
-            out.append(getCounterFieldName()).append("++;");
+            out.append(counterFieldName).append("++;");
         }
 
         out.append("}");

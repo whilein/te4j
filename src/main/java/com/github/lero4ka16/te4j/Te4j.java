@@ -66,18 +66,6 @@ public final class Te4j {
         return DEFAULT_MODIFY_WATCHER;
     }
 
-    @ApiStatus.Internal
-    public static @NotNull String getOutputPrefix(int bit) {
-        switch (bit) {
-            case 1:
-                return "STRING_";
-            case 2:
-                return "BYTES_";
-            default:
-                throw new IllegalArgumentException("Undefined bit: " + bit);
-        }
-    }
-
     public static @NotNull Filters getFilters() {
         return FILTERS;
     }

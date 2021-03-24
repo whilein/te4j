@@ -14,33 +14,17 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+package com.github.lero4ka16.te4j.filter;
 
 /**
  * @author lero4ka16
  */
-public interface TypeInfo {
-
-    boolean isArray();
-    boolean isArrayList();
-
-    Annotation[] getAnnotations();
-
-    boolean isAnnotationPresent(Class<? extends Annotation> annotation);
-
-    <T extends Annotation> T getAnnotation(Class<T> cls);
+public interface Filter {
 
     String getName();
 
-    Type getType();
-
-    Class<?> getRawType();
-
-    Class<?> getComponentType();
-
-    boolean isEnum();
+    default String wrap(String value) {
+        return getClass().getName() + ".process(" + value + ")";
+    }
 
 }

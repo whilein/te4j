@@ -140,7 +140,7 @@ public final class RenderCode {
         if (field != null) {
             fieldTextMap.put(field, textBuffer.toByteArray());
             out.append("out.write(");
-            out.append(Te4j.getOutputPrefix(process.getOutputType()));
+            out.append(process.getOutputPrefix(process.getOutputType()));
             out.append(field);
             out.append(");");
             textBuffer.reset();

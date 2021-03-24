@@ -52,6 +52,7 @@ import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
 import com.github.lero4ka16.te4j.util.hash.Hash;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -358,24 +359,19 @@ public class TemplateCompileProcess<BoundType> {
                 ParsedTemplate template = method.getBlock();
                 String as = method.getAs();
 
-                IterationCode iterationCode = new IterationCode();
-                iterationCode.setElementType(listType.getName());
-                iterationCode.setAs(as + path.getId());
-                iterationCode.setFrom(accessorValue);
+                String id = path.getId();
+                String counter = "__counter_" + id + "_";
 
-                LoopEnvironment loop = new LoopEnvironment(iterationCode, iterationCode.getCounterFieldName());
+                LoopEnvironment loop = new LoopEnvironment(counter);
+
+                IterationCode iterationCode = new IterationCode(
+                        id, listType.getName(), accessorValue, counter, template, loop,
+                        returnType.isArrayList(), returnType.isArray(),
+                        !List.class.isAssignableFrom(returnType.getRawType())
+                );
 
                 Environment prevLoop = setEnvironment("loop", loop);
-                addEnvironment(as, new PrimaryEnvironment(iterationCode.getElementName(), listType, listType));
-
-                iterationCode.setContent(template);
-
-                if (returnType.isArray()) {
-                    iterationCode.setArray(true);
-                } else if (returnType.isArrayList()) {
-                    iterationCode.setArrayList(true);
-                    iterationCode.setCastArrayList(!List.class.isAssignableFrom(returnType.getRawType()));
-                }
+                addEnvironment(method.getAs(), new PrimaryEnvironment(iterationCode.getElementFieldName(), listType, listType));
 
                 iterationCode.write(out);
 
@@ -393,7 +389,7 @@ public class TemplateCompileProcess<BoundType> {
     }
 
     public void addBytes(Integer field, byte[] bytes) {
-        String fieldName = Te4j.getOutputPrefix(outputType) + field;
+        String fieldName = getOutputPrefix(outputType) + field;
         String prevFieldName = byteValues.put(Hash.forArray(bytes), fieldName);
 
         switch (outputType) {
@@ -508,6 +504,17 @@ public class TemplateCompileProcess<BoundType> {
 
     public void addContent(String src) {
         javaCompiler.addContent(src);
+    }
+
+    public @NotNull String getOutputPrefix(int bit) {
+        switch (bit) {
+            case 1:
+                return "STRING_";
+            case 2:
+                return "BYTES_";
+            default:
+                throw new IllegalArgumentException("Undefined bit: " + bit);
+        }
     }
 
     @SuppressWarnings("unchecked")

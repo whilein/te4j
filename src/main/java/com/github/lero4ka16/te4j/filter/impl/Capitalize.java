@@ -14,33 +14,33 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type;
+package com.github.lero4ka16.te4j.filter.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import com.github.lero4ka16.te4j.filter.Filter;
 
 /**
  * @author lero4ka16
  */
-public interface TypeInfo {
+public final class Capitalize implements Filter {
+    @Override
+    public String getName() {
+        return "capitalize";
+    }
 
-    boolean isArray();
-    boolean isArrayList();
+    @Override
+    public String wrap(String value) {
+        return getClass().getName() + ".process(" + value + ")";
+    }
 
-    Annotation[] getAnnotations();
+    public static String process(String value) {
+        char ch = value.charAt(0);
+        char mod = Character.toTitleCase(ch);
 
-    boolean isAnnotationPresent(Class<? extends Annotation> annotation);
+        if (ch == mod) return value;
 
-    <T extends Annotation> T getAnnotation(Class<T> cls);
+        char[] chars = value.toCharArray();
+        chars[0] = mod;
 
-    String getName();
-
-    Type getType();
-
-    Class<?> getRawType();
-
-    Class<?> getComponentType();
-
-    boolean isEnum();
-
+        return new String(chars);
+    }
 }
