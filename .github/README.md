@@ -29,7 +29,18 @@
 
 Te4j (Template Engine For Java) - Fast, lightweight and easy template engine
 
-There are no any dependencies in the jar, works really fast (`//todo benchmarks`), simple syntax
+There are no any dependencies in the jar, works really fast, simple syntax
+
+## Benchmarks
+<div>
+    <a href="https://github.com/lero4ka16/template-benchmark">
+        <img src="https://github.com/lero4ka16/template-benchmark/raw/master/results.png">
+        <div>
+            <a>Click to open benchmarks sourcecode</a>
+        </div>
+    </a>
+</div>
+
 
 ## Example
 ```html
