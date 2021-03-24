@@ -19,6 +19,10 @@
   <a href="https://search.maven.org/artifact/com.github.lero4ka16/te4j">
     <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
   </a>
+
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/lero4ka16/te4j">
+    <img src="https://img.shields.io/nexus/s/com.github.lero4ka16/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
+  </a> -->
 </div>
 
 ## About the project
@@ -76,6 +80,15 @@ More examples in docs
 [Click me](https://github.com/lero4ka16/te4j/wiki)
 
 ## Add as dependency
+<div>
+  <a href="https://search.maven.org/artifact/com.github.lero4ka16/te4j">
+    <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
+  </a>
+
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/lero4ka16/te4j">
+    <img src="https://img.shields.io/nexus/s/com.github.lero4ka16/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
+  </a> -->
+</div>
 
 ### Maven
 ```xml

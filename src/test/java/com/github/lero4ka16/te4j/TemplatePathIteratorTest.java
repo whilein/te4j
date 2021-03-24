@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.template.path;
+package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

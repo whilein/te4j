@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.util.type.ref;
+package com.github.lero4ka16.te4j;
 
+import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
