@@ -33,12 +33,8 @@ There are no any dependencies in the jar, works really fast, simple syntax
 
 ## Benchmarks
 <div>
-    <a href="https://github.com/lero4ka16/template-benchmark">
-        <img src="https://github.com/lero4ka16/template-benchmark/raw/master/results.png">
-        <div>
-            <a>Click to open benchmarks sourcecode</a>
-        </div>
-    </a>
+    <img src="https://github.com/lero4ka16/template-benchmark/raw/master/results.png">
+    <a href="https://github.com/lero4ka16/template-benchmark">Click to open benchmarks sourcecode</a>
 </div>
 
 
