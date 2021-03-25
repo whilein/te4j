@@ -24,6 +24,7 @@ import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,11 +53,11 @@ public abstract class Template<T> {
     public abstract void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
 
     @ApiStatus.Internal
-    public static <T> Template<T> wrapHotReloading(ModifyWatcherManager modifyWatcherManager,
-                                                   TemplateContext context,
-                                                   Template<T> template,
-                                                   ITypeRef<T> type,
-                                                   String file) {
+    public static <T> Template<T> wrapHotReloading(@NotNull ModifyWatcherManager modifyWatcherManager,
+                                                   @NotNull TemplateContext context,
+                                                   @NotNull Template<T> template,
+                                                   @NotNull ITypeRef<T> type,
+                                                   @Nullable String file) {
         return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, file);
     }
 
@@ -110,11 +111,15 @@ public abstract class Template<T> {
         public Path[] getFiles() {
             String[] includes = getIncludes();
 
-            Path[] files = new Path[includes.length + 1];
-            files[0] = Paths.get(file);
+            boolean hasFile = file != null;
+            Path[] files = new Path[includes.length + (hasFile ? 1 : 0)];
 
             for (int i = 0; i < includes.length; i++) {
-                files[i + 1] = Paths.get(includes[i]);
+                files[i] = Paths.get(includes[i]);
+            }
+
+            if (hasFile) {
+                files[files.length - 1] = Paths.get(file);
             }
 
             return files;

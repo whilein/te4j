@@ -24,11 +24,13 @@ import com.github.lero4ka16.te4j.template.reader.TemplateReader;
 import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,25 +84,34 @@ public final class TemplateContext {
     /**
      * Compiles new template from bytes
      *
-     * @param type  Type
-     * @param bytes Data
+     * @param type Type
+     * @param data Bytes
+     * @param <T>  Type of an object which will be passed for rendering
      * @return New compiled template
      */
-    public <T> Template<T> loadBytes(ITypeRef<T> type, byte[] bytes) {
-        return parseBytes(bytes).compile(
+    public @NotNull <T> Template<T> loadBytes(@NotNull ITypeRef<T> type,
+                                              byte @NotNull [] data) {
+        return parseBytes(data).compile(
                 useResources ? null : modifyWatcherManager,
                 ".", null, type
         );
     }
 
-    public <T> Template<T> load(ITypeRef<T> type, String name) {
+    public @NotNull <T> Template<T> loadString(@NotNull ITypeRef<T> type,
+                                               @NotNull String data) {
+        return loadBytes(type, data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public @NotNull <T> Template<T> load(@NotNull ITypeRef<T> type,
+                                         @NotNull String name) {
         return parse(name).compile(
                 useResources ? null : modifyWatcherManager,
                 getParent(name), name, type
         );
     }
 
-    public <T> Template<T> loadFile(ITypeRef<T> type, File file) {
+    public @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+                                             @NotNull File file) {
         return parseFile(file).compile(
                 modifyWatcherManager,
                 file.getAbsoluteFile().getParent(),
@@ -109,7 +120,8 @@ public final class TemplateContext {
         );
     }
 
-    public <T> Template<T> loadFile(ITypeRef<T> type, Path path) {
+    public @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+                                             @NotNull Path path) {
         return parseFile(path).compile(
                 modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
@@ -118,27 +130,40 @@ public final class TemplateContext {
         );
     }
 
-    public <T> Template<T> loadBytes(Class<T> type, byte[] bytes) {
+    public @NotNull <T> Template<T> loadBytes(@NotNull Class<T> type,
+                                              byte @NotNull [] bytes) {
         return loadBytes(new ClassRef<>(type), bytes);
     }
 
-    public <T> Template<T> load(Class<T> type, String name) {
+    public @NotNull <T> Template<T> loadString(@NotNull Class<T> type,
+                                               @NotNull String data) {
+        return loadBytes(type, data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public @NotNull <T> Template<T> load(@NotNull Class<T> type,
+                                         @NotNull String name) {
         return load(new ClassRef<>(type), name);
     }
 
-    public <T> Template<T> loadFile(Class<T> type, File file) {
+    public @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
+                                             @NotNull File file) {
         return loadFile(new ClassRef<>(type), file);
     }
 
-    public <T> Template<T> loadFile(Class<T> type, Path path) {
+    public @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
+                                             @NotNull Path path) {
         return loadFile(new ClassRef<>(type), path);
     }
 
-    public ParsedTemplate parseBytes(byte[] bytes) {
-        return new TemplateReader(this, bytes).readTemplate();
+    public @NotNull ParsedTemplate parseBytes(byte @NotNull [] data) {
+        return new TemplateReader(this, data).readTemplate();
     }
 
-    public ParsedTemplate parse(String name) {
+    public @NotNull ParsedTemplate parseString(@NotNull String data) {
+        return parseBytes(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public @NotNull ParsedTemplate parse(@NotNull String name) {
         if (useResources) {
             try {
                 InputStream is = ClassLoader.getSystemResourceAsStream(name);
@@ -156,7 +181,7 @@ public final class TemplateContext {
         }
     }
 
-    public ParsedTemplate parseFile(File file) {
+    public @NotNull ParsedTemplate parseFile(@NotNull File file) {
         try {
             return parseBytes(Utils.readFile(file));
         } catch (IOException e) {
@@ -164,7 +189,7 @@ public final class TemplateContext {
         }
     }
 
-    public ParsedTemplate parseFile(Path path) {
+    public @NotNull ParsedTemplate parseFile(@NotNull Path path) {
         try {
             return parseBytes(Files.readAllBytes(path));
         } catch (IOException e) {

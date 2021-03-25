@@ -78,8 +78,13 @@ public final class Te4j {
     }
 
     public static @NotNull <T> Template<T> loadBytes(@NotNull ITypeRef<T> type,
-                                                     byte @NotNull [] bytes) {
-        return DEFAULTS.loadBytes(type, bytes);
+                                                     byte @NotNull [] data) {
+        return DEFAULTS.loadBytes(type, data);
+    }
+
+    public static @NotNull <T> Template<T> loadString(@NotNull ITypeRef<T> type,
+                                                      @NotNull String data) {
+        return DEFAULTS.loadString(type, data);
     }
 
     public static @NotNull <T> Template<T> load(@NotNull ITypeRef<T> type,
@@ -115,6 +120,11 @@ public final class Te4j {
     public static @NotNull <T> Template<T> loadBytes(@NotNull Class<T> type,
                                                      byte @NotNull [] bytes) {
         return DEFAULTS.loadBytes(type, bytes);
+    }
+
+    public static @NotNull <T> Template<T> loadString(@NotNull Class<T> type,
+                                                      @NotNull String data) {
+        return DEFAULTS.loadString(type, data);
     }
 
     public static @NotNull <T> Template<T> load(@NotNull Class<T> type,

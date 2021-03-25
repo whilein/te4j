@@ -1,4 +1,7 @@
+<!-- @formatter:on  -->
+
 # Te4j
+
 <div align="center">
   <a href="https://github.com/lero4ka16/te4j/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/lero4ka16/te4j">
@@ -36,7 +39,6 @@ There are no any dependencies in the jar, works really fast, simple syntax
 
 [Click to open sourcecode](https://github.com/lero4ka16/template-benchmark)
 
-
 ## Example
 ```html
 <p>Message: ^^ message ^^</p>
@@ -49,9 +51,9 @@ class Pojo {
     }
 }
 
-Pojo pojo = new Pojo();
+    Pojo pojo = new Pojo();
 
-Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
+    Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
 String result = template.renderAsString(pojo);
 // result = <p>Message: Hello world!</p>
 ```
@@ -78,7 +80,7 @@ TemplateContext ctx = Te4j.custom()
         .enableHotReloading()
         .build();
 
-Template<Pojo> template = ctx.load(Pojo.class, "index.html");
+        Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
 
 More examples in docs
@@ -115,12 +117,17 @@ dependencies {
 ```
 
 ## Build the project
+
 1. Execute `./gradlew build`
 2. Output file located at `output/te4j.jar`
 
 ## Contact
+
 [Vkontakte](https://vk.com/id623151994),
 [Telegram](https://t.me/lero4ka85)
 
 ### Post Scriptum
+
 I will be very glad if someone can help me with development.
+
+<!-- @formatter:off  -->

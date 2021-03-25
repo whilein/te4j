@@ -58,7 +58,7 @@ public final class StandardParsedTemplate extends ParsedTemplate {
                                    @NotNull ITypeRef<T> type) {
         Template<T> result = TemplateCompiler.INSTANCE.compile(context, this, type, parentFile);
 
-        if (modifyWatcherManager != null && file != null) {
+        if (modifyWatcherManager != null) {
             result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, file);
         }
 

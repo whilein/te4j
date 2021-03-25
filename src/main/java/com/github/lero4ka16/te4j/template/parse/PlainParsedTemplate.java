@@ -46,7 +46,7 @@ public final class PlainParsedTemplate extends ParsedTemplate {
                                    @NotNull ITypeRef<T> type) {
         Template<T> result = new PlainTemplate<>(content, offset, length);
 
-        if (modifyWatcherManager != null && file != null) {
+        if (modifyWatcherManager != null) {
             result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, file);
         }
 
