@@ -16,6 +16,8 @@ jobs:
           java-version: 8
       - name: Cache Gradle packages
         uses: burrunan/gradle-cache-action@v1
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Prepare to publish
         run: |
           echo "${{secrets.GPG_KEY_CONTENTS}}" | base64 -d > publish_key.gpg
