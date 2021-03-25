@@ -25,7 +25,7 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
-public final class PlainTemplate<BoundType> extends Template<BoundType> {
+public final class PlainTemplate<T> extends Template<T> {
 
     private final byte[] value;
 
@@ -48,17 +48,17 @@ public final class PlainTemplate<BoundType> extends Template<BoundType> {
     }
 
     @Override
-    public @NotNull String renderAsString(@NotNull BoundType object) {
+    public @NotNull String renderAsString(@NotNull T object) {
         return chars;
     }
 
     @Override
-    public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
+    public byte @NotNull [] renderAsBytes(@NotNull T object) {
         return Arrays.copyOfRange(value, offset, offset + length);
     }
 
     @Override
-    public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
+    public void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException {
         os.write(value, offset, offset + length);
     }
 

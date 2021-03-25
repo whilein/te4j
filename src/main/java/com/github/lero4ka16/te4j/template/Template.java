@@ -33,7 +33,7 @@ import java.nio.file.Paths;
 /**
  * @author lero4ka16
  */
-public abstract class Template<BoundType> {
+public abstract class Template<T> {
 
     @ApiStatus.Internal
     protected static final ThreadLocal<TemplateOutputBuffer> bytesOptimized
@@ -45,33 +45,33 @@ public abstract class Template<BoundType> {
 
     public abstract @NotNull String[] getIncludes();
 
-    public abstract @NotNull String renderAsString(@NotNull BoundType object);
+    public abstract @NotNull String renderAsString(@NotNull T object);
 
-    public abstract byte @NotNull [] renderAsBytes(@NotNull BoundType object);
+    public abstract byte @NotNull [] renderAsBytes(@NotNull T object);
 
-    public abstract void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException;
+    public abstract void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
 
     @ApiStatus.Internal
-    public static <BoundType> Template<BoundType> wrapHotReloading(ModifyWatcherManager modifyWatcherManager,
-                                                                   TemplateContext context,
-                                                                   Template<BoundType> template,
-                                                                   ITypeRef<BoundType> type,
-                                                                   String file) {
+    public static <T> Template<T> wrapHotReloading(ModifyWatcherManager modifyWatcherManager,
+                                                   TemplateContext context,
+                                                   Template<T> template,
+                                                   ITypeRef<T> type,
+                                                   String file) {
         return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, file);
     }
 
-    private static class HotReloadingWrapper<BoundType> extends Template<BoundType> implements Modifiable {
+    private static class HotReloadingWrapper<T> extends Template<T> implements Modifiable {
 
         private final TemplateContext context;
-        private final ITypeRef<BoundType> type;
+        private final ITypeRef<T> type;
         private final String file;
 
         private volatile boolean locked;
-        private volatile Template<BoundType> handle;
+        private volatile Template<T> handle;
 
         public HotReloadingWrapper(ModifyWatcherManager modifyWatcherManager,
-                                   TemplateContext context, ITypeRef<BoundType> type,
-                                   Template<BoundType> handle, String file) {
+                                   TemplateContext context, ITypeRef<T> type,
+                                   Template<T> handle, String file) {
             this.handle = handle;
             this.context = context;
             this.type = type;
@@ -80,7 +80,7 @@ public abstract class Template<BoundType> {
             modifyWatcherManager.register(this);
         }
 
-        private Template<BoundType> getHandle() {
+        private Template<T> getHandle() {
             return handle;
         }
 
@@ -127,19 +127,19 @@ public abstract class Template<BoundType> {
         }
 
         @Override
-        public @NotNull String renderAsString(@NotNull BoundType object) {
+        public @NotNull String renderAsString(@NotNull T object) {
             awaitUnlock();
             return getHandle().renderAsString(object);
         }
 
         @Override
-        public byte @NotNull [] renderAsBytes(@NotNull BoundType object) {
+        public byte @NotNull [] renderAsBytes(@NotNull T object) {
             awaitUnlock();
             return getHandle().renderAsBytes(object);
         }
 
         @Override
-        public void renderTo(@NotNull BoundType object, @NotNull OutputStream os) throws IOException {
+        public void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException {
             awaitUnlock();
             getHandle().renderTo(object, os);
         }

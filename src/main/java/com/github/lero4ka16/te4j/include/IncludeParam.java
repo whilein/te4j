@@ -21,18 +21,18 @@ package com.github.lero4ka16.te4j.include;
  */
 public final class IncludeParam {
 
-    private final IncludeFile file;
+    private final IncludeTarget file;
 
     private final int begin;
     private final int end;
 
-    public IncludeParam(IncludeFile file, int begin, int end) {
+    public IncludeParam(IncludeTarget file, int begin, int end) {
         this.file = file;
         this.begin = begin;
         this.end = end;
     }
 
-    public IncludeFile getFile() {
+    public IncludeTarget getFile() {
         return file;
     }
 

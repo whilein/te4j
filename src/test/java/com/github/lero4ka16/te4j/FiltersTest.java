@@ -24,15 +24,8 @@ import com.github.lero4ka16.te4j.filter.impl.Min;
 import com.github.lero4ka16.te4j.filter.impl.Shuffle;
 import com.github.lero4ka16.te4j.filter.impl.Sort;
 import com.github.lero4ka16.te4j.filter.impl.Sum;
-import com.github.lero4ka16.te4j.template.Template;
-import com.github.lero4ka16.te4j.template.context.TemplateContext;
-import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
-import com.github.lero4ka16.te4j.template.parse.StandardParsedTemplate;
-import com.github.lero4ka16.te4j.template.reader.TemplateReader;
-import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author lero4ka16
@@ -68,15 +60,7 @@ public class FiltersTest {
     private static final List<Integer> SHUFFLED_OBJECT_LIST = Arrays.asList(3, 4, 1, 5, 2);
 
     public <T> void testInTemplate(T pojo, Class<T> cls, String text, String expect, boolean notExpect) {
-        TemplateContext ctx = Te4j.defaults();
-
-        TemplateReader reader = new TemplateReader(ctx, text.getBytes(StandardCharsets.UTF_8));
-        ParsedTemplate parsed = reader.readTemplate();
-
-        Template<T> template = parsed.compile(null, "", "",
-                new ClassRef<>(cls));
-
-        String actual = template.renderAsString(pojo);
+        String actual = Te4j.loadBytes(cls, text.getBytes()).renderAsString(pojo);
 
         if (notExpect) {
             assertNotEquals(expect, actual);

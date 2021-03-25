@@ -22,6 +22,7 @@ import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -124,9 +125,10 @@ public abstract class ParsedTemplate {
         return _content;
     }
 
-    public abstract <BoundType> Template<BoundType> compile(ModifyWatcherManager modifyWatcherManager,
-                                                            String parentFile, String file,
-                                                            ITypeRef<BoundType> type);
+    public abstract <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
+                                            @NotNull String parentFile,
+                                            @Nullable String file,
+                                            @NotNull ITypeRef<T> type);
 
     public abstract boolean hasPaths();
 

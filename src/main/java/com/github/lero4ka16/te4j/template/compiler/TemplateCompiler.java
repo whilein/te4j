@@ -21,22 +21,19 @@ import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author lero4ka16
  */
 public class TemplateCompiler {
 
-    private static final TemplateCompiler instance = new TemplateCompiler();
+    public static final TemplateCompiler INSTANCE = new TemplateCompiler();
 
-    public static TemplateCompiler getInstance() {
-        return instance;
-    }
-
-    public <BoundType> Template<BoundType> compile(TemplateContext context,
-                                                   ParsedTemplate template,
-                                                   ITypeRef<BoundType> type,
-                                                   String parentFile) {
+    public <T> Template<T> compile(@NotNull TemplateContext context,
+                                   @NotNull ParsedTemplate template,
+                                   @NotNull ITypeRef<T> type,
+                                   @NotNull String parentFile) {
         try {
             return new TemplateCompileProcess<>(context, template, type, parentFile)
                     .compile();

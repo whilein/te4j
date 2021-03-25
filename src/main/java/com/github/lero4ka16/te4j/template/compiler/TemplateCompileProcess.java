@@ -21,7 +21,7 @@ import com.github.lero4ka16.te4j.expression.Expression;
 import com.github.lero4ka16.te4j.expression.ExpressionList;
 import com.github.lero4ka16.te4j.expression.ExpressionParser;
 import com.github.lero4ka16.te4j.expression.ExpressionValue;
-import com.github.lero4ka16.te4j.include.IncludeFile;
+import com.github.lero4ka16.te4j.include.IncludeTarget;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
 import com.github.lero4ka16.te4j.template.compiler.code.RenderCode;
@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
 /**
  * @author lero4ka16
  */
-public class TemplateCompileProcess<BoundType> {
+public class TemplateCompileProcess<T> {
 
     private static final String OUTPUT_STREAM_CLASS
             = OutputStream.class.getName();
@@ -88,7 +88,7 @@ public class TemplateCompileProcess<BoundType> {
     private final ParsedTemplate template;
     private final TemplateContext context;
 
-    private final ITypeRef<BoundType> type;
+    private final ITypeRef<T> type;
     private final String parentFile;
 
     private final TemplateClassCompiler javaCompiler;
@@ -105,8 +105,8 @@ public class TemplateCompileProcess<BoundType> {
     private int outputType;
     private SwitchCase currentSwitchCase;
 
-    public TemplateCompileProcess(TemplateContext context, ParsedTemplate template,
-                                  ITypeRef<BoundType> type, String parentFile) {
+    public TemplateCompileProcess(@NotNull TemplateContext context, @NotNull ParsedTemplate template,
+                                  @NotNull ITypeRef<T> type, @NotNull String parentFile) {
         this.type = type;
         this.parentFile = parentFile;
 
@@ -304,7 +304,7 @@ public class TemplateCompileProcess<BoundType> {
                 IncludeMethod method = path.getMethod();
 
                 String fileName;
-                IncludeFile file = method.getFile();
+                IncludeTarget file = method.getFile();
 
                 if (file.hasValues()) {
                     SwitchCase switchCase = currentSwitchCase;
@@ -518,7 +518,7 @@ public class TemplateCompileProcess<BoundType> {
     }
 
     @SuppressWarnings("unchecked")
-    public Template<BoundType> compile() throws Exception {
+    public Template<T> compile() throws Exception {
         addEnvironment("this", primaryEnvironment);
 
         for (int outputType : Te4j.OUTPUT_TYPES) {
@@ -549,7 +549,7 @@ public class TemplateCompileProcess<BoundType> {
         Class<?> result = javaCompiler.compile();
 
         Constructor<?> constructor = result.getDeclaredConstructor();
-        return (Template<BoundType>) constructor.newInstance();
+        return (Template<T>) constructor.newInstance();
     }
 
 }

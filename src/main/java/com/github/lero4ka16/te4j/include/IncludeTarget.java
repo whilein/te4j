@@ -27,12 +27,12 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-public final class IncludeFile {
+public final class IncludeTarget {
 
     private final String path;
     private final List<IncludeParam> values;
 
-    public IncludeFile(String path) {
+    public IncludeTarget(String path) {
         this.path = path;
         this.values = new ArrayList<>();
 

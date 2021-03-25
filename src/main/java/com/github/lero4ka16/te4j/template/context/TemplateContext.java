@@ -79,14 +79,28 @@ public final class TemplateContext {
         return name.substring(0, separator);
     }
 
-    public <BoundType> Template<BoundType> load(ITypeRef<BoundType> type, String name) {
+    /**
+     * Compiles new template from bytes
+     *
+     * @param type  Type
+     * @param bytes Data
+     * @return New compiled template
+     */
+    public <T> Template<T> loadBytes(ITypeRef<T> type, byte[] bytes) {
+        return parseBytes(bytes).compile(
+                useResources ? null : modifyWatcherManager,
+                ".", null, type
+        );
+    }
+
+    public <T> Template<T> load(ITypeRef<T> type, String name) {
         return parse(name).compile(
                 useResources ? null : modifyWatcherManager,
                 getParent(name), name, type
         );
     }
 
-    public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, File file) {
+    public <T> Template<T> loadFile(ITypeRef<T> type, File file) {
         return parseFile(file).compile(
                 modifyWatcherManager,
                 file.getAbsoluteFile().getParent(),
@@ -95,7 +109,7 @@ public final class TemplateContext {
         );
     }
 
-    public <BoundType> Template<BoundType> loadFile(ITypeRef<BoundType> type, Path path) {
+    public <T> Template<T> loadFile(ITypeRef<T> type, Path path) {
         return parseFile(path).compile(
                 modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
@@ -104,19 +118,23 @@ public final class TemplateContext {
         );
     }
 
-    public <BoundType> Template<BoundType> load(Class<BoundType> type, String name) {
+    public <T> Template<T> loadBytes(Class<T> type, byte[] bytes) {
+        return loadBytes(new ClassRef<>(type), bytes);
+    }
+
+    public <T> Template<T> load(Class<T> type, String name) {
         return load(new ClassRef<>(type), name);
     }
 
-    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, File file) {
+    public <T> Template<T> loadFile(Class<T> type, File file) {
         return loadFile(new ClassRef<>(type), file);
     }
 
-    public <BoundType> Template<BoundType> loadFile(Class<BoundType> type, Path path) {
+    public <T> Template<T> loadFile(Class<T> type, Path path) {
         return loadFile(new ClassRef<>(type), path);
     }
 
-    private ParsedTemplate parse(byte[] bytes) {
+    public ParsedTemplate parseBytes(byte[] bytes) {
         return new TemplateReader(this, bytes).readTemplate();
     }
 
@@ -129,7 +147,7 @@ public final class TemplateContext {
                     throw new FileNotFoundException("Resource not found: " + name);
                 }
 
-                return parse(Utils.readBytes(is));
+                return parseBytes(Utils.readBytes(is));
             } catch (IOException e) {
                 throw new TemplateLoadException("Cannot read template", e);
             }
@@ -140,7 +158,7 @@ public final class TemplateContext {
 
     public ParsedTemplate parseFile(File file) {
         try {
-            return parse(Utils.readFile(file));
+            return parseBytes(Utils.readFile(file));
         } catch (IOException e) {
             throw new TemplateLoadException("Cannot read template", e);
         }
@@ -148,7 +166,7 @@ public final class TemplateContext {
 
     public ParsedTemplate parseFile(Path path) {
         try {
-            return parse(Files.readAllBytes(path));
+            return parseBytes(Files.readAllBytes(path));
         } catch (IOException e) {
             throw new TemplateLoadException("Cannot read template", e);
         }

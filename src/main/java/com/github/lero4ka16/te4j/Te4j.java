@@ -22,8 +22,8 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.context.TemplateContextBuilder;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import com.github.lero4ka16.te4j.util.type.ref.TypeRef;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -77,35 +77,65 @@ public final class Te4j {
         return DEFAULTS;
     }
 
-    public static @NotNull <BoundType> Template<BoundType> load(@NotNull TypeRef<BoundType> type,
-                                                                @NotNull String name) {
+    public static @NotNull <T> Template<T> loadBytes(@NotNull ITypeRef<T> type,
+                                                     byte @NotNull [] bytes) {
+        return DEFAULTS.loadBytes(type, bytes);
+    }
+
+    public static @NotNull <T> Template<T> load(@NotNull ITypeRef<T> type,
+                                                @NotNull String name) {
         return DEFAULTS.load(type, name);
     }
 
-    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull TypeRef<BoundType> type,
-                                                                    @NotNull File file) {
+    public static @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+                                                    @NotNull File file) {
         return DEFAULTS.loadFile(type, file);
     }
 
-    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull TypeRef<BoundType> type,
-                                                                    @NotNull Path path) {
+    public static @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+                                                    @NotNull Path path) {
         return DEFAULTS.loadFile(type, path);
     }
 
-    public static @NotNull <BoundType> Template<BoundType> load(@NotNull Class<BoundType> type,
-                                                                @NotNull String name) {
+    public static @NotNull <T> Template<T> load(@NotNull TypeRef<T> type,
+                                                @NotNull String name) {
         return DEFAULTS.load(type, name);
     }
 
-    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull Class<BoundType> type,
-                                                                    @NotNull File file) {
+    public static @NotNull <T> Template<T> loadFile(@NotNull TypeRef<T> type,
+                                                    @NotNull File file) {
         return DEFAULTS.loadFile(type, file);
     }
 
-    public static @NotNull <BoundType> Template<BoundType> loadFile(@NotNull Class<BoundType> type,
-                                                                    @NotNull Path path) {
+    public static @NotNull <T> Template<T> loadFile(@NotNull TypeRef<T> type,
+                                                    @NotNull Path path) {
         return DEFAULTS.loadFile(type, path);
     }
+
+    public static @NotNull <T> Template<T> loadBytes(@NotNull Class<T> type,
+                                                     byte @NotNull [] bytes) {
+        return DEFAULTS.loadBytes(type, bytes);
+    }
+
+    public static @NotNull <T> Template<T> load(@NotNull Class<T> type,
+                                                @NotNull String name) {
+        return DEFAULTS.load(type, name);
+    }
+
+    public static @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
+                                                    @NotNull File file) {
+        return DEFAULTS.loadFile(type, file);
+    }
+
+    public static @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
+                                                    @NotNull Path path) {
+        return DEFAULTS.loadFile(type, path);
+    }
+
+    public static ParsedTemplate parseBytes(byte[] bytes) {
+        return DEFAULTS.parseBytes(bytes);
+    }
+
 
     public static @NotNull ParsedTemplate parse(@NotNull String name) {
         return DEFAULTS.parse(name);

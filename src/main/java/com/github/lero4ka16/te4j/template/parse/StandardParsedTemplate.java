@@ -22,6 +22,8 @@ import com.github.lero4ka16.te4j.template.compiler.TemplateCompiler;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -50,12 +52,13 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     }
 
     @Override
-    public <BoundType> Template<BoundType> compile(ModifyWatcherManager modifyWatcherManager,
-                                                   String parentFile, String file,
-                                                   ITypeRef<BoundType> type) {
-        Template<BoundType> result = TemplateCompiler.getInstance().compile(context, this, type, parentFile);
+    public <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
+                                   @NotNull String parentFile,
+                                   @Nullable String file,
+                                   @NotNull ITypeRef<T> type) {
+        Template<T> result = TemplateCompiler.INSTANCE.compile(context, this, type, parentFile);
 
-        if (modifyWatcherManager != null) {
+        if (modifyWatcherManager != null && file != null) {
             result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, file);
         }
 
