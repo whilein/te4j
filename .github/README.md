@@ -119,7 +119,7 @@ dependencies {
 ## Build the project
 
 1. Execute `./gradlew build`
-2. Output file located at `output/te4j.jar`
+2. Output file located at `build/libs/te4j.jar`
 
 ## Contact
 
