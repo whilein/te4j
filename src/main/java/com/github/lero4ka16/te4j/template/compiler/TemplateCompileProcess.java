@@ -17,14 +17,12 @@
 package com.github.lero4ka16.te4j.template.compiler;
 
 import com.github.lero4ka16.te4j.Te4j;
-import com.github.lero4ka16.te4j.expression.Expression;
-import com.github.lero4ka16.te4j.expression.ExpressionList;
-import com.github.lero4ka16.te4j.expression.ExpressionParser;
-import com.github.lero4ka16.te4j.expression.ExpressionValue;
 import com.github.lero4ka16.te4j.include.IncludeTarget;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
 import com.github.lero4ka16.te4j.template.compiler.code.RenderCode;
+import com.github.lero4ka16.te4j.template.compiler.exp.ExpParsedList;
+import com.github.lero4ka16.te4j.template.compiler.exp.ExpParser;
 import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.DefaultCompiledPath;
 import com.github.lero4ka16.te4j.template.compiler.path.IncludeCompiledPath;
@@ -98,7 +96,7 @@ public class TemplateCompileProcess<T> {
     private final PrimaryEnvironment primaryEnvironment;
     private final Map<String, Environment> environments = new HashMap<>();
 
-    private final ExpressionParser expressionParser;
+    private final ExpParser expParser;
 
     private AtomicInteger nameCounter;
 
@@ -115,7 +113,7 @@ public class TemplateCompileProcess<T> {
         this.context = context;
 
         this.template = template;
-        this.expressionParser = new ExpressionParser(this::compilePathAccessor);
+        this.expParser = new ExpParser(this::compilePathAccessor);
 
         this.javaCompiler = TemplateClassCompiler.current();
         this.javaCompiler.setTemplateType(type.getCanonicalName());
@@ -171,33 +169,12 @@ public class TemplateCompileProcess<T> {
                         ? path.<ValueMethod>getMethod().getValue()
                         : path.<ConditionMethod>getMethod().getCondition();
 
-                Expression exp = expressionParser.parseExpression(value);
-                String result = exp.compile();
-
-                PathAccessor newAccessor;
-
-                if (exp instanceof ExpressionValue) {
-                    ExpressionValue expValue = (ExpressionValue) exp;
-                    PathAccessor oldAccessor = expValue.getAccessor();
-
-                    if (oldAccessor.getAccessor().equals(result)) {
-                        newAccessor = oldAccessor;
-                    } else {
-                        newAccessor = new PathAccessor(exp.getObjectType(), result);
-                    }
-                } else {
-                    newAccessor = new PathAccessor(exp.getObjectType(), result);
-                }
-
-                return new DefaultCompiledPath(id, newAccessor, path);
+                return new DefaultCompiledPath(id, expParser.recompile(value), path);
             }
             default:
                 String value = path.<ForeachMethod>getMethod().getPath();
 
-                Expression exp = expressionParser.parseExpression(value);
-                String result = exp.compile();
-
-                return new DefaultCompiledPath(id, new PathAccessor(exp.getObjectType(), result), path);
+                return new DefaultCompiledPath(id, expParser.recompile(value), path);
         }
     }
 
@@ -256,15 +233,10 @@ public class TemplateCompileProcess<T> {
                     type = (Class<?>) info.getType();
                     values = type.getEnumConstants();
                 } else {
-                    Expression exp = expressionParser.parseExpression(from);
+                    ExpParsedList parsedList = expParser.parseList(from);
 
-                    if (!(exp instanceof ExpressionList)) {
-                        throw new UnsupportedOperationException();
-                    }
-
-                    ExpressionList expList = (ExpressionList) exp;
-                    values = expList.toArray();
-                    type = expList.getObjectType().getComponentType();
+                    values = parsedList.getValues();
+                    type = parsedList.getType();
                 }
 
                 SwitchCase oldSwitchCase = currentSwitchCase;

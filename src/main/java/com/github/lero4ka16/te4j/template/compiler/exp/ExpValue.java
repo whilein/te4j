@@ -14,43 +14,43 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.type.NullTypeInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public final class ExpressionValue extends Expression {
+final class ExpValue extends Exp {
 
     private final PathAccessor accessor;
 
     private final String value;
     private final TypeInfo objectType;
 
-    private final ExpressionReturnType type;
+    private final ExpReturnType type;
 
-    public ExpressionValue(PathAccessor accessor, ExpressionNegation negation) {
+    public ExpValue(PathAccessor accessor, ExpNegation negation) {
         this.accessor = accessor;
         this.value = negation.getPrefix() + accessor.getAccessor();
 
         this.objectType = accessor.getReturnType();
 
         if (objectType instanceof NullTypeInfo) {
-            this.type = ExpressionReturnType.NULL;
+            this.type = ExpReturnType.NULL;
         } else if (objectType.getType() instanceof Class) {
             Class<?> cls = (Class<?>) objectType.getType();
 
             if (cls == String.class) {
-                this.type = ExpressionReturnType.STRING;
+                this.type = ExpReturnType.STRING;
             } else if (cls == boolean.class || cls == Boolean.class) {
-                this.type = ExpressionReturnType.LOGICAL;
+                this.type = ExpReturnType.LOGICAL;
             } else if (!cls.isArray() && (cls.isPrimitive() || Number.class.isAssignableFrom(cls))) {
-                this.type = ExpressionReturnType.NUMERICAL;
+                this.type = ExpReturnType.NUMERICAL;
             } else {
-                this.type = ExpressionReturnType.OBJECT;
+                this.type = ExpReturnType.OBJECT;
             }
         } else {
-            this.type = ExpressionReturnType.OBJECT;
+            this.type = ExpReturnType.OBJECT;
         }
     }
 
@@ -59,7 +59,7 @@ public final class ExpressionValue extends Expression {
     }
 
     @Override
-    public ExpressionReturnType getReturnType() {
+    public ExpReturnType getReturnType() {
         return type;
     }
 

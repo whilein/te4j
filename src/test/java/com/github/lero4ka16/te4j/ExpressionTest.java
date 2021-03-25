@@ -16,13 +16,7 @@
 
 package com.github.lero4ka16.te4j;
 
-import com.github.lero4ka16.te4j.expression.Expression;
-import com.github.lero4ka16.te4j.expression.ExpressionList;
-import com.github.lero4ka16.te4j.expression.ExpressionNumber;
-import com.github.lero4ka16.te4j.expression.ExpressionParentheses;
-import com.github.lero4ka16.te4j.expression.ExpressionParser;
-import com.github.lero4ka16.te4j.expression.ExpressionString;
-import com.github.lero4ka16.te4j.expression.ExpressionValue;
+import com.github.lero4ka16.te4j.template.compiler.exp.ExpParser;
 import com.github.lero4ka16.te4j.template.compiler.path.PathAccessor;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import org.junit.jupiter.api.Test;
@@ -34,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class ExpressionTest {
 
-    private final ExpressionParser parser = new ExpressionParser(
+    private final ExpParser parser = new ExpParser(
             value -> {
                 if (value.equals("message")) {
                     return new PathAccessor(GenericInfo.STRING, "getMessage()");
@@ -50,49 +44,27 @@ public class ExpressionTest {
 
     @Test
     public void expBooleanNegate() {
-        Expression exp = parser.parseExpression("!condition");
-        assertEquals(ExpressionValue.class, exp.getClass());
-        assertEquals("!isCondition()", exp.compile());
+        assertEquals("!isCondition()", parser.recompile("!condition").getAccessor());
     }
 
     @Test
     public void expList() {
-        Expression exp = parser.parseExpression("[1, 2, 3, 4, 5]");
-        assertEquals(ExpressionList.class, exp.getClass());
-        assertEquals("new java.lang.Object[] {1,2,3,4,5}", exp.compile());
+        assertEquals("new java.lang.Object[] {1,2,3,4,5}", parser.recompile("[1, 2, 3, 4, 5]").getAccessor());
     }
 
     @Test
     public void testIntEquals() {
-        Expression equals = parser.parseExpression("1 == 5");
-        assertEquals(ExpressionParentheses.class, equals.getClass());
-        assertEquals("(1==5)", equals.compile());
+        assertEquals("(1==5)", parser.recompile("1 == 5").getAccessor());
     }
 
     @Test
     public void testObjectEquals() {
-        Expression equals = parser.parseExpression("message == \"Hello world!\"");
-        assertEquals(ExpressionParentheses.class, equals.getClass());
-        assertEquals("(getMessage().equals(\"Hello world!\"))", equals.compile());
+        assertEquals("(getMessage().equals(\"Hello world!\"))", parser.recompile("message == \"Hello world!\"").getAccessor());
     }
 
     @Test
     public void expValue() {
-        Expression exp = parser.parseExpression("message");
-        assertEquals(ExpressionValue.class, exp.getClass());
-        assertEquals(GenericInfo.STRING, exp.getObjectType());
-        assertEquals("getMessage()", exp.compile());
-    }
-
-    @Test
-    public void expString() {
-        assertEquals(ExpressionString.class, parser.parseExpression("\"Hello world!\"").getClass());
-    }
-
-    @Test
-    public void expNumber() {
-        assertEquals(ExpressionNumber.class, parser.parseExpression("12345").getClass());
-        assertEquals(ExpressionNumber.class, parser.parseExpression("-12345").getClass());
+        assertEquals("getMessage()", parser.recompile("message").getAccessor());
     }
 
 }

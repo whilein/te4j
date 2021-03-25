@@ -14,17 +14,17 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public abstract class Expression {
+abstract class Exp {
 
     protected String filter;
 
-    public abstract ExpressionReturnType getReturnType();
+    public abstract ExpReturnType getReturnType();
 
-    public void addFilter(String filter) {
+    void addFilter(String filter) {
         if (this.filter == null) this.filter = filter;
         else this.filter += ":" + filter;
     }

@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public final class ExpressionString extends Expression {
+final class ExpString extends Exp {
 
     private final String value;
 
-    public ExpressionString(String value) {
+    public ExpString(String value) {
         this.value = value;
     }
 
@@ -32,8 +32,8 @@ public final class ExpressionString extends Expression {
     }
 
     @Override
-    public ExpressionReturnType getReturnType() {
-        return ExpressionReturnType.STRING;
+    public ExpReturnType getReturnType() {
+        return ExpReturnType.STRING;
     }
 
     @Override

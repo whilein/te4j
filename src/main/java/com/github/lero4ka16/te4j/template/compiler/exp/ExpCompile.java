@@ -14,26 +14,26 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.Te4j;
 
 import java.util.LinkedList;
 
-public final class ExpCompile {
+final class ExpCompile {
 
-    private final Expression[] expression;
+    private final Exp[] exp;
     private final LinkedList<String> tokens;
 
     private int position;
 
-    public ExpCompile(Expression[] expression, LinkedList<String> tokens) {
-        this.expression = expression;
+    public ExpCompile(Exp[] exp, LinkedList<String> tokens) {
+        this.exp = exp;
         this.tokens = tokens;
     }
 
-    public Expression[] getExpression() {
-        return expression;
+    public Exp[] getExpression() {
+        return exp;
     }
 
     public LinkedList<String> getTokens() {
@@ -48,26 +48,26 @@ public final class ExpCompile {
         position++;
     }
 
-    public Expression getPrevious() {
-        return expression[position - 1];
+    public Exp getPrevious() {
+        return exp[position - 1];
     }
 
-    public static String singleton(Expression exp) {
-        ExpCompile compile = new ExpCompile(new Expression[]{exp}, new LinkedList<>());
+    public static String singleton(Exp exp) {
+        ExpCompile compile = new ExpCompile(new Exp[]{exp}, new LinkedList<>());
         exp.compile(compile);
 
         return compile.toString();
     }
 
     public void compile() {
-        while (position < expression.length) {
-            expression[position].compile(this);
+        while (position < exp.length) {
+            exp[position].compile(this);
             position++;
         }
     }
 
-    public Expression getNext() {
-        return expression[position + 1];
+    public Exp getNext() {
+        return exp[position + 1];
     }
 
     public String toString() {

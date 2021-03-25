@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.util.formatter.TextFormatter;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
@@ -23,12 +23,12 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
-public final class ExpressionList extends Expression {
+final class ExpList extends Exp {
 
     private final TypeInfo type;
-    private final Expression[] inner;
+    private final Exp[] inner;
 
-    public ExpressionList(Class<?> type, Expression[] inner) {
+    public ExpList(Class<?> type, Exp[] inner) {
         Class<?> arrayType;
 
         if (type == Object.class) {
@@ -45,18 +45,18 @@ public final class ExpressionList extends Expression {
         Object[] result = new Object[inner.length];
 
         for (int i = 0; i < result.length; i++) {
-            Expression element = inner[i];
+            Exp element = inner[i];
 
-            if (element instanceof ExpressionParentheses) {
-                ExpressionParentheses parentheses = (ExpressionParentheses) element;
+            if (element instanceof ExpParentheses) {
+                ExpParentheses parentheses = (ExpParentheses) element;
 
                 if (parentheses.canOpenParentheses()) {
                     element = parentheses.openParentheses();
                 }
             }
 
-            if (element instanceof ExpressionString) {
-                result[i] = new TextFormatter(((ExpressionString) element).getValue()).format();
+            if (element instanceof ExpString) {
+                result[i] = new TextFormatter(((ExpString) element).getValue()).format();
             } else {
                 throw new UnsupportedOperationException(element.getClass().getSimpleName() + " is unsupported, sorry");
             }
@@ -66,8 +66,8 @@ public final class ExpressionList extends Expression {
     }
 
     @Override
-    public ExpressionReturnType getReturnType() {
-        return ExpressionReturnType.OBJECT;
+    public ExpReturnType getReturnType() {
+        return ExpReturnType.OBJECT;
     }
 
     @Override

@@ -14,36 +14,32 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
-public final class ExpressionNumber extends Expression {
+final class ExpEnum extends Exp {
 
-    private final String number;
+    private final String value;
 
-    public ExpressionNumber(String number) {
-        this.number = number;
-    }
-
-    public String getNumber() {
-        return number;
+    public ExpEnum(String value) {
+        this.value = value;
     }
 
     @Override
-    public ExpressionReturnType getReturnType() {
-        return ExpressionReturnType.NUMERICAL;
+    public ExpReturnType getReturnType() {
+        return ExpReturnType.ENUM;
     }
 
     @Override
     public TypeInfo getObjectType() {
-        return GenericInfo.NUMBER;
+        return GenericInfo.STRING;
     }
 
     @Override
     protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, number);
+        compile.appendFiltered(filter, value);
     }
 
 }

@@ -14,34 +14,27 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
 /**
  * @author lero4ka16
  */
-public enum ExpressionNegation {
+public final class ExpParsedList {
 
-    LOGICAL("!"), NUMERICAL("-"), NONE("");
+    private final Class<?> type;
+    private final Object[] values;
 
-    private final String prefix;
-
-    ExpressionNegation(String prefix) {
-        this.prefix = prefix;
+    public ExpParsedList(Class<?> type, Object[] values) {
+        this.type = type;
+        this.values = values;
     }
 
-    public String getPrefix() {
-        return prefix;
+    public Class<?> getType() {
+        return type;
     }
 
-    public static ExpressionNegation byChar(int ch) {
-        switch (ch) {
-            case '!':
-                return LOGICAL;
-            case '-':
-                return NUMERICAL;
-            default:
-                return NONE;
-        }
+    public Object[] getValues() {
+        return values;
     }
 
 }

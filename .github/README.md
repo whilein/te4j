@@ -30,16 +30,23 @@
 
 ## About the project
 
-Te4j (Template Engine For Java) - Fast, lightweight and easy template engine
+Te4j (Template Engine For Java) - Fastest and easy template engine
 
-There are no any dependencies in the jar, works really fast, simple syntax
+### Pros:
+
+- Extremely fast (`127k` renders per second on 4790K)
+- Easy and simple syntax
+- No dependencies
+-
 
 ## Benchmarks
+
 ![](https://github.com/lero4ka16/template-benchmark/raw/master/results.png)
 
-[Click to open sourcecode](https://github.com/lero4ka16/template-benchmark)
+[Click me](https://github.com/lero4ka16/template-benchmark)
 
 ## Example
+
 ```html
 <p>Message: ^^ message ^^</p>
 ```
@@ -51,9 +58,9 @@ class Pojo {
     }
 }
 
-    Pojo pojo = new Pojo();
+Pojo pojo = new Pojo();
 
-    Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
+Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
 String result = template.renderAsString(pojo);
 // result = <p>Message: Hello world!</p>
 ```
@@ -80,7 +87,7 @@ TemplateContext ctx = Te4j.custom()
         .enableHotReloading()
         .build();
 
-        Template<Pojo> template = ctx.load(Pojo.class, "index.html");
+Template<Pojo> template = ctx.load(Pojo.class, "index.html");
 ```
 
 More examples in docs

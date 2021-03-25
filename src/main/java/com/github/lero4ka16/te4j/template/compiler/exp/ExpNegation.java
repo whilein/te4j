@@ -14,24 +14,34 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.expression;
+package com.github.lero4ka16.te4j.template.compiler.exp;
 
-import java.util.Set;
+/**
+ * @author lero4ka16
+ */
+enum ExpNegation {
 
-public enum ExpressionReturnType {
+    LOGICAL("!"), NUMERICAL("-"), NONE("");
 
-    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
+    private final String prefix;
 
-    public static final ExpressionReturnType[] VALUES = values();
+    ExpNegation(String prefix) {
+        this.prefix = prefix;
+    }
 
-    public static ExpressionReturnType getPriorityType(Set<ExpressionReturnType> types) {
-        for (ExpressionReturnType type : VALUES) {
-            if (types.contains(type)) {
-                return type;
-            }
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public static ExpNegation byChar(int ch) {
+        switch (ch) {
+            case '!':
+                return LOGICAL;
+            case '-':
+                return NUMERICAL;
+            default:
+                return NONE;
         }
-
-        return null;
     }
 
 }
