@@ -20,15 +20,18 @@ import com.github.lero4ka16.te4j.modifiable.Modifiable;
 import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
+import com.github.lero4ka16.te4j.template.source.TemplateSource;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author lero4ka16
@@ -55,26 +58,26 @@ public abstract class Template<T> {
                                                    @NotNull TemplateContext context,
                                                    @NotNull Template<T> template,
                                                    @NotNull ITypeRef<T> type,
-                                                   @Nullable String file) {
-        return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, file);
+                                                   @NotNull TemplateSource source) {
+        return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, source);
     }
 
     private static class HotReloadingWrapper<T> extends Template<T> implements Modifiable {
 
         private final TemplateContext context;
         private final ITypeRef<T> type;
-        private final String file;
+        private final TemplateSource source;
 
         private volatile boolean locked;
         private volatile Template<T> handle;
 
         public HotReloadingWrapper(ModifyWatcherManager modifyWatcherManager,
                                    TemplateContext context, ITypeRef<T> type,
-                                   Template<T> handle, String file) {
+                                   Template<T> handle, TemplateSource source) {
             this.handle = handle;
-            this.context = context;
+            this.context = context.copy().disableHotReloading().build();
+            this.source = source;
             this.type = type;
-            this.file = file;
 
             modifyWatcherManager.register(this);
         }
@@ -84,8 +87,10 @@ public abstract class Template<T> {
         }
 
         public void handleModify() {
+            awaitUnlock();
+
             locked = true;
-            handle = context.load(type, file); // fixme: load from bytes may produce error
+            handle = source.load(context, type);
             locked = false;
 
             synchronized (this) {
@@ -106,21 +111,18 @@ public abstract class Template<T> {
         }
 
         @Override
-        public Path[] getFiles() {
+        public List<Path> getFiles() {
             String[] includes = getIncludes();
 
-            boolean hasFile = file != null;
-            Path[] files = new Path[includes.length + (hasFile ? 1 : 0)];
+            List<Path> result = Arrays.stream(includes)
+                    .map(include -> Paths.get(include).toAbsolutePath())
+                    .collect(Collectors.toList());
 
-            for (int i = 0; i < includes.length; i++) {
-                files[i] = Paths.get(includes[i]);
+            if (source.hasPath()) {
+                result.add(source.getPath());
             }
 
-            if (hasFile) {
-                files[files.length - 1] = Paths.get(file);
-            }
-
-            return files;
+            return result;
         }
 
         @Override

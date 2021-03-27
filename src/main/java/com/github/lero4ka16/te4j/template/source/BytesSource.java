@@ -14,40 +14,37 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.modifiable;
+package com.github.lero4ka16.te4j.template.source;
 
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
+import com.github.lero4ka16.te4j.template.Template;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
+
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author lero4ka16
  */
-public final class ModifiableReference extends WeakReference<Modifiable> {
+public final class BytesSource implements TemplateSource {
 
-    private volatile List<Path> files;
+    private final byte[] bytes;
 
-    public ModifiableReference(Modifiable referent, ReferenceQueue<Modifiable> queue) {
-        super(referent, queue);
-
-        files = referent.getFiles();
+    public BytesSource(byte[] bytes) {
+        this.bytes = bytes;
     }
 
-    public boolean handleModify() {
-        Modifiable modifiable = get();
-
-        if (modifiable != null) {
-            modifiable.handleModify();
-            files = modifiable.getFiles();
-
-            return true;
-        }
-
+    @Override
+    public boolean hasPath() {
         return false;
     }
 
-    public List<Path> getFiles() {
-        return files;
+    @Override
+    public Path getPath() {
+        return null;
+    }
+
+    @Override
+    public <T> Template<T> load(TemplateContext ctx, ITypeRef<T> type) {
+        return ctx.loadBytes(type, bytes);
     }
 }

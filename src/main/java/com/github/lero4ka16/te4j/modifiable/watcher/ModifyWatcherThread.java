@@ -16,6 +16,7 @@
 
 package com.github.lero4ka16.te4j.modifiable.watcher;
 
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -46,7 +47,9 @@ final class ModifyWatcherThread extends Thread {
 
                 key.reset();
             }
-        } catch (Throwable ignored) {
+        } catch (ClosedWatchServiceException ignored) {
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 }

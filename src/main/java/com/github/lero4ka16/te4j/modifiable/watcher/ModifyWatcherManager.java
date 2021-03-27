@@ -25,7 +25,9 @@ import java.lang.ref.ReferenceQueue;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.WatchService;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -52,6 +54,14 @@ public final class ModifyWatcherManager {
         return watcher;
     }
 
+    public synchronized void terminate() {
+        try {
+            watcher.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void cleanup() {
         Reference<? extends Modifiable> reference;
 
@@ -59,16 +69,7 @@ public final class ModifyWatcherManager {
             ModifiableReference modifiable = (ModifiableReference) reference;
 
             for (Path path : modifiable.getFiles()) {
-                Path abs = path.toAbsolutePath();
-                Path absParent = abs.getParent();
-
-                ModifyWatcherDirectory directory = directories.get(absParent);
-                directory.removeFile(abs);
-
-                if (!directory.hasFiles()) {
-                    directory.remove();
-                    directories.remove(absParent);
-                }
+                remove(modifiable, path);
             }
         }
     }
@@ -82,27 +83,58 @@ public final class ModifyWatcherManager {
         ModifyWatcherDirectory directory = directories.get(absParent);
         if (directory == null) return;
 
-        ModifiableReference file = directory.getFile(abs);
-        if (file == null) return;
+        for (ModifiableReference reference : directory.getFiles(abs)) {
+            List<Path> oldFiles = reference.getFiles();
+            if (!reference.handleModify()) return;
+            List<Path> newFiles = reference.getFiles();
 
-        file.handleModify();
+            List<Path> addedFiles = new ArrayList<>(newFiles);
+            addedFiles.removeAll(oldFiles);
+
+            List<Path> removedFiles = new ArrayList<>(oldFiles);
+            removedFiles.removeAll(newFiles);
+
+            for (Path add : addedFiles) {
+                add(reference, add);
+            }
+
+            for (Path remove : removedFiles) {
+                remove(reference, remove);
+            }
+        }
+    }
+
+    private void add(ModifiableReference modifiable, Path path) {
+        Path parent = path.getParent();
+
+        directories.computeIfAbsent(parent, x -> {
+            try {
+                return new ModifyWatcherDirectory(x.register(this.watcher, ENTRY_MODIFY));
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }).addFile(path, modifiable);
+    }
+
+    private void remove(ModifiableReference modifiable, Path path) {
+        Path abs = path.toAbsolutePath();
+        Path absParent = abs.getParent();
+
+        ModifyWatcherDirectory directory = directories.get(absParent);
+        directory.removeFile(abs, modifiable);
+
+        if (!directory.hasFiles()) {
+            directory.remove();
+            directories.remove(absParent);
+        }
     }
 
     public synchronized void register(Modifiable modifiable) {
         ModifiableReference reference = new ModifiableReference(modifiable, queue);
 
         for (Path path : modifiable.getFiles()) {
-            Path abs = path.toAbsolutePath();
-            Path absParent = abs.getParent();
-
-            directories.computeIfAbsent(absParent, parent -> {
-                try {
-                    return new ModifyWatcherDirectory(parent.register(this.watcher, ENTRY_MODIFY));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            }).addFile(abs, reference);
+            add(reference, path);
         }
     }
 

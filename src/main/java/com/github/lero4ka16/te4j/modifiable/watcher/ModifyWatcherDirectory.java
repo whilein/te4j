@@ -20,36 +20,51 @@ import com.github.lero4ka16.te4j.modifiable.ModifiableReference;
 
 import java.nio.file.Path;
 import java.nio.file.WatchKey;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 final class ModifyWatcherDirectory {
 
     private final WatchKey key;
-    private final Map<Path, ModifiableReference> files = new ConcurrentHashMap<>();
+    private final Map<Path, Set<ModifiableReference>> files = new HashMap<>();
 
     public ModifyWatcherDirectory(WatchKey key) {
         this.key = key;
     }
 
-    public boolean hasFiles() {
+    public synchronized boolean hasFiles() {
         return !files.isEmpty();
     }
 
-    public void removeFile(Path path) {
-        files.remove(path);
+    public synchronized void removeFile(Path path, ModifiableReference reference) {
+        Set<ModifiableReference> references = files.get(path);
+
+        if (references == null) {
+            return;
+        }
+
+        references.remove(reference);
+
+        if (references.isEmpty()) {
+            files.remove(path);
+        }
     }
 
     public void remove() {
         key.reset();
     }
 
-    public ModifiableReference getFile(Path path) {
-        return files.get(path);
+    public synchronized Collection<ModifiableReference> getFiles(Path path) {
+        return new ArrayList<>(files.getOrDefault(path, Collections.emptySet()));
     }
 
-    public void addFile(Path path, ModifiableReference reference) {
-        files.put(path, reference);
+    public synchronized void addFile(Path path, ModifiableReference reference) {
+        files.computeIfAbsent(path, x -> new HashSet<>()).add(reference);
     }
 
 }

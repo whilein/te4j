@@ -37,13 +37,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author lero4ka16
@@ -54,6 +51,8 @@ public class TemplateTest {
     private TemplateContext context;
     private TemplateContext trimContext;
     private TemplateContext hotReloadContext;
+
+    private ModifyWatcherManager modifyManager;
 
     private File tests;
 
@@ -66,6 +65,8 @@ public class TemplateTest {
     public void init() {
         dummy = new Object();
 
+        modifyManager = new ModifyWatcherManager();
+
         context = Te4j.custom()
                 .useResources()
                 .replace(Te4j.DEL_ALL)
@@ -77,11 +78,16 @@ public class TemplateTest {
 
         hotReloadContext = Te4j.custom()
                 .replace(Te4j.DEL_ALL)
-                .enableHotReloading(new ModifyWatcherManager())
+                .enableHotReloading(modifyManager)
                 .build();
 
         tests = new File("tests");
         tests.mkdirs();
+    }
+
+    @AfterEach
+    public void finish() {
+        modifyManager.terminate();
     }
 
     @Test
@@ -101,29 +107,40 @@ public class TemplateTest {
 
     @Test
     public void testHotReload() throws InterruptedException {
-        Path plain_1 = Paths.get("tests/hotreload_plain_1.txt");
-        Path plain_2 = Paths.get("tests/hotreload_plain_2.txt");
+        Path plain1 = Paths.get("tests/hotreload_plain_1.txt");
+        Path plain2 = Paths.get("tests/hotreload_plain_2.txt");
+        Path plain3 = Paths.get("tests/hotreload_plain_3.txt");
+        Path plain4 = Paths.get("tests/hotreload_plain_4.txt");
 
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain_1);
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain_2);
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain1);
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain2);
+        copyResource("WEB-INF/hotreload_plain_3.txt", plain3);
+        copyResource("WEB-INF/hotreload_plain_1.txt", plain4);
 
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
-        Template<Object> template_1 = hotReloadContext.loadFile(Object.class, plain_1);
-        Template<Object> template_2 = hotReloadContext.loadFile(Object.class, plain_2);
+        Template<Object> template1 = hotReloadContext.loadFile(Object.class, plain1);
+        Template<Object> template2 = hotReloadContext.loadFile(Object.class, plain2);
+        Template<Object> template3 = hotReloadContext.loadFile(Object.class, plain3);
+        Template<Object> template4 = hotReloadContext.loadString(Object.class, "<* include tests/hotreload_plain_1.txt *>");
 
-        assertEquals("Before hot reload", template_1.renderAsString(dummy));
-        assertEquals("Before hot reload", template_2.renderAsString(dummy));
+        assertEquals("Before hot reload", template1.renderAsString(dummy));
+        assertEquals("Before hot reload", template2.renderAsString(dummy));
+        assertEquals("Before hot reloadBefore hot reload", template3.renderAsString(dummy));
+        assertEquals("Before hot reload", template4.renderAsString(dummy));
 
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain_1);
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain_2);
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain1);
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain2);
+        copyResource("WEB-INF/hotreload_plain_2.txt", plain4);
+        copyResource("WEB-INF/hotreload_plain_4.txt", plain3);
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
-        Thread.sleep(100);
-
-        assertEquals("After hot reload", template_1.renderAsString(dummy));
-        assertEquals("After hot reload", template_2.renderAsString(dummy));
+        Thread.sleep(1000);
+        assertEquals("After hot reload", template1.renderAsString(dummy));
+        assertEquals("After hot reload", template2.renderAsString(dummy));
+        assertEquals("After hot reload", template3.renderAsString(dummy));
+        assertEquals("After hot reload", template4.renderAsString(dummy));
     }
 
     @Test

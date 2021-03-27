@@ -21,6 +21,7 @@ import com.github.lero4ka16.te4j.template.PlainTemplate;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
+import com.github.lero4ka16.te4j.template.source.TemplateSource;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,12 +43,12 @@ public final class PlainParsedTemplate extends ParsedTemplate {
     @Override
     public <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
                                    @NotNull String parentFile,
-                                   @Nullable String file,
+                                   @NotNull TemplateSource source,
                                    @NotNull ITypeRef<T> type) {
         Template<T> result = new PlainTemplate<>(content, offset, length);
 
         if (modifyWatcherManager != null) {
-            result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, file);
+            result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, source);
         }
 
         return result;

@@ -30,8 +30,23 @@ public final class TemplateContextBuilder {
     private int outputTypes;
     private int replace;
 
+    public TemplateContextBuilder() {
+    }
+
+    public TemplateContextBuilder(TemplateContext another) {
+        this.useResources = another.useResources();
+        this.modifyWatcherManager = another.getModifyWatcherManager();
+        this.outputTypes = another.getOutputTypes();
+        this.replace = another.getReplace();
+    }
+
     public TemplateContextBuilder outputTypes(int bits) {
         this.outputTypes = bits;
+        return this;
+    }
+
+    public TemplateContextBuilder disableHotReloading() {
+        this.modifyWatcherManager = null;
         return this;
     }
 

@@ -21,6 +21,9 @@ import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.exception.TemplateLoadException;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.reader.TemplateReader;
+import com.github.lero4ka16.te4j.template.source.BytesSource;
+import com.github.lero4ka16.te4j.template.source.NameSource;
+import com.github.lero4ka16.te4j.template.source.PathSource;
 import com.github.lero4ka16.te4j.util.Utils;
 import com.github.lero4ka16.te4j.util.type.ref.ClassRef;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
@@ -52,6 +55,19 @@ public final class TemplateContext {
         this.modifyWatcherManager = modifyWatcherManager;
         this.outputTypes = outputTypes;
         this.replace = replace;
+    }
+
+    public TemplateContextBuilder copy() {
+        return new TemplateContextBuilder(this);
+    }
+
+
+    public boolean useResources() {
+        return useResources;
+    }
+
+    public ModifyWatcherManager getModifyWatcherManager() {
+        return modifyWatcherManager;
     }
 
     public int getOutputTypes() {
@@ -93,7 +109,7 @@ public final class TemplateContext {
                                               byte @NotNull [] data) {
         return parseBytes(data).compile(
                 useResources ? null : modifyWatcherManager,
-                ".", null, type
+                ".", new BytesSource(data), type
         );
     }
 
@@ -106,7 +122,7 @@ public final class TemplateContext {
                                          @NotNull String name) {
         return parse(name).compile(
                 useResources ? null : modifyWatcherManager,
-                getParent(name), name, type
+                getParent(name), new NameSource(name), type
         );
     }
 
@@ -115,7 +131,7 @@ public final class TemplateContext {
         return parseFile(file).compile(
                 modifyWatcherManager,
                 file.getAbsoluteFile().getParent(),
-                file.getAbsolutePath(),
+                new PathSource(file.getAbsoluteFile().toPath()),
                 type
         );
     }
@@ -125,7 +141,7 @@ public final class TemplateContext {
         return parseFile(path).compile(
                 modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
-                path.toAbsolutePath().toString(),
+                new PathSource(path.toAbsolutePath()),
                 type
         );
     }

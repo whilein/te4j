@@ -32,12 +32,12 @@
 
 Te4j (Template Engine For Java) - Fastest and easy template engine
 
-### Pros:
+### Pros
 - Extremely fast (`127k` renders per second on 4790K)
 - Easy and simple syntax
 - No dependencies
 
-### Cons (`temporary`):
+### Cons (`temporary`)
 
 - No community :(
 - Sometimes really bad code

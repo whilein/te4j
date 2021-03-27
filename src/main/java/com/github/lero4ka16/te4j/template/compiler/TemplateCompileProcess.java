@@ -118,18 +118,6 @@ public class TemplateCompileProcess<T> {
         this.javaCompiler.setTemplateType(type.getCanonicalName());
 
         this.includes = new HashSet<>();
-
-        for (TemplatePath path : template.getPaths()) {
-            if (path.getMethodType() == TemplateMethodType.INCLUDE) {
-                IncludeMethod includeMethod = path.getMethod();
-
-                if (includeMethod.getFile().hasValues()) {
-                    continue;
-                }
-
-                includes.add(parentFile + "/" + includeMethod.getFile().format());
-            }
-        }
     }
 
     public String getPutTemplateContent() {
@@ -211,6 +199,10 @@ public class TemplateCompileProcess<T> {
         return environment.resolve(iterator);
     }
 
+    public String formatFile(String file) {
+        return parentFile.equals(".") ? file : parentFile + "/" + file;
+    }
+
     public void writePath(AbstractCompiledPath path, RenderCode out) {
         switch (path.getMethodType()) {
             case VALUE: {
@@ -289,12 +281,14 @@ public class TemplateCompileProcess<T> {
                         fileName = file.format();
                     }
 
-                    includes.add(parentFile + "/" + fileName);
                 } else {
                     fileName = file.format();
                 }
 
-                ParsedTemplate template = context.parse(parentFile + "/" + fileName);
+                fileName = formatFile(fileName);
+                includes.add(fileName);
+
+                ParsedTemplate template = context.parse(fileName);
 
                 if (template.hasPaths()) {
                     out.appendTemplate(template);
@@ -524,7 +518,7 @@ public class TemplateCompileProcess<T> {
             }
 
             includeBuilder.append('"');
-            includeBuilder.append(new TextFormatter(parentFile + "/" + include).format());
+            includeBuilder.append(new TextFormatter(include).format());
             includeBuilder.append('"');
         }
 

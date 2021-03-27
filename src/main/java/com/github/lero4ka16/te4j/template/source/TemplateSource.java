@@ -14,18 +14,23 @@
  *    limitations under the License.
  */
 
-package com.github.lero4ka16.te4j.modifiable;
+package com.github.lero4ka16.te4j.template.source;
+
+import com.github.lero4ka16.te4j.template.Template;
+import com.github.lero4ka16.te4j.template.context.TemplateContext;
+import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author lero4ka16
  */
-public interface Modifiable {
+public interface TemplateSource {
 
-    List<Path> getFiles();
+    boolean hasPath();
 
-    void handleModify();
+    Path getPath();
+
+    <T> Template<T> load(TemplateContext ctx, ITypeRef<T> type);
 
 }
