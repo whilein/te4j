@@ -116,7 +116,7 @@ More examples in docs
     <dependency>
         <groupId>com.github.lero4ka16</groupId>
         <artifactId>te4j</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </dependency>
 </dependencies>
 ```
@@ -124,7 +124,7 @@ More examples in docs
 ### Gradle
 ```groovy
 dependencies {
-    implementation 'com.github.lero4ka16:te4j:1.1.0'
+    implementation 'com.github.lero4ka16:te4j:1.1.1'
 }
 ```
 
