@@ -45,6 +45,12 @@ public abstract class ParsedTemplate {
 
     public ParsedTemplate(TemplateContext context, byte[] content,
                           int offset, int length) {
+        if (offset == 0 && length == 0 && content.length == 0) {
+            System.out.println("DEBUG: " + new String(content));
+
+            throw new IllegalArgumentException("template is empty");
+        }
+
         if (offset < 0 || offset >= content.length) {
             throw new IllegalArgumentException("offset must be between 0 and "
                     + content.length + " inclusive, but " + offset);
