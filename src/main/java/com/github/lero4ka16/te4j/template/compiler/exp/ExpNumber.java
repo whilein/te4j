@@ -43,7 +43,7 @@ final class ExpNumber extends Exp {
 
     @Override
     protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, number);
+        compile.appendFiltered(filters, number);
     }
 
 }

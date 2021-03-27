@@ -85,7 +85,7 @@ final class ExpList extends Exp {
         }
 
         sb.append('}');
-        compile.appendFiltered(filter, sb.toString());
+        compile.appendFiltered(filters, sb.toString());
     }
 
 

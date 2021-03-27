@@ -23,8 +23,6 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class TemplateOutput {
 
-    private static final byte[] ARRAY_DELIMITER = ", ".getBytes(StandardCharsets.UTF_8);
-
     static final int[] INT_UNITS = new int[]{
             1, 10, 100,
             1_000, 10_000, 100_000,

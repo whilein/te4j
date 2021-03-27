@@ -18,15 +18,21 @@ package com.github.lero4ka16.te4j.template.compiler.exp;
 
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
 
+import java.util.LinkedList;
+import java.util.List;
+
 abstract class Exp {
 
-    protected String filter;
+    protected List<String> filters;
 
     public abstract ExpReturnType getReturnType();
 
     void addFilter(String filter) {
-        if (this.filter == null) this.filter = filter;
-        else this.filter += ":" + filter;
+        if (filters == null) {
+            filters = new LinkedList<>();
+        }
+
+        filters.add(filter);
     }
 
     public String compile() {

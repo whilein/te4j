@@ -36,6 +36,7 @@ import com.github.lero4ka16.te4j.filter.impl.Trim;
 import com.github.lero4ka16.te4j.filter.impl.Upper;
 import com.github.lero4ka16.te4j.filter.impl.Wrap;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -83,14 +84,12 @@ public final class Filters {
         filters.put(filter.getName(), filter);
     }
 
-    public String applyFilters(String filters, String value) {
+    public String applyFilters(List<String> filters, String value) {
         if (filters == null) {
             return value;
         }
 
-        String[] filterArray = filters.split(":");
-
-        for (String filterName : filterArray) {
+        for (String filterName : filters) {
             Filter filter = get(filterName);
 
             if (filter == null) {

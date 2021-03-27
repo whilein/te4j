@@ -39,7 +39,7 @@ final class ExpEnum extends Exp {
 
     @Override
     protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filter, value);
+        compile.appendFiltered(filters, value);
     }
 
 }

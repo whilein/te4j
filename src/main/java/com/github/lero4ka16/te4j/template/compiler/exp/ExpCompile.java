@@ -19,6 +19,7 @@ package com.github.lero4ka16.te4j.template.compiler.exp;
 import com.github.lero4ka16.te4j.Te4j;
 
 import java.util.LinkedList;
+import java.util.List;
 
 final class ExpCompile {
 
@@ -75,7 +76,6 @@ final class ExpCompile {
     }
 
     public void appendBeforePrevious(String value) {
-        // костыль :)))
         String removed = tokens.removeLast();
         tokens.addLast(value);
         tokens.addLast(removed);
@@ -85,7 +85,7 @@ final class ExpCompile {
         tokens.add(value);
     }
 
-    public void appendFiltered(String filter, String value) {
-        append(Te4j.getFilters().applyFilters(filter, value));
+    public void appendFiltered(List<String> filters, String value) {
+        append(Te4j.getFilters().applyFilters(filters, value));
     }
 }
