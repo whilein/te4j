@@ -121,7 +121,6 @@ final class TemplateClassCompiler {
             return cls;
         } finally {
             Utils.deleteDirectory(out);
-
             clearContent();
         }
     }

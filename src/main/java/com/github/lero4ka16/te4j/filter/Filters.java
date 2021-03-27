@@ -31,6 +31,7 @@ import com.github.lero4ka16.te4j.filter.impl.Shuffle;
 import com.github.lero4ka16.te4j.filter.impl.Sort;
 import com.github.lero4ka16.te4j.filter.impl.StripTags;
 import com.github.lero4ka16.te4j.filter.impl.Sum;
+import com.github.lero4ka16.te4j.filter.impl.ToString;
 import com.github.lero4ka16.te4j.filter.impl.Trim;
 import com.github.lero4ka16.te4j.filter.impl.Upper;
 import com.github.lero4ka16.te4j.filter.impl.Wrap;
@@ -71,6 +72,7 @@ public final class Filters {
         add(new Average());
         add(new Hex());
         add(new EscapeTags());
+        add(new ToString());
     }
 
     public Filter get(String name) {

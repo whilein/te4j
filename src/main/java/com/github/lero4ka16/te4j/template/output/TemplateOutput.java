@@ -16,9 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.output;
 
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 /**
  * @author lero4ka16
@@ -166,45 +164,7 @@ public abstract class TemplateOutput {
     }
 
     public void put(Object object) {
-        Class<?> cls = object.getClass();
-
-        if (cls.isArray()) {
-            Class<?> type = cls.getComponentType();
-
-            if (type.isPrimitive()) {
-                if (type == byte.class) {
-                    put(Arrays.toString((byte[]) object));
-                } else if (type == short.class) {
-                    put(Arrays.toString((short[]) object));
-                } else if (type == int.class) {
-                    put(Arrays.toString((int[]) object));
-                } else if (type == long.class) {
-                    put(Arrays.toString((long[]) object));
-                } else if (type == float.class) {
-                    put(Arrays.toString((float[]) object));
-                } else if (type == double.class) {
-                    put(Arrays.toString((double[]) object));
-                } else if (type == boolean.class) {
-                    put(Arrays.toString((boolean[]) object));
-                } else if (type == char.class) {
-                    put(Arrays.toString((char[]) object));
-                }
-            } else {
-                int len = Array.getLength(object);
-                write('[');
-
-                for (int i = 0; i < len; i++) {
-                    if (i != 0) write(ARRAY_DELIMITER);
-
-                    Object element = Array.get(object, i);
-                    put(element);
-                }
-
-                write(']');
-            }
-        } else {
-            put(String.valueOf(object));
-        }
+        put(String.valueOf(object));
     }
 
     public void put(double d) {

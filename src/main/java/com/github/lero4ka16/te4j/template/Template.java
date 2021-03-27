@@ -20,7 +20,6 @@ import com.github.lero4ka16.te4j.modifiable.Modifiable;
 import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.util.type.ref.ITypeRef;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +40,12 @@ public abstract class Template<T> {
             = ThreadLocal.withInitial(TemplateOutputBuffer::new);
 
     @ApiStatus.Internal
-    protected static final ThreadLocal<TemplateOutputString> stringOptimized
-            = ThreadLocal.withInitial(TemplateOutputString::new);
+    protected static final ThreadLocal<StringBuilder> stringOptimized
+            = ThreadLocal.withInitial(StringBuilder::new);
 
     public abstract @NotNull String[] getIncludes();
 
     public abstract @NotNull String renderAsString(@NotNull T object);
-
     public abstract byte @NotNull [] renderAsBytes(@NotNull T object);
 
     public abstract void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
@@ -87,7 +85,7 @@ public abstract class Template<T> {
 
         public void handleModify() {
             locked = true;
-            handle = context.load(type, file);
+            handle = context.load(type, file); // fixme: load from bytes may produce error
             locked = false;
 
             synchronized (this) {

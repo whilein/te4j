@@ -198,13 +198,13 @@ public class FiltersTest {
 
     @Test
     public void sortTemplate() {
-        testInTemplate(new ArrayPojo(SHUFFLED_INT_ARRAY), ArrayPojo.class, "^^ array:sorted ^^",
+        testInTemplate(new ArrayPojo(SHUFFLED_INT_ARRAY), ArrayPojo.class, "^^ array:sorted:tostr ^^",
                 "[1, 2, 3, 4, 5]", false);
     }
 
     @Test
     public void shuffleTemplate() {
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:shuffle ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:shuffle:tostr ^^",
                 "[1, 2, 3, 4, 5]", true);
     }
 

@@ -16,7 +16,6 @@
 
 package com.github.lero4ka16.te4j.template.compiler.code;
 
-import com.github.lero4ka16.te4j.Te4j;
 import com.github.lero4ka16.te4j.template.compiler.TemplateCompileProcess;
 import com.github.lero4ka16.te4j.template.compiler.path.AbstractCompiledPath;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
@@ -35,6 +34,7 @@ public final class RenderCode {
     private final TemplateCompileProcess<?> process;
 
     private final Map<Integer, byte[]> fieldTextMap = new HashMap<>();
+
     private Integer field;
     private boolean prevText;
 
@@ -139,7 +139,7 @@ public final class RenderCode {
     public void flushText() {
         if (field != null) {
             fieldTextMap.put(field, textBuffer.toByteArray());
-            out.append("out.write(");
+            out.append("out.").append(process.getPutTemplateContent()).append('(');
             out.append(process.getOutputPrefix(process.getOutputType()));
             out.append(field);
             out.append(");");

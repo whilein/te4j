@@ -42,7 +42,6 @@ import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
 import com.github.lero4ka16.te4j.template.output.TemplateOutput;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
-import com.github.lero4ka16.te4j.template.output.TemplateOutputString;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.template.path.TemplatePathIterator;
@@ -74,9 +73,6 @@ public class TemplateCompileProcess<T> {
     private static final String TEMPLATE_OUTPUT_CLASS
             = TemplateOutput.class.getName();
 
-    private static final String TEMPLATE_OUTPUT_STRING_CLASS
-            = TemplateOutputString.class.getName();
-
     private static final String TEMPLATE_OUTPUT_STREAM_CLASS
             = TemplateOutputStream.class.getName();
 
@@ -102,6 +98,9 @@ public class TemplateCompileProcess<T> {
 
     private int outputType;
     private SwitchCase currentSwitchCase;
+
+    private String putUserVariable;
+    private String putTemplateContent;
 
     public TemplateCompileProcess(@NotNull TemplateContext context, @NotNull ParsedTemplate template,
                                   @NotNull ITypeRef<T> type, @NotNull String parentFile) {
@@ -131,6 +130,10 @@ public class TemplateCompileProcess<T> {
                 includes.add(parentFile + "/" + includeMethod.getFile().format());
             }
         }
+    }
+
+    public String getPutTemplateContent() {
+        return putTemplateContent;
     }
 
     public Environment setEnvironment(String name, Environment environment) {
@@ -209,12 +212,11 @@ public class TemplateCompileProcess<T> {
     }
 
     public void writePath(AbstractCompiledPath path, RenderCode out) {
-        String accessorValue = path.getAccessorValue();
-
         switch (path.getMethodType()) {
-            case VALUE:
-                out.appendCodeSegment("out.put(" + accessorValue + ");");
+            case VALUE: {
+                out.appendCodeSegment("out." + putUserVariable + "(" + path.getAccessorValue() + ");");
                 break;
+            }
             case CASE: {
                 SwitchCaseMethod SwitchCaseMethod = path.getMethod();
                 String value = SwitchCaseMethod.getValue();
@@ -244,7 +246,7 @@ public class TemplateCompileProcess<T> {
                 SwitchCase switchCase = new SwitchCase(type);
                 currentSwitchCase = switchCase;
 
-                out.append("switch (").append(accessorValue).append(") {");
+                out.append("switch (").append(path.getAccessorValue()).append(") {");
 
                 for (Object o : values) {
                     switchCase.setValue(o);
@@ -307,7 +309,7 @@ public class TemplateCompileProcess<T> {
                 ParsedTemplate block = method.getBlock();
                 ParsedTemplate elseBlock = method.getElseBlock();
 
-                out.append("if(").append(accessorValue).append("){");
+                out.append("if(").append(path.getAccessorValue()).append("){");
                 out.appendTemplate(block);
 
                 if (elseBlock != null) {
@@ -337,7 +339,7 @@ public class TemplateCompileProcess<T> {
                 LoopEnvironment loop = new LoopEnvironment(counter);
 
                 IterationCode iterationCode = new IterationCode(
-                        id, listType.getName(), accessorValue, counter, template, loop,
+                        id, listType.getName(), path.getAccessorValue(), counter, template, loop,
                         returnType.isArrayList(), returnType.isArray(),
                         !List.class.isAssignableFrom(returnType.getRawType())
                 );
@@ -404,9 +406,19 @@ public class TemplateCompileProcess<T> {
         StringBuilder sb = new StringBuilder();
 
         sb.append("private void render(").append(type.getCanonicalName()).append(" object, ");
-        sb.append(outputType == Te4j.STRING
-                ? TEMPLATE_OUTPUT_STRING_CLASS
-                : TEMPLATE_OUTPUT_CLASS);
+
+        if (outputType == Te4j.STRING) {
+            sb.append("StringBuilder");
+
+            putUserVariable = "append";
+            putTemplateContent = "append";
+        } else {
+            sb.append(TEMPLATE_OUTPUT_CLASS);
+
+            putUserVariable = "put";
+            putTemplateContent = "write";
+        }
+
         sb.append(" out) {");
 
         RenderCode renderCode = new RenderCode(this);
@@ -428,7 +440,7 @@ public class TemplateCompileProcess<T> {
         if (hasBytesOptimization) {
             sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
         } else {
-            sb.append(TEMPLATE_OUTPUT_STRING_CLASS).append(" result = stringOptimized.get();");
+            sb.append("StringBuilder result = stringOptimized.get();");
         }
 
         sb.append("result.reset();");
@@ -444,12 +456,13 @@ public class TemplateCompileProcess<T> {
         sb.append("public String renderAsString(").append(type.getCanonicalName()).append(" object) {");
 
         if (hasStringOptimization) {
-            sb.append(TEMPLATE_OUTPUT_STRING_CLASS).append(" result = stringOptimized.get();");
+            sb.append("StringBuilder result = stringOptimized.get();");
+            sb.append("result.setLength(0);");
         } else {
             sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
+            sb.append("result.reset();");
         }
 
-        sb.append("result.reset();");
         sb.append("render(object, result);");
         sb.append("return result.toString();");
         sb.append("}");
