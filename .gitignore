@@ -1,3 +1,7 @@
 /.gradle/
-/.idea/
 /build/
+/.idea/**
+!/.idea/scopes/
+!/.idea/copyright/
+!/.idea/scopes/**
+!/.idea/copyright/**
