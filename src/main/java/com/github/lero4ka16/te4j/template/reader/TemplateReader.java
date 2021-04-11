@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.reader;
 
-import com.github.lero4ka16.te4j.include.IncludeTarget;
+import com.github.lero4ka16.te4j.include.Include;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
 import com.github.lero4ka16.te4j.template.exception.TemplateException;
 import com.github.lero4ka16.te4j.template.exception.TemplateUnexpectedTokenException;
@@ -198,7 +198,7 @@ public final class TemplateReader {
         switch (methodType) {
             default:
             case INCLUDE: {
-                method = new IncludeMethod(new IncludeTarget(path));
+                method = new IncludeMethod(new Include(path));
                 break;
             }
             case FOR: {

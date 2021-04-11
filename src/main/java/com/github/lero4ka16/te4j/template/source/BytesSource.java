@@ -29,8 +29,12 @@ public final class BytesSource implements TemplateSource {
 
     private final byte[] bytes;
 
-    public BytesSource(byte[] bytes) {
+    private BytesSource(byte[] bytes) {
         this.bytes = bytes;
+    }
+
+    public static TemplateSource create(byte[] bytes) {
+        return new BytesSource(bytes);
     }
 
     @Override

@@ -109,7 +109,7 @@ public final class TemplateContext {
                                               byte @NotNull [] data) {
         return parseBytes(data).compile(
                 useResources ? null : modifyWatcherManager,
-                ".", new BytesSource(data), type
+                ".", BytesSource.create(data), type
         );
     }
 
@@ -122,7 +122,7 @@ public final class TemplateContext {
                                          @NotNull String name) {
         return parse(name).compile(
                 useResources ? null : modifyWatcherManager,
-                getParent(name), new NameSource(name), type
+                getParent(name), NameSource.create(name), type
         );
     }
 
@@ -131,7 +131,7 @@ public final class TemplateContext {
         return parseFile(file).compile(
                 modifyWatcherManager,
                 file.getAbsoluteFile().getParent(),
-                new PathSource(file.getAbsoluteFile().toPath()),
+                PathSource.create(file.getAbsoluteFile().toPath()),
                 type
         );
     }
@@ -141,7 +141,7 @@ public final class TemplateContext {
         return parseFile(path).compile(
                 modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
-                new PathSource(path.toAbsolutePath()),
+                PathSource.create(path.toAbsolutePath()),
                 type
         );
     }

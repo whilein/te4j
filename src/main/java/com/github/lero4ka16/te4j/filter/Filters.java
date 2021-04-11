@@ -16,90 +16,47 @@
 
 package com.github.lero4ka16.te4j.filter;
 
-import com.github.lero4ka16.te4j.filter.impl.Average;
-import com.github.lero4ka16.te4j.filter.impl.Capitalize;
-import com.github.lero4ka16.te4j.filter.impl.Cast;
-import com.github.lero4ka16.te4j.filter.impl.Ceil;
-import com.github.lero4ka16.te4j.filter.impl.EscapeTags;
-import com.github.lero4ka16.te4j.filter.impl.Floor;
-import com.github.lero4ka16.te4j.filter.impl.Hex;
-import com.github.lero4ka16.te4j.filter.impl.Lower;
-import com.github.lero4ka16.te4j.filter.impl.Max;
-import com.github.lero4ka16.te4j.filter.impl.Min;
-import com.github.lero4ka16.te4j.filter.impl.Round;
-import com.github.lero4ka16.te4j.filter.impl.Shuffle;
-import com.github.lero4ka16.te4j.filter.impl.Sort;
-import com.github.lero4ka16.te4j.filter.impl.StripTags;
-import com.github.lero4ka16.te4j.filter.impl.Sum;
-import com.github.lero4ka16.te4j.filter.impl.ToString;
-import com.github.lero4ka16.te4j.filter.impl.Trim;
-import com.github.lero4ka16.te4j.filter.impl.Upper;
-import com.github.lero4ka16.te4j.filter.impl.Wrap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
 /**
  * @author lero4ka16
  */
-public final class Filters {
 
-    private final Map<String, Filter> filters = new ConcurrentHashMap<>();
+public interface Filters {
 
-    public Filters() {
-        add(new Upper());
-        add(new Lower());
-        add(new Capitalize());
-        add(new StripTags());
-        add(new Trim());
-        add(new Sort());
-        add(new Shuffle());
-        add(new Cast("byte"));
-        add(new Cast("boolean"));
-        add(new Cast("short"));
-        add(new Cast("char"));
-        add(new Cast("int"));
-        add(new Cast("long"));
-        add(new Cast("double"));
-        add(new Cast("float"));
-        add(new Wrap());
-        add(new Floor());
-        add(new Ceil());
-        add(new Round());
-        add(new Sum());
-        add(new Max());
-        add(new Min());
-        add(new Average());
-        add(new Hex());
-        add(new EscapeTags());
-        add(new ToString());
-    }
+    /**
+     * Add filter
+     *
+     * @param filter Filter
+     */
+    void add(@NotNull Filter filter);
 
-    public Filter get(String name) {
-        return filters.get(name);
-    }
+    /**
+     * Add default filters
+     */
+    void addDefaults();
 
-    public void add(Filter filter) {
-        filters.put(filter.getName(), filter);
-    }
+    /**
+     * Get filter by name (case sensitive)
+     *
+     * @param name Filter's name
+     * @return Filter
+     */
+    @NotNull Optional<? extends Filter> get(@NotNull String name);
 
-    public String applyFilters(List<String> filters, String value) {
-        if (filters == null) {
-            return value;
-        }
+    /**
+     * Apply filters to string
+     *
+     * @param filters List of filters
+     * @param target  Target string
+     * @return String with applied filters
+     */
 
-        for (String filterName : filters) {
-            Filter filter = get(filterName);
-
-            if (filter == null) {
-                throw new IllegalStateException("Filter not found: " + filterName);
-            }
-
-            value = filter.wrap(value);
-        }
-
-        return value;
-    }
+    // TODO return string with applied filters and return type
+    @NotNull String applyFilters(@Nullable List<String> filters, @NotNull String target);
 
 }

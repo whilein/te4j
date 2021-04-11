@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.compiler.path;
 
-import com.github.lero4ka16.te4j.include.IncludeTarget;
+import com.github.lero4ka16.te4j.include.Include;
 import com.github.lero4ka16.te4j.template.path.TemplatePath;
 import com.github.lero4ka16.te4j.util.type.GenericInfo;
 import com.github.lero4ka16.te4j.util.type.TypeInfo;
@@ -26,15 +26,15 @@ import com.github.lero4ka16.te4j.util.type.TypeInfo;
  */
 public class IncludeCompiledPath extends AbstractCompiledPath {
 
-    private final IncludeTarget file;
+    private final Include file;
 
-    public IncludeCompiledPath(String id, IncludeTarget file, TemplatePath path) {
+    public IncludeCompiledPath(String id, Include file, TemplatePath path) {
         super(id, path);
 
         this.file = file;
     }
 
-    public IncludeTarget getFile() {
+    public Include getFile() {
         return file;
     }
 

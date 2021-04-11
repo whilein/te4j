@@ -30,8 +30,12 @@ public final class NameSource implements TemplateSource {
 
     private final String name;
 
-    public NameSource(String name) {
+    private NameSource(String name) {
         this.name = name;
+    }
+
+    public static TemplateSource create(String name) {
+        return new NameSource(name);
     }
 
     @Override

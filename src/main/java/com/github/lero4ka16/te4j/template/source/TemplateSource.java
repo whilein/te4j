@@ -28,7 +28,6 @@ import java.nio.file.Path;
 public interface TemplateSource {
 
     boolean hasPath();
-
     Path getPath();
 
     <T> Template<T> load(TemplateContext ctx, ITypeRef<T> type);

@@ -27,14 +27,14 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
-public final class IncludeTarget {
+public final class Include {
 
     private final String path;
-    private final List<IncludeParam> values;
+    private final List<IncludeArgument> args;
 
-    public IncludeTarget(String path) {
+    public Include(String path) {
         this.path = path;
-        this.values = new ArrayList<>();
+        this.args = new ArrayList<>();
 
         int begin = 0;
 
@@ -55,11 +55,12 @@ public final class IncludeTarget {
 
     private void add(int from, int to) {
         if (from == to) return;
-        this.values.add(new IncludeParam(this, from, to));
+
+        this.args.add(new IncludeArgument(this, from, to));
     }
 
     public boolean hasValues() {
-        return values.size() != 1;
+        return args.size() != 1;
     }
 
     public String format() {
@@ -100,7 +101,7 @@ public final class IncludeTarget {
     public String format(Object element) {
         StringBuilder sb = new StringBuilder();
 
-        for (IncludeParam value : values) {
+        for (IncludeArgument value : args) {
             if (value.isExpression()) {
                 sb.append(resolve(value.getExpression(), element));
             } else {

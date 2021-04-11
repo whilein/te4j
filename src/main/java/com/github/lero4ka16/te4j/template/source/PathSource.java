@@ -29,8 +29,12 @@ public final class PathSource implements TemplateSource {
 
     private final Path path;
 
-    public PathSource(Path path) {
-        this.path = path.toAbsolutePath();
+    private PathSource(Path path) {
+        this.path = path;
+    }
+
+    public static TemplateSource create(Path path) {
+        return new PathSource(path.toAbsolutePath());
     }
 
     @Override

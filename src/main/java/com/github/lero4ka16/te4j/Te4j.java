@@ -17,6 +17,7 @@
 package com.github.lero4ka16.te4j;
 
 import com.github.lero4ka16.te4j.filter.Filters;
+import com.github.lero4ka16.te4j.filter.MapBasedFilters;
 import com.github.lero4ka16.te4j.modifiable.watcher.ModifyWatcherManager;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.context.TemplateContext;
@@ -47,7 +48,7 @@ public final class Te4j {
     public static final int[] OUTPUT_TYPES = new int[]{STRING, BYTES};
 
     private static final Filters FILTERS
-            = new Filters();
+            = MapBasedFilters.createDefaults();
 
     private static final ModifyWatcherManager DEFAULT_MODIFY_WATCHER
             = new ModifyWatcherManager();

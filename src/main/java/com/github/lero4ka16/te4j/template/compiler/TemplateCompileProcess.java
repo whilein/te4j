@@ -17,7 +17,7 @@
 package com.github.lero4ka16.te4j.template.compiler;
 
 import com.github.lero4ka16.te4j.Te4j;
-import com.github.lero4ka16.te4j.include.IncludeTarget;
+import com.github.lero4ka16.te4j.include.Include;
 import com.github.lero4ka16.te4j.template.Template;
 import com.github.lero4ka16.te4j.template.compiler.code.IterationCode;
 import com.github.lero4ka16.te4j.template.compiler.code.RenderCode;
@@ -270,7 +270,7 @@ public class TemplateCompileProcess<T> {
                 IncludeMethod method = path.getMethod();
 
                 String fileName;
-                IncludeTarget file = method.getFile();
+                Include file = method.getFile();
 
                 if (file.hasValues()) {
                     SwitchCase switchCase = currentSwitchCase;

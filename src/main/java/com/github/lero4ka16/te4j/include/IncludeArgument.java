@@ -19,20 +19,20 @@ package com.github.lero4ka16.te4j.include;
 /**
  * @author lero4ka16
  */
-public final class IncludeParam {
+public final class IncludeArgument {
 
-    private final IncludeTarget file;
+    private final Include file;
 
     private final int begin;
     private final int end;
 
-    public IncludeParam(IncludeTarget file, int begin, int end) {
+    public IncludeArgument(Include file, int begin, int end) {
         this.file = file;
         this.begin = begin;
         this.end = end;
     }
 
-    public IncludeTarget getFile() {
+    public Include getFile() {
         return file;
     }
 

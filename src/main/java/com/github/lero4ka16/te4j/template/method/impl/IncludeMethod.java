@@ -16,7 +16,7 @@
 
 package com.github.lero4ka16.te4j.template.method.impl;
 
-import com.github.lero4ka16.te4j.include.IncludeTarget;
+import com.github.lero4ka16.te4j.include.Include;
 import com.github.lero4ka16.te4j.template.method.TemplateMethod;
 import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
 
@@ -25,13 +25,13 @@ import com.github.lero4ka16.te4j.template.method.TemplateMethodType;
  */
 public class IncludeMethod implements TemplateMethod {
 
-    private final IncludeTarget file;
+    private final Include file;
 
-    public IncludeMethod(IncludeTarget file) {
+    public IncludeMethod(Include file) {
         this.file = file;
     }
 
-    public IncludeTarget getFile() {
+    public Include getFile() {
         return file;
     }
 
