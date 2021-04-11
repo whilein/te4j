@@ -26,8 +26,8 @@ import te4j.template.source.BytesSource;
 import te4j.template.source.NameSource;
 import te4j.template.source.PathSource;
 import te4j.util.Utils;
-import te4j.util.type.ref.ClassRef;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.ClassReference;
+import te4j.util.type.ref.TypeReference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -105,7 +105,7 @@ public final class TemplateContext {
      * @param <T>  Type of an object which will be passed for rendering
      * @return New compiled template
      */
-    public @NotNull <T> Template<T> loadBytes(@NotNull ITypeRef<T> type,
+    public @NotNull <T> Template<T> loadBytes(@NotNull TypeReference<T> type,
                                               byte @NotNull [] data) {
         return parseBytes(data).compile(
                 useResources ? null : modifyWatcherManager,
@@ -113,12 +113,12 @@ public final class TemplateContext {
         );
     }
 
-    public @NotNull <T> Template<T> loadString(@NotNull ITypeRef<T> type,
+    public @NotNull <T> Template<T> loadString(@NotNull TypeReference<T> type,
                                                @NotNull String data) {
         return loadBytes(type, data.getBytes(StandardCharsets.UTF_8));
     }
 
-    public @NotNull <T> Template<T> load(@NotNull ITypeRef<T> type,
+    public @NotNull <T> Template<T> load(@NotNull TypeReference<T> type,
                                          @NotNull String name) {
         return parse(name).compile(
                 useResources ? null : modifyWatcherManager,
@@ -126,7 +126,7 @@ public final class TemplateContext {
         );
     }
 
-    public @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+    public @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
                                              @NotNull File file) {
         return parseFile(file).compile(
                 modifyWatcherManager,
@@ -136,7 +136,7 @@ public final class TemplateContext {
         );
     }
 
-    public @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+    public @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
                                              @NotNull Path path) {
         return parseFile(path).compile(
                 modifyWatcherManager,
@@ -148,7 +148,7 @@ public final class TemplateContext {
 
     public @NotNull <T> Template<T> loadBytes(@NotNull Class<T> type,
                                               byte @NotNull [] bytes) {
-        return loadBytes(new ClassRef<>(type), bytes);
+        return loadBytes(ClassReference.create(type), bytes);
     }
 
     public @NotNull <T> Template<T> loadString(@NotNull Class<T> type,
@@ -158,17 +158,17 @@ public final class TemplateContext {
 
     public @NotNull <T> Template<T> load(@NotNull Class<T> type,
                                          @NotNull String name) {
-        return load(new ClassRef<>(type), name);
+        return load(ClassReference.create(type), name);
     }
 
     public @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
                                              @NotNull File file) {
-        return loadFile(new ClassRef<>(type), file);
+        return loadFile(ClassReference.create(type), file);
     }
 
     public @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
                                              @NotNull Path path) {
-        return loadFile(new ClassRef<>(type), path);
+        return loadFile(ClassReference.create(type), path);
     }
 
     public @NotNull ParsedTemplate parseBytes(byte @NotNull [] data) {

@@ -24,7 +24,7 @@ import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public final class PlainParsedTemplate extends ParsedTemplate {
     public <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
                                    @NotNull String parentFile,
                                    @NotNull TemplateSource source,
-                                   @NotNull ITypeRef<T> type) {
+                                   @NotNull TypeReference<T> type) {
         Template<T> result = new PlainTemplate<>(content, offset, length);
 
         if (modifyWatcherManager != null) {

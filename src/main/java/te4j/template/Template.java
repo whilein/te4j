@@ -23,7 +23,7 @@ import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.TemplateContext;
 import te4j.template.output.TemplateOutputBuffer;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,7 +57,7 @@ public abstract class Template<T> {
     public static <T> Template<T> wrapHotReloading(@NotNull ModifyWatcherManager modifyWatcherManager,
                                                    @NotNull TemplateContext context,
                                                    @NotNull Template<T> template,
-                                                   @NotNull ITypeRef<T> type,
+                                                   @NotNull TypeReference<T> type,
                                                    @NotNull TemplateSource source) {
         return new HotReloadingWrapper<>(modifyWatcherManager, context, type, template, source);
     }
@@ -65,14 +65,14 @@ public abstract class Template<T> {
     private static class HotReloadingWrapper<T> extends Template<T> implements Modifiable {
 
         private final TemplateContext context;
-        private final ITypeRef<T> type;
+        private final TypeReference<T> type;
         private final TemplateSource source;
 
         private volatile boolean locked;
         private volatile Template<T> handle;
 
         public HotReloadingWrapper(ModifyWatcherManager modifyWatcherManager,
-                                   TemplateContext context, ITypeRef<T> type,
+                                   TemplateContext context, TypeReference<T> type,
                                    Template<T> handle, TemplateSource source) {
             this.handle = handle;
             this.context = context.copy().disableHotReloading().build();

@@ -21,7 +21,7 @@ import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.template.exception.TemplateException;
 import te4j.template.parse.ParsedTemplate;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 /**
  * @author lero4ka16
@@ -32,7 +32,7 @@ public class TemplateCompiler {
 
     public <T> Template<T> compile(@NotNull TemplateContext context,
                                    @NotNull ParsedTemplate template,
-                                   @NotNull ITypeRef<T> type,
+                                   @NotNull TypeReference<T> type,
                                    @NotNull String parentFile) {
         try {
             return new TemplateCompileProcess<>(context, template, type, parentFile)

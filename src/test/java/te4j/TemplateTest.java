@@ -23,9 +23,9 @@ import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.util.Utils;
-import te4j.util.type.ref.ClassRef;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class TemplateTest {
 
         testTemplate(trimContext,
                 "WEB-INF/trim.txt", expect,
-                new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), new ClassRef<>(Pojo_6.class));
+                new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), ClassReference.create(Pojo_6.class));
     }
 
     @Test
@@ -147,28 +147,28 @@ public class TemplateTest {
     public void testPlain() {
         testTemplate(context,
                 "WEB-INF/plain.txt", "Hello world!Привет мир!",
-                dummy, new ClassRef<>(Object.class));
+                dummy, ClassReference.create(Object.class));
     }
 
     @Test
     public void testValue() {
         testTemplate(context,
                 "WEB-INF/greeting.txt", "Hello my friend!",
-                new Pojo_1("my friend"), new ClassRef<>(Pojo_1.class));
+                new Pojo_1("my friend"), ClassReference.create(Pojo_1.class));
     }
 
     @Test
     public void testForeach() {
         testTemplate(context,
                 "WEB-INF/foreach.txt", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
-                new Pojo_2(10, 20, 30), new ClassRef<>(Pojo_2.class));
+                new Pojo_2(10, 20, 30), ClassReference.create(Pojo_2.class));
     }
 
     @Test
     public void testForeachCollection() {
         testTemplate(context,
                 "WEB-INF/foreach.txt", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
-                new Pojo_5(15, 25, 35), new ClassRef<>(Pojo_5.class));
+                new Pojo_5(15, 25, 35), ClassReference.create(Pojo_5.class));
     }
 
     @Test
@@ -183,35 +183,35 @@ public class TemplateTest {
     public void testConditionFalse() {
         testTemplate(context,
                 "WEB-INF/condition.txt", "<a>Result is false</a>",
-                new Pojo_3("Hello world", false), new ClassRef<>(Pojo_3.class));
+                new Pojo_3("Hello world", false), ClassReference.create(Pojo_3.class));
     }
 
     @Test
     public void testConditionTrue() {
         testTemplate(context,
                 "WEB-INF/condition.txt", "<a>Hello world</a>",
-                new Pojo_3("Hello world", true), new ClassRef<>(Pojo_3.class));
+                new Pojo_3("Hello world", true), ClassReference.create(Pojo_3.class));
     }
 
     @Test
     public void testSwitchCase_Condition() {
         testTemplate(context,
                 "WEB-INF/switchcase.txt", "<a>Goodbye my friend</a>",
-                new Pojo_4("Goodbye my friend", true), new ClassRef<>(Pojo_4.class));
+                new Pojo_4("Goodbye my friend", true), ClassReference.create(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Foreach() {
         testTemplate(context,
                 "WEB-INF/switchcase.txt", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
-                new Pojo_4(new int[]{5, 10, 15}), new ClassRef<>(Pojo_4.class));
+                new Pojo_4(new int[]{5, 10, 15}), ClassReference.create(Pojo_4.class));
     }
 
     @Test
     public void testSwitchCase_Value() {
         testTemplate(context,
                 "WEB-INF/switchcase.txt", "Hello you!",
-                new Pojo_4("you"), new ClassRef<>(Pojo_4.class));
+                new Pojo_4("you"), ClassReference.create(Pojo_4.class));
     }
 
     private void copyResource(String resource, Path to) {
@@ -231,7 +231,7 @@ public class TemplateTest {
     }
 
     private <T> void testTemplate(TemplateContext context, String resource, String expectText,
-                                  T object, ITypeRef<T> type) {
+                                  T object, TypeReference<T> type) {
         String result = context.load(type, resource).renderAsString(object);
         assertEquals(expectText, result);
     }

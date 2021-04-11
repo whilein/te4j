@@ -18,7 +18,7 @@ package te4j.template.source;
 
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.nio.file.Path;
 
@@ -48,7 +48,7 @@ public final class PathSource implements TemplateSource {
     }
 
     @Override
-    public <T> Template<T> load(TemplateContext ctx, ITypeRef<T> type) {
+    public <T> Template<T> load(TemplateContext ctx, TypeReference<T> type) {
         return ctx.loadFile(type, path);
     }
 }

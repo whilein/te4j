@@ -49,7 +49,7 @@ import te4j.template.path.TemplatePathIterator;
 import te4j.util.formatter.TextFormatter;
 import te4j.util.hash.Hash;
 import te4j.util.type.TypeInfo;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -82,7 +82,7 @@ public class TemplateCompileProcess<T> {
     private final ParsedTemplate template;
     private final TemplateContext context;
 
-    private final ITypeRef<T> type;
+    private final TypeReference<T> type;
     private final String parentFile;
 
     private final TemplateClassCompiler javaCompiler;
@@ -103,11 +103,11 @@ public class TemplateCompileProcess<T> {
     private String putTemplateContent;
 
     public TemplateCompileProcess(@NotNull TemplateContext context, @NotNull ParsedTemplate template,
-                                  @NotNull ITypeRef<T> type, @NotNull String parentFile) {
+                                  @NotNull TypeReference<T> type, @NotNull String parentFile) {
         this.type = type;
         this.parentFile = parentFile;
 
-        this.primaryEnvironment = new PrimaryEnvironment("object", type.getType(), type.getRawType());
+        this.primaryEnvironment = new PrimaryEnvironment("object", type.getRawType(), type.getType());
 
         this.context = context;
 

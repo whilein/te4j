@@ -18,7 +18,7 @@ package te4j.util.resolver;
 
 import java.lang.reflect.Method;
 
-public class DefaultMethodResolver implements MethodResolver {
+public final class DefaultMethodResolver implements MethodResolver {
 
     public static final MethodResolver[] RESOLVERS = new MethodResolver[]{
             new DefaultMethodResolver("get%s", MethodNameCase.UPPER_CAMEL_CASE),
@@ -29,7 +29,7 @@ public class DefaultMethodResolver implements MethodResolver {
     private final String format;
     private final MethodNameCase nameCase;
 
-    public DefaultMethodResolver(String format, MethodNameCase nameCase) {
+    private DefaultMethodResolver(String format, MethodNameCase nameCase) {
         this.format = format;
         this.nameCase = nameCase;
     }

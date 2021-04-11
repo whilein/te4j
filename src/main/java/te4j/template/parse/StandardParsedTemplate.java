@@ -24,7 +24,7 @@ import te4j.template.compiler.TemplateCompiler;
 import te4j.template.context.TemplateContext;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.ITypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public final class StandardParsedTemplate extends ParsedTemplate {
     public <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
                                    @NotNull String parentFile,
                                    @NotNull TemplateSource source,
-                                   @NotNull ITypeRef<T> type) {
+                                   @NotNull TypeReference<T> type) {
         Template<T> result = TemplateCompiler.INSTANCE.compile(context, this, type, parentFile);
 
         if (modifyWatcherManager != null) {

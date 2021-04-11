@@ -26,13 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author lero4ka16
  */
-class TypeRefTest {
+class TypeReferenceTest {
 
 
     @Test
     public void testTypeRef() {
         TypeRef<List<String>> listStringType = new TypeRef<List<String>>() {
         };
+
         assertEquals("List", listStringType.getSimpleName());
         assertEquals("java.util.List<java.lang.String>", listStringType.getCanonicalName());
 

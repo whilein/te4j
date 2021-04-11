@@ -24,8 +24,8 @@ import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.template.context.TemplateContextBuilder;
 import te4j.template.parse.ParsedTemplate;
-import te4j.util.type.ref.ITypeRef;
 import te4j.util.type.ref.TypeRef;
+import te4j.util.type.ref.TypeReference;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -78,27 +78,27 @@ public final class Te4j {
         return DEFAULTS;
     }
 
-    public static @NotNull <T> Template<T> loadBytes(@NotNull ITypeRef<T> type,
+    public static @NotNull <T> Template<T> loadBytes(@NotNull TypeReference<T> type,
                                                      byte @NotNull [] data) {
         return DEFAULTS.loadBytes(type, data);
     }
 
-    public static @NotNull <T> Template<T> loadString(@NotNull ITypeRef<T> type,
+    public static @NotNull <T> Template<T> loadString(@NotNull TypeReference<T> type,
                                                       @NotNull String data) {
         return DEFAULTS.loadString(type, data);
     }
 
-    public static @NotNull <T> Template<T> load(@NotNull ITypeRef<T> type,
+    public static @NotNull <T> Template<T> load(@NotNull TypeReference<T> type,
                                                 @NotNull String name) {
         return DEFAULTS.load(type, name);
     }
 
-    public static @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+    public static @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
                                                     @NotNull File file) {
         return DEFAULTS.loadFile(type, file);
     }
 
-    public static @NotNull <T> Template<T> loadFile(@NotNull ITypeRef<T> type,
+    public static @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
                                                     @NotNull Path path) {
         return DEFAULTS.loadFile(type, path);
     }

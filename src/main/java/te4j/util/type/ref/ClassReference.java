@@ -21,15 +21,35 @@ import java.lang.reflect.Type;
 /**
  * @author lero4ka16
  */
-public interface ITypeRef<T> {
+public final class ClassReference<T> implements TypeReference<T> {
 
-    Type getType();
+    private final Class<T> cls;
 
-    Class<T> getRawType();
+    private ClassReference(Class<T> cls) {
+        this.cls = cls;
+    }
 
-    String getSimpleName();
+    public static <T> TypeReference<T> create(Class<T> cls) {
+        return new ClassReference<>(cls);
+    }
 
-    String getCanonicalName();
+    @Override
+    public Type getRawType() {
+        return cls;
+    }
 
+    @Override
+    public Class<T> getType() {
+        return cls;
+    }
 
+    @Override
+    public String getSimpleName() {
+        return cls.getSimpleName();
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return cls.getCanonicalName();
+    }
 }

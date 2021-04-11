@@ -22,12 +22,12 @@ import java.lang.reflect.Type;
 /**
  * @author lero4ka16
  */
-public abstract class TypeRef<T> implements ITypeRef<T> {
+public abstract class TypeRef<T> implements TypeReference<T> {
 
     protected final Type type;
     protected final Class<T> rawType;
 
-    public TypeRef() {
+    protected TypeRef() {
         this.type = ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
         this.rawType = getClass(type);
@@ -44,12 +44,12 @@ public abstract class TypeRef<T> implements ITypeRef<T> {
     }
 
     @Override
-    public final Type getType() {
+    public final Type getRawType() {
         return type;
     }
 
     @Override
-    public final Class<T> getRawType() {
+    public final Class<T> getType() {
         return rawType;
     }
 
