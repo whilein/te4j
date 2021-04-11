@@ -39,7 +39,7 @@ import com.github.lero4ka16.te4j.template.method.impl.ForeachMethod;
 import com.github.lero4ka16.te4j.template.method.impl.IncludeMethod;
 import com.github.lero4ka16.te4j.template.method.impl.SwitchCaseMethod;
 import com.github.lero4ka16.te4j.template.method.impl.ValueMethod;
-import com.github.lero4ka16.te4j.template.output.TemplateOutput;
+import com.github.lero4ka16.te4j.template.output.AbstractTemplateOutput;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputBuffer;
 import com.github.lero4ka16.te4j.template.output.TemplateOutputStream;
 import com.github.lero4ka16.te4j.template.parse.ParsedTemplate;
@@ -71,7 +71,7 @@ public class TemplateCompileProcess<T> {
             = OutputStream.class.getName();
 
     private static final String TEMPLATE_OUTPUT_CLASS
-            = TemplateOutput.class.getName();
+            = AbstractTemplateOutput.class.getName();
 
     private static final String TEMPLATE_OUTPUT_STREAM_CLASS
             = TemplateOutputStream.class.getName();

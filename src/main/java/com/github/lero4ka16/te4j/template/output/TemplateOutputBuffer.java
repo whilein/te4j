@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
-public class TemplateOutputBuffer extends TemplateOutput {
+public final class TemplateOutputBuffer extends AbstractTemplateOutput {
 
     private byte[] value;
     private int length;
@@ -39,6 +39,7 @@ public class TemplateOutputBuffer extends TemplateOutput {
         return new String(value, 0, length);
     }
 
+    @Override
     public byte[] toByteArray() {
         return Arrays.copyOf(value, length);
     }
@@ -74,15 +75,6 @@ public class TemplateOutputBuffer extends TemplateOutput {
 
     public void reset() {
         length = 0;
-    }
-
-    @Override
-    public void flush() {
-    }
-
-    @Override
-    public void close() {
-        value = null;
     }
 
 }

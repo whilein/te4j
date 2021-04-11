@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * @author lero4ka16
  */
-public class TemplateOutputStream extends TemplateOutput {
+public final class TemplateOutputStream extends AbstractTemplateOutput {
 
     private final OutputStream os;
 
@@ -51,30 +51,17 @@ public class TemplateOutputStream extends TemplateOutput {
     }
 
     @Override
-    public void flush() {
-        try {
-            os.flush();
-        } catch (IOException e) {
-            throw new TemplateException("Cannot flush output stream", e);
-        }
-    }
-
-    @Override
-    public void close() {
-        try {
-            os.flush();
-        } catch (IOException e) {
-            throw new TemplateException("Cannot close output stream", e);
-        }
-    }
-
-    @Override
     public void write(int b) {
         try {
             os.write(b);
         } catch (IOException e) {
             throw new TemplateException("Cannot write to output stream", e);
         }
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        throw new UnsupportedOperationException();
     }
 
 }
