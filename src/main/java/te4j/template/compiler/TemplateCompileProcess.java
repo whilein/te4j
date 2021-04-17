@@ -174,13 +174,13 @@ public final class TemplateCompileProcess<T> {
                 return new IncludeCompiledPath(id, path.<IncludeMethod>getMethod().getFile(), path);
             case CASE:
                 return new DefaultCompiledPath(id, compilePathAccessor(path.<SwitchCaseMethod>getMethod().getValue()), path);
-            case VALUE:
+            case VALUE: {
+                return new DefaultCompiledPath(id,
+                        expParser.recompile(path.<ValueMethod>getMethod().getValue()), path);
+            }
             case CONDITION: {
-                String value = path.getMethodType() == TemplateMethodType.VALUE
-                        ? path.<ValueMethod>getMethod().getValue()
-                        : path.<ConditionMethod>getMethod().getCondition();
-
-                return new DefaultCompiledPath(id, expParser.recompile(value), path);
+                return new DefaultCompiledPath(id,
+                        expParser.recompile(path.<ConditionMethod>getMethod().getCondition()), path);
             }
             default:
                 String value = path.<ForeachMethod>getMethod().getPath();
@@ -319,19 +319,7 @@ public final class TemplateCompileProcess<T> {
                 break;
             }
             case CONDITION: {
-                ConditionMethod method = path.getMethod();
-                ParsedTemplate block = method.getBlock();
-                ParsedTemplate elseBlock = method.getElseBlock();
-
-                out.append("if(").append(path.getAccessorValue()).append("){");
-                out.appendTemplate(block);
-
-                if (elseBlock != null) {
-                    out.append("} else {");
-                    out.appendTemplate(elseBlock);
-                }
-
-                out.append("}");
+                appendCondition(path.getMethod(), path.getAccessorValue(), out);
                 break;
             }
             case FOR: {
@@ -368,6 +356,29 @@ public final class TemplateCompileProcess<T> {
                 break;
             }
         }
+    }
+
+    private void appendCondition(ConditionMethod method, String value, RenderCode out) {
+        ParsedTemplate block = method.getBlock();
+        ConditionMethod elseIf = method.getElseIf();
+        ParsedTemplate elseBlock = method.getElseBlock();
+
+
+        out.append("if(").append(value).append("){");
+        out.appendTemplate(block);
+
+        if (elseIf != null) {
+            out.append("} else ");
+            appendCondition(elseIf, expParser.recompile(elseIf.getCondition()).getAccessor(), out);
+            return;
+        }
+
+        if (elseBlock != null) {
+            out.append("} else {");
+            out.appendTemplate(elseBlock);
+        }
+
+        out.append("}");
     }
 
     private final Map<Hash, String> byteValues = new HashMap<>();

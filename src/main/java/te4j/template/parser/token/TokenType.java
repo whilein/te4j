@@ -21,7 +21,7 @@ package te4j.template.parser.token;
  */
 public enum TokenType {
 
-    BEGIN, END_FOR, ELSE, END_IF, END_CASE, CASE_DEFAULT;
+    BEGIN, END_FOR, ELSE, ELIF, END_IF, END_CASE, CASE_DEFAULT;
 
     public static TokenType getType(String path) {
         switch (path) {
@@ -33,6 +33,8 @@ public enum TokenType {
                 return END_CASE;
             case "else":
                 return ELSE;
+            case "elif":
+                return ELIF;
             case "endif":
                 return END_IF;
             default:

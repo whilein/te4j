@@ -183,17 +183,24 @@ public class TemplateTest {
     }
 
     @Test
-    public void testConditionFalse() {
+    public void testConditionFalseFalse() {
         testTemplate(context,
                 "WEB-INF/condition.txt", "<a>Result is false</a>",
-                new Pojo_3("Hello world", false), ClassReference.create(Pojo_3.class));
+                new Pojo_3("Hello world", false, false), ClassReference.create(Pojo_3.class));
+    }
+
+    @Test
+    public void testConditionFalseTrue() {
+        testTemplate(context,
+                "WEB-INF/condition.txt", "<a>Another condition</a>",
+                new Pojo_3("Hello world", false, true), ClassReference.create(Pojo_3.class));
     }
 
     @Test
     public void testConditionTrue() {
         testTemplate(context,
                 "WEB-INF/condition.txt", "<a>Hello world</a>",
-                new Pojo_3("Hello world", true), ClassReference.create(Pojo_3.class));
+                new Pojo_3("Hello world", true, false), ClassReference.create(Pojo_3.class));
     }
 
     @Test
@@ -266,10 +273,12 @@ public class TemplateTest {
     public static class Pojo_3 {
         private final String message;
         private final boolean condition;
+        private final boolean anotherCondition;
 
-        public Pojo_3(String message, boolean condition) {
+        public Pojo_3(String message, boolean condition, boolean anotherCondition) {
             this.message = message;
             this.condition = condition;
+            this.anotherCondition = anotherCondition;
         }
 
         public String getMessage() {
@@ -278,6 +287,10 @@ public class TemplateTest {
 
         public boolean getCondition() {
             return condition;
+        }
+
+        public boolean getAnotherCondition() {
+            return anotherCondition;
         }
     }
 
@@ -325,9 +338,14 @@ public class TemplateTest {
             return message;
         }
 
-        public boolean isCondition() {
+        public boolean getCondition() {
             return condition;
         }
+
+        public boolean getAnotherCondition() {
+            return false;
+        }
+
     }
 
     public static class Pojo_5 {

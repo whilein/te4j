@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package te4j.template.parser;
+package te4j.template.reader;
 
 import org.jetbrains.annotations.NotNull;
 import te4j.include.Include;
@@ -28,9 +28,15 @@ import te4j.template.method.impl.IncludeMethod;
 import te4j.template.method.impl.SwitchCaseMethod;
 import te4j.template.method.impl.ValueMethod;
 import te4j.template.option.minify.Minify;
+import te4j.template.parser.EmptyParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
+import te4j.template.parser.PlainParsedTemplate;
+import te4j.template.parser.StandardParsedTemplate;
 import te4j.template.parser.token.ImmutableToken;
+import te4j.template.parser.token.ImmutableTokenizedTemplate;
 import te4j.template.parser.token.Token;
 import te4j.template.parser.token.TokenType;
+import te4j.template.parser.token.TokenizedTemplate;
 import te4j.template.path.TemplatePath;
 import te4j.util.formatter.TextFormatter;
 import te4j.util.io.BytesReader;
@@ -181,7 +187,7 @@ public final class DefaultTemplateReader implements TemplateReader {
 
         return ImmutableTokenizedTemplate.builder()
                 .template(newTemplate(innerPaths, blockBegin, blockEnd, true))
-                .token(token.getType())
+                .token(token)
                 .build();
     }
 
@@ -193,32 +199,19 @@ public final class DefaultTemplateReader implements TemplateReader {
 
         token.expect(begin, TokenType.BEGIN);
 
-        String fullPath = token.getValue();
-        int separator = fullPath.indexOf(' ');
-
-        String methodName;
-        String path;
-
-        if (separator == -1) {
-            methodName = fullPath;
-            path = "";
-        } else {
-            methodName = fullPath.substring(0, separator);
-            path = fullPath.substring(separator + 1);
-        }
-
-        TemplateMethodType methodType = TemplateMethodType.findType(methodName);
-
+        String path = token.getPath();
+        TemplateMethodType methodType = TemplateMethodType.findType(token.getMethod());
         TemplateMethod method;
 
         switch (methodType) {
             default:
+                throw new IllegalArgumentException("unknown method: " + token.getMethod());
             case INCLUDE: {
                 method = new IncludeMethod(new Include(path));
                 break;
             }
             case FOR: {
-                separator = path.indexOf(':');
+                int separator = path.indexOf(':');
 
                 if (separator == -1) {
                     throw new IllegalStateException("Not found ':' in " + path);
@@ -231,7 +224,7 @@ public final class DefaultTemplateReader implements TemplateReader {
                 break;
             }
             case CASE: {
-                separator = path.indexOf(':');
+                int separator = path.indexOf(':');
 
                 String value;
                 String from;
@@ -246,30 +239,44 @@ public final class DefaultTemplateReader implements TemplateReader {
 
                 TokenizedTemplate inner = readInner(TokenType.CASE_DEFAULT, TokenType.END_CASE);
 
-                if (inner.getToken() == TokenType.END_CASE) {
-                    method = SwitchCaseMethod.create(value, from, inner.getTemplate(), null);
-                } else {
-                    method = SwitchCaseMethod.create(value, from, inner.getTemplate(),
-                            readInner(TokenType.END_CASE).getTemplate());
+                switch (inner.getToken().getType()) {
+                    case END_CASE:
+                        method = SwitchCaseMethod.create(value, from, inner.getTemplate(), null);
+                        break;
+                    case CASE_DEFAULT:
+                        method = SwitchCaseMethod.create(value, from, inner.getTemplate(),
+                                readInner(TokenType.END_CASE).getTemplate());
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected token: " + inner.getToken().getType());
                 }
 
                 break;
             }
-            case CONDITION: {
-                TokenizedTemplate inner = readInner(TokenType.ELSE, TokenType.END_IF);
-
-                if (inner.getToken() == TokenType.END_IF) {
-                    method = new ConditionMethod(path, inner.getTemplate(), null);
-                } else {
-                    method = new ConditionMethod(path, inner.getTemplate(),
-                            readInner(TokenType.END_IF).getTemplate());
-                }
-
+            case CONDITION:
+                method = readCondition(path);
                 break;
-            }
         }
 
         return new TemplatePath(begin, reader.position() - begin, method);
+    }
+
+    private ConditionMethod readCondition(String path) {
+        TokenizedTemplate inner = readInner(TokenType.ELSE, TokenType.ELIF, TokenType.END_IF);
+
+        switch (inner.getToken().getType()) {
+            case ELSE:
+                return ConditionMethod.create(path, inner.getTemplate(),
+                        readInner(TokenType.END_IF).getTemplate());
+            case ELIF:
+                return ConditionMethod.create(path, inner.getTemplate(),
+                        readCondition(inner.getToken().getPath()));
+            case END_IF:
+                return ConditionMethod.create(path, inner.getTemplate(),
+                        (ParsedTemplate) null);
+            default:
+                throw new IllegalStateException("Unexpected token: " + inner.getToken().getType());
+        }
     }
 
     private Token readToken(DataReader in) {
@@ -296,11 +303,25 @@ public final class DefaultTemplateReader implements TemplateReader {
 
         int end = in.position() - 2; // *>
 
-        String path = in.substring(start, end).trim();
+        String fullPath = in.substring(start, end).trim();
+
+        int separator = fullPath.indexOf(' ');
+
+        String method;
+        String path;
+
+        if (separator == -1) {
+            method = fullPath;
+            path = "";
+        } else {
+            method = fullPath.substring(0, separator);
+            path = fullPath.substring(separator + 1);
+        }
 
         return ImmutableToken.builder()
-                .value(path)
-                .type(TokenType.getType(path))
+                .method(method)
+                .path(path)
+                .type(TokenType.getType(method))
                 .build();
     }
 

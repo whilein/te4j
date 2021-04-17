@@ -19,9 +19,9 @@ package te4j.template.context.parser;
 import org.jetbrains.annotations.NotNull;
 import te4j.template.exception.TemplateLoadException;
 import te4j.template.option.minify.Minify;
-import te4j.template.parser.DefaultTemplateReader;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
+import te4j.template.reader.DefaultTemplateReader;
 import te4j.util.Utils;
 
 import java.io.File;

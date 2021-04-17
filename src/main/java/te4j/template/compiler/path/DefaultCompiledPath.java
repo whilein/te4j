@@ -22,7 +22,7 @@ import te4j.util.type.TypeInfo;
 /**
  * @author lero4ka16
  */
-public class DefaultCompiledPath extends AbstractCompiledPath {
+public final class DefaultCompiledPath extends AbstractCompiledPath {
 
     private final PathAccessor value;
 

@@ -16,36 +16,37 @@
 
 package te4j.template.compiler.path;
 
-import te4j.include.Include;
 import te4j.template.path.TemplatePath;
-import te4j.util.type.GenericInfo;
 import te4j.util.type.TypeInfo;
 
 /**
  * @author lero4ka16
  */
-public final class IncludeCompiledPath extends AbstractCompiledPath {
+public final class ConditionCompiledPath extends AbstractCompiledPath {
 
-    private final Include file;
+    private final PathAccessor value;
+    private final ConditionCompiledPath elseIf;
 
-    public IncludeCompiledPath(String id, Include file, TemplatePath path) {
-        super(id, path);
+    public ConditionCompiledPath(String id, PathAccessor value, ConditionCompiledPath elseIf, TemplatePath original) {
+        super(id, original);
 
-        this.file = file;
+        this.value = value;
+        this.elseIf = elseIf;
     }
 
-    public Include getFile() {
-        return file;
+    public ConditionCompiledPath getElseIf() {
+        return elseIf;
     }
 
     @Override
     public TypeInfo getReturnType() {
-        return GenericInfo.STRING;
+        return value.getReturnType();
     }
 
     @Override
     public String getAccessorValue() {
-        return file.format();
+        return value.getAccessor();
     }
+
 
 }

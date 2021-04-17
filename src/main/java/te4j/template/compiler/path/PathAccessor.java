@@ -23,7 +23,7 @@ import te4j.util.type.TypeInfo;
 /**
  * @author lero4ka16
  */
-public class PathAccessor {
+public final class PathAccessor {
 
     public static final PathAccessor TRUE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "true");
     public static final PathAccessor FALSE = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, "false");

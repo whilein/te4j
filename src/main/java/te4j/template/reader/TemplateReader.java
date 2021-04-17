@@ -14,19 +14,16 @@
  *    limitations under the License.
  */
 
-package te4j.template.parser;
+package te4j.template.reader;
 
-import org.immutables.value.Value;
-import te4j.template.parser.token.TokenType;
+import org.jetbrains.annotations.NotNull;
+import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author lero4ka16
  */
-@Value.Immutable
-public interface TokenizedTemplate {
+public interface TemplateReader {
 
-    TokenType getToken();
-
-    ParsedTemplate getTemplate();
+    @NotNull ParsedTemplate readTemplate();
 
 }

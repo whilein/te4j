@@ -25,7 +25,9 @@ import te4j.template.exception.TemplateUnexpectedTokenException;
 @Value.Immutable
 public abstract class Token {
 
-    public abstract String getValue();
+    public abstract String getMethod();
+
+    public abstract String getPath();
 
     public abstract TokenType getType();
 

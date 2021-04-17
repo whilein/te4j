@@ -16,9 +16,13 @@
 
 package te4j.template.method.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
+
+import java.util.Objects;
 
 /**
  * @author lero4ka16
@@ -26,18 +30,44 @@ import te4j.template.parser.ParsedTemplate;
 public class ConditionMethod implements TemplateMethod {
 
     private final String condition;
+    private final ConditionMethod elseIf;
     private final ParsedTemplate block, elseBlock;
 
-    public ConditionMethod(String condition,
-                           ParsedTemplate block,
-                           ParsedTemplate elseBlock) {
+    private ConditionMethod(String condition,
+                            ConditionMethod elseIf,
+                            ParsedTemplate block,
+                            ParsedTemplate elseBlock) {
         this.condition = condition;
+        this.elseIf = elseIf;
         this.block = block;
         this.elseBlock = elseBlock;
     }
 
-    public static ConditionMethod create(String condition, ParsedTemplate block, ParsedTemplate elseBlock) {
-        return new ConditionMethod(condition, block, elseBlock);
+    public static ConditionMethod create(
+            @NotNull String condition,
+            @NotNull ParsedTemplate block,
+            @Nullable ParsedTemplate elseBlock
+    ) {
+        Objects.requireNonNull(condition, "condition");
+        Objects.requireNonNull(block, "block");
+
+        return new ConditionMethod(condition, null, block, elseBlock);
+    }
+
+    public static ConditionMethod create(
+            @NotNull String condition,
+            @NotNull ParsedTemplate block,
+            @NotNull ConditionMethod elseIf
+    ) {
+        Objects.requireNonNull(condition, "condition");
+        Objects.requireNonNull(block, "block");
+        Objects.requireNonNull(elseIf, "elseIf");
+
+        return new ConditionMethod(condition, elseIf, block, null);
+    }
+
+    public ConditionMethod getElseIf() {
+        return elseIf;
     }
 
     public String getCondition() {
@@ -59,7 +89,7 @@ public class ConditionMethod implements TemplateMethod {
 
     @Override
     public String toString() {
-        return "Condition[" + condition + "; block=" + block + (elseBlock == null ? "" : ", else=" + elseBlock) + "]";
+        return "Condition[" + condition + ", " + (elseIf == null ? ("block=" + block + (elseBlock == null ? "" : ", else=" + elseBlock)) : ("elseIf=" + elseIf)) + "]";
     }
 
 }
