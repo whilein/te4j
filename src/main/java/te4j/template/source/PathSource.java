@@ -16,10 +16,12 @@
 
 package te4j.template.source;
 
+import org.jetbrains.annotations.NotNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * @author lero4ka16
@@ -32,7 +34,9 @@ public final class PathSource implements TemplateSource {
         this.path = path;
     }
 
-    public static TemplateSource create(Path path) {
+    public static TemplateSource create(@NotNull Path path) {
+        Objects.requireNonNull(path, "path");
+
         return new PathSource(path.toAbsolutePath());
     }
 
@@ -51,4 +55,8 @@ public final class PathSource implements TemplateSource {
         return loader.fromFile(path);
     }
 
+    @Override
+    public String toString() {
+        return "Source[path=" + path + "]";
+    }
 }

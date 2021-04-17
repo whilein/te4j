@@ -1,4 +1,4 @@
-<!-- @formatter:on  -->
+<!-- @formatter:off  -->
 
 # Te4j
 
@@ -145,4 +145,4 @@ dependencies {
 
 I will be very glad if someone can help me with development.
 
-<!-- @formatter:off  -->
+<!-- @formatter:on  -->

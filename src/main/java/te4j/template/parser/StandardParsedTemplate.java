@@ -95,7 +95,7 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
 
             return result;
         } catch (Exception e) {
-            throw new TemplateLoadException("Cannot compile template", e);
+            throw new TemplateLoadException("Cannot compile template: " + src, e);
         }
     }
 

@@ -20,6 +20,7 @@ import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * @author lero4ka16
@@ -33,6 +34,8 @@ public final class BytesSource implements TemplateSource {
     }
 
     public static TemplateSource create(byte[] bytes) {
+        Objects.requireNonNull(bytes, "bytes");
+
         return new BytesSource(bytes);
     }
 
@@ -51,4 +54,8 @@ public final class BytesSource implements TemplateSource {
         return loader.fromBytes(bytes);
     }
 
+    @Override
+    public String toString() {
+        return "Bytes[" + new String(bytes) + "]";
+    }
 }

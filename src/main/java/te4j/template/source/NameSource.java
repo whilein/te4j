@@ -16,11 +16,13 @@
 
 package te4j.template.source;
 
+import org.jetbrains.annotations.NotNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * @author lero4ka16
@@ -33,7 +35,9 @@ public final class NameSource implements TemplateSource {
         this.name = name;
     }
 
-    public static TemplateSource create(String name) {
+    public static TemplateSource create(@NotNull String name) {
+        Objects.requireNonNull(name, "name");
+
         return new NameSource(name);
     }
 
@@ -52,5 +56,8 @@ public final class NameSource implements TemplateSource {
         return loader.from(name);
     }
 
-
+    @Override
+    public String toString() {
+        return "Source[name=" + name + "]";
+    }
 }
