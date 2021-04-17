@@ -73,12 +73,6 @@ public final class DefaultTemplateReader implements TemplateReader {
 
                 if (processed.length == 0) {
                     template = EmptyParsedTemplate.getInstance();
-
-                    System.out.println("WARN: Processed is empty!");
-                    System.out.println("WARN: '" + new String(value, begin, end - begin) + "'");
-                    System.out.println("WARN: " + begin + " -> " + end);
-                    System.out.println("WARN: " + minifyOptions);
-                    System.out.println("WARN: '" + new String(value) + "'");
                 } else {
                     template = PlainParsedTemplate.create(processed, 0, processed.length);
                 }
