@@ -18,7 +18,7 @@ package te4j.template.method.impl;
 
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author lero4ka16
@@ -30,11 +30,15 @@ public class ForeachMethod implements TemplateMethod {
 
     private final ParsedTemplate block;
 
-    public ForeachMethod(String path, String as,
-                         ParsedTemplate block) {
+    private ForeachMethod(String path, String as,
+                          ParsedTemplate block) {
         this.path = path;
         this.as = as;
         this.block = block;
+    }
+
+    public static TemplateMethod create(String path, String as, ParsedTemplate block) {
+        return new ForeachMethod(path, as, block);
     }
 
     public String getPath() {

@@ -18,7 +18,7 @@ package te4j.template.method.impl;
 
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author lero4ka16
@@ -30,14 +30,18 @@ public class SwitchCaseMethod implements TemplateMethod {
 
     private final ParsedTemplate block, defaultBlock;
 
-    public SwitchCaseMethod(String value,
-                            String from,
-                            ParsedTemplate block,
-                            ParsedTemplate defaultBlock) {
+    private SwitchCaseMethod(String value,
+                             String from,
+                             ParsedTemplate block,
+                             ParsedTemplate defaultBlock) {
         this.value = value;
         this.from = from;
         this.block = block;
         this.defaultBlock = defaultBlock;
+    }
+
+    public static TemplateMethod create(String value, String from, ParsedTemplate block, ParsedTemplate defaultBlock) {
+        return new SwitchCaseMethod(value, from, block, defaultBlock);
     }
 
     public String getValue() {
@@ -51,7 +55,6 @@ public class SwitchCaseMethod implements TemplateMethod {
     public ParsedTemplate getBlock() {
         return block;
     }
-
     public ParsedTemplate getDefaultBlock() {
         return defaultBlock;
     }

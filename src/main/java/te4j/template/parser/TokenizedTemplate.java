@@ -14,21 +14,19 @@
  *    limitations under the License.
  */
 
-package te4j.template.source;
+package te4j.template.parser;
 
-import te4j.template.Template;
-import te4j.template.context.loader.TemplateLoader;
-
-import java.nio.file.Path;
+import org.immutables.value.Value;
+import te4j.template.parser.token.TokenType;
 
 /**
  * @author lero4ka16
  */
-public interface TemplateSource {
+@Value.Immutable
+public interface TokenizedTemplate {
 
-    boolean hasPath();
-    Path getPath();
+    TokenType getToken();
 
-    <T> Template<T> load(TemplateLoader<T> loader);
+    ParsedTemplate getTemplate();
 
 }

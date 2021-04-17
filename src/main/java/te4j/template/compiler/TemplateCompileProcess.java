@@ -17,7 +17,6 @@
 package te4j.template.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import te4j.Te4j;
 import te4j.include.Include;
 import te4j.template.Template;
 import te4j.template.compiler.code.IterationCode;
@@ -29,7 +28,7 @@ import te4j.template.compiler.path.DefaultCompiledPath;
 import te4j.template.compiler.path.IncludeCompiledPath;
 import te4j.template.compiler.path.PathAccessor;
 import te4j.template.compiler.switchcase.SwitchCase;
-import te4j.template.context.TemplateContext;
+import te4j.template.context.parser.TemplateParser;
 import te4j.template.environment.Environment;
 import te4j.template.environment.LoopEnvironment;
 import te4j.template.environment.PrimaryEnvironment;
@@ -40,20 +39,26 @@ import te4j.template.method.impl.ForeachMethod;
 import te4j.template.method.impl.IncludeMethod;
 import te4j.template.method.impl.SwitchCaseMethod;
 import te4j.template.method.impl.ValueMethod;
+import te4j.template.option.minify.Minify;
+import te4j.template.option.output.Output;
 import te4j.template.output.AbstractTemplateOutput;
 import te4j.template.output.TemplateOutputBuffer;
 import te4j.template.output.TemplateOutputStream;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 import te4j.template.path.TemplatePath;
 import te4j.template.path.TemplatePathIterator;
+import te4j.util.compiler.JavaRuntimeCompiler;
+import te4j.util.compiler.RuntimeCompiler;
 import te4j.util.formatter.TextFormatter;
 import te4j.util.hash.Hash;
 import te4j.util.type.TypeInfo;
 import te4j.util.type.ref.TypeReference;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +70,7 @@ import java.util.stream.Collectors;
 /**
  * @author lero4ka16
  */
-public class TemplateCompileProcess<T> {
+public final class TemplateCompileProcess<T> {
 
     private static final String OUTPUT_STREAM_CLASS
             = OutputStream.class.getName();
@@ -79,13 +84,20 @@ public class TemplateCompileProcess<T> {
     private static final String TEMPLATE_OUTPUT_BUFFER_CLASS
             = TemplateOutputBuffer.class.getName();
 
-    private final ParsedTemplate template;
-    private final TemplateContext context;
+    private static final String TEMPLATE_CLASS
+            = Template.class.getName();
 
+    private final ParsedTemplate template;
+
+    private final Set<Output> outputTypes;
+    private final Set<Minify> minifyOptions;
+
+    private final TemplateParser parser;
     private final TypeReference<T> type;
+
     private final String parentFile;
 
-    private final TemplateClassCompiler javaCompiler;
+    private final RuntimeCompiler compiler;
 
     private final Set<String> includes;
 
@@ -96,26 +108,34 @@ public class TemplateCompileProcess<T> {
 
     private AtomicInteger nameCounter;
 
-    private int outputType;
+    private Output outputType;
     private SwitchCase currentSwitchCase;
 
     private String putUserVariable;
     private String putTemplateContent;
 
-    public TemplateCompileProcess(@NotNull TemplateContext context, @NotNull ParsedTemplate template,
-                                  @NotNull TypeReference<T> type, @NotNull String parentFile) {
+    public TemplateCompileProcess(
+            @NotNull TypeReference<T> type,
+            @NotNull TemplateParser parser,
+            @NotNull Set<Output> outputTypes,
+            @NotNull Set<Minify> minifyOptions,
+            @NotNull ParsedTemplate template,
+            @NotNull String parentFile
+    ) {
+        this.parser = parser;
+        this.outputTypes = outputTypes;
+        this.minifyOptions = minifyOptions;
+
         this.type = type;
         this.parentFile = parentFile;
 
         this.primaryEnvironment = new PrimaryEnvironment("object", type.getRawType(), type.getType());
 
-        this.context = context;
-
         this.template = template;
         this.expParser = new ExpParser(this::compilePathAccessor);
 
-        this.javaCompiler = TemplateClassCompiler.current();
-        this.javaCompiler.setTemplateType(type.getCanonicalName());
+        this.compiler = JavaRuntimeCompiler.create("GeneratedTemplate", new StringBuilder());
+        this.compiler.setInterfaces(Collections.singletonList(TEMPLATE_CLASS + "<" + type.getCanonicalName() + ">"));
 
         this.includes = new HashSet<>();
     }
@@ -200,7 +220,7 @@ public class TemplateCompileProcess<T> {
     }
 
     public String formatFile(String file) {
-        return parentFile.equals(".") ? file : parentFile + "/" + file;
+        return parentFile.equals(".") ? file : parentFile + File.separatorChar + file;
     }
 
     public void writePath(AbstractCompiledPath path, RenderCode out) {
@@ -288,7 +308,7 @@ public class TemplateCompileProcess<T> {
                 fileName = formatFile(fileName);
                 includes.add(fileName);
 
-                ParsedTemplate template = context.parse(fileName);
+                ParsedTemplate template = parser.from(fileName);
 
                 if (template.hasPaths()) {
                     out.appendTemplate(template);
@@ -357,15 +377,15 @@ public class TemplateCompileProcess<T> {
     }
 
     public void addBytes(Integer field, byte[] bytes) {
-        String fieldName = getOutputPrefix(outputType) + field;
+        String fieldName = outputType.getPrefix() + field;
         String prevFieldName = byteValues.put(Hash.forArray(bytes), fieldName);
 
         switch (outputType) {
-            case Te4j.STRING:
+            case STRING:
                 addContent("private final String " + fieldName + " = "
                         + (prevFieldName != null ? prevFieldName : getString(bytes)) + ";");
                 break;
-            case Te4j.BYTES:
+            case BYTES:
                 addContent("private final byte[] " + fieldName + " = "
                         + (prevFieldName != null ? prevFieldName : getString(bytes) + ".getBytes()") + ";");
                 break;
@@ -378,7 +398,7 @@ public class TemplateCompileProcess<T> {
 
         try {
             new TextFormatter(bytes)
-                    .replace(context.getReplace())
+                    .minify(minifyOptions)
                     .write(sb);
         } catch (IOException e) {
             e.printStackTrace();
@@ -389,11 +409,11 @@ public class TemplateCompileProcess<T> {
         return sb.toString();
     }
 
-    public int getOutputType() {
+    public Output getOutputType() {
         return outputType;
     }
 
-    private void addRenderMethod(int outputType) {
+    private void addRenderMethod(@NotNull Output outputType) {
         this.outputType = outputType;
         this.nameCounter = new AtomicInteger();
 
@@ -401,16 +421,19 @@ public class TemplateCompileProcess<T> {
 
         sb.append("private void render(").append(type.getCanonicalName()).append(" object, ");
 
-        if (outputType == Te4j.STRING) {
-            sb.append("StringBuilder");
+        switch (outputType) {
+            case STRING:
+                sb.append("StringBuilder");
 
-            putUserVariable = "append";
-            putTemplateContent = "append";
-        } else {
-            sb.append(TEMPLATE_OUTPUT_CLASS);
+                putUserVariable = "append";
+                putTemplateContent = "append";
+                break;
+            case BYTES:
+                sb.append(TEMPLATE_OUTPUT_CLASS);
 
-            putUserVariable = "put";
-            putTemplateContent = "write";
+                putUserVariable = "put";
+                putTemplateContent = "write";
+                break;
         }
 
         sb.append(" out) {");
@@ -482,33 +505,20 @@ public class TemplateCompileProcess<T> {
     }
 
     public void addContent(String src) {
-        javaCompiler.addContent(src);
-    }
-
-    public @NotNull String getOutputPrefix(int bit) {
-        switch (bit) {
-            case 1:
-                return "STRING_";
-            case 2:
-                return "BYTES_";
-            default:
-                throw new IllegalArgumentException("Undefined bit: " + bit);
-        }
+        compiler.getContent().append(src);
     }
 
     @SuppressWarnings("unchecked")
     public Template<T> compile() throws Exception {
         addEnvironment("this", primaryEnvironment);
 
-        for (int outputType : Te4j.OUTPUT_TYPES) {
-            if ((context.getOutputTypes() & outputType) == outputType) {
-                addRenderMethod(outputType);
-            }
+        for (Output output : outputTypes) {
+            addRenderMethod(output);
         }
 
-        addRenderAsString((context.getOutputTypes() & Te4j.STRING) != 0);
-        addRenderAsBytes((context.getOutputTypes() & Te4j.BYTES) != 0);
-        addRenderToStream((context.getOutputTypes() & Te4j.BYTES) != 0);
+        addRenderAsString(outputTypes.contains(Output.STRING));
+        addRenderAsBytes(outputTypes.contains(Output.BYTES));
+        addRenderToStream(outputTypes.contains(Output.BYTES));
 
         StringBuilder includeBuilder = new StringBuilder();
 
@@ -525,7 +535,7 @@ public class TemplateCompileProcess<T> {
         addContent("private final String[] includes = new String[]{" + includeBuilder + "};");
         addContent("public String[] getIncludes() { return includes; }");
 
-        Class<?> result = javaCompiler.compile();
+        Class<?> result = compiler.compile();
 
         Constructor<?> constructor = result.getDeclaredConstructor();
         return (Template<T>) constructor.newInstance();

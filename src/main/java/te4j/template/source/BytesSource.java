@@ -17,8 +17,7 @@
 package te4j.template.source;
 
 import te4j.template.Template;
-import te4j.template.context.TemplateContext;
-import te4j.util.type.ref.TypeReference;
+import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
 
@@ -48,7 +47,8 @@ public final class BytesSource implements TemplateSource {
     }
 
     @Override
-    public <T> Template<T> load(TemplateContext ctx, TypeReference<T> type) {
-        return ctx.loadBytes(type, bytes);
+    public <T> Template<T> load(TemplateLoader<T> loader) {
+        return loader.fromBytes(bytes);
     }
+
 }

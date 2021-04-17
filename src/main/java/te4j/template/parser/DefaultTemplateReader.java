@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-package te4j.template.reader;
+package te4j.template.parser;
 
+import org.jetbrains.annotations.NotNull;
 import te4j.include.Include;
-import te4j.template.context.TemplateContext;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
 import te4j.template.method.TemplateMethod;
@@ -27,30 +27,30 @@ import te4j.template.method.impl.ForeachMethod;
 import te4j.template.method.impl.IncludeMethod;
 import te4j.template.method.impl.SwitchCaseMethod;
 import te4j.template.method.impl.ValueMethod;
-import te4j.template.parse.ParsedTemplate;
-import te4j.template.parse.PlainParsedTemplate;
-import te4j.template.parse.StandardParsedTemplate;
+import te4j.template.option.minify.Minify;
+import te4j.template.parser.token.ImmutableToken;
+import te4j.template.parser.token.Token;
+import te4j.template.parser.token.TokenType;
 import te4j.template.path.TemplatePath;
-import te4j.template.reader.token.TemplateToken;
-import te4j.template.reader.token.TemplateTokenType;
 import te4j.util.formatter.TextFormatter;
 import te4j.util.io.BytesReader;
 import te4j.util.io.DataReader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public final class TemplateReader {
+public final class DefaultTemplateReader implements TemplateReader {
 
-    private final TemplateContext context;
+    private final Set<Minify> minifyOptions;
 
     private final byte[] value;
     private final DataReader reader;
 
-    public TemplateReader(TemplateContext context, byte[] value) {
-        this.context = context;
-
+    public DefaultTemplateReader(byte[] value, Set<Minify> minifyOptions) {
         this.value = value;
+
+        this.minifyOptions = minifyOptions;
         this.reader = new BytesReader(value);
     }
 
@@ -61,21 +61,22 @@ public final class TemplateReader {
             if (!inner) {
                 byte[] processed = new TextFormatter(value, begin, end - begin)
                         .disableEscaping()
-                        .replace(context.getReplace())
+                        .minify(minifyOptions)
                         .formatAsBytes();
 
-                template = new PlainParsedTemplate(context, processed, 0, processed.length);
+                template = PlainParsedTemplate.create(processed, 0, processed.length);
             } else {
-                template = new PlainParsedTemplate(context, value, begin, end - begin);
+                template = PlainParsedTemplate.create(value, begin, end - begin);
             }
         } else {
-            template = new StandardParsedTemplate(context, paths, value, begin, end - begin);
+            template = StandardParsedTemplate.create(paths, value, begin, end - begin);
         }
 
         return template;
     }
 
-    public ParsedTemplate readTemplate() {
+    @Override
+    public @NotNull ParsedTemplate readTemplate() {
         int begin = reader.position();
 
         List<TemplatePath> paths = new ArrayList<>();
@@ -102,7 +103,8 @@ public final class TemplateReader {
                     reader.roll();
                     path = readOperation();
                     break;
-                default: continue;
+                default:
+                    continue;
             }
 
             if (path == null) {
@@ -123,7 +125,7 @@ public final class TemplateReader {
 
         int valueBegin = reader.position();
 
-        for (;;) {
+        for (; ; ) {
             int value = reader.read();
             if (value == -1) return null;
 
@@ -147,12 +149,12 @@ public final class TemplateReader {
         return new TemplatePath(pathBegin, pathEnd - pathBegin, new ValueMethod(value));
     }
 
-    private Inner readInner(TemplateTokenType... types) throws TemplateUnexpectedTokenException {
+    private TokenizedTemplate readInner(TokenType... types) throws TemplateUnexpectedTokenException {
         int blockBegin = reader.position();
         int blockEnd;
 
         List<TemplatePath> innerPaths = new ArrayList<>();
-        TemplateToken token;
+        Token token;
 
         try {
             readPathsTo(innerPaths);
@@ -166,16 +168,19 @@ public final class TemplateReader {
             token.expect(blockEnd, types);
         }
 
-        return new Inner(newTemplate(innerPaths, blockBegin, blockEnd, true), token.getType());
+        return ImmutableTokenizedTemplate.builder()
+                .template(newTemplate(innerPaths, blockBegin, blockEnd, true))
+                .token(token.getType())
+                .build();
     }
 
     private TemplatePath readOperation() throws TemplateUnexpectedTokenException {
         int begin = reader.position();
 
-        TemplateToken token = readToken(reader);
+        Token token = readToken(reader);
         if (token == null) return null;
 
-        token.expect(begin, TemplateTokenType.BEGIN);
+        token.expect(begin, TokenType.BEGIN);
 
         String fullPath = token.getValue();
         int separator = fullPath.indexOf(' ');
@@ -211,7 +216,7 @@ public final class TemplateReader {
                 String as = path.substring(0, separator).trim();
                 String value = path.substring(separator + 1).trim();
 
-                method = new ForeachMethod(value, as, readInner(TemplateTokenType.END_FOR).template);
+                method = ForeachMethod.create(value, as, readInner(TokenType.END_FOR).getTemplate());
                 break;
             }
             case CASE: {
@@ -228,23 +233,27 @@ public final class TemplateReader {
                     from = path.substring(separator + 1).trim();
                 }
 
-                Inner inner = readInner(TemplateTokenType.CASE_DEFAULT, TemplateTokenType.END_CASE);
+                TokenizedTemplate inner = readInner(TokenType.CASE_DEFAULT, TokenType.END_CASE);
 
-                if (inner.byToken == TemplateTokenType.END_CASE) {
-                    method = new SwitchCaseMethod(value, from, inner.template, null);
+                if (inner.getToken() == TokenType.END_CASE) {
+                    method = SwitchCaseMethod.create(value, from, inner.getTemplate(), null);
                 } else {
-                    method = new SwitchCaseMethod(value, from, inner.template, readInner(TemplateTokenType.END_CASE).template);
+                    method = SwitchCaseMethod.create(value, from, inner.getTemplate(),
+                            readInner(TokenType.END_CASE).getTemplate());
                 }
+
                 break;
             }
             case CONDITION: {
-                Inner inner = readInner(TemplateTokenType.ELSE, TemplateTokenType.END_IF);
+                TokenizedTemplate inner = readInner(TokenType.ELSE, TokenType.END_IF);
 
-                if (inner.byToken == TemplateTokenType.END_IF) {
-                    method = new ConditionMethod(path, inner.template, null);
+                if (inner.getToken() == TokenType.END_IF) {
+                    method = new ConditionMethod(path, inner.getTemplate(), null);
                 } else {
-                    method = new ConditionMethod(path, inner.template, readInner(TemplateTokenType.END_IF).template);
+                    method = new ConditionMethod(path, inner.getTemplate(),
+                            readInner(TokenType.END_IF).getTemplate());
                 }
+
                 break;
             }
         }
@@ -252,7 +261,7 @@ public final class TemplateReader {
         return new TemplatePath(begin, reader.position() - begin, method);
     }
 
-    private TemplateToken readToken(DataReader in) {
+    private Token readToken(DataReader in) {
         if (in.read() != '<' || in.read() != '*') { // <*
             return null;
         }
@@ -262,7 +271,7 @@ public final class TemplateReader {
 
         int start = in.position();
 
-        for (;;) {
+        for (; ; ) {
             if (!in.move('*')) {
                 throw new TemplateException("Not found closing for token");
             }
@@ -277,17 +286,11 @@ public final class TemplateReader {
         int end = in.position() - 2; // *>
 
         String path = in.substring(start, end).trim();
-        return new TemplateToken(path, TemplateTokenType.getType(path));
-    }
 
-    private static class Inner {
-        private final ParsedTemplate template;
-        private final TemplateTokenType byToken;
-
-        public Inner(ParsedTemplate template, TemplateTokenType byToken) {
-            this.template = template;
-            this.byToken = byToken;
-        }
+        return ImmutableToken.builder()
+                .value(path)
+                .type(TokenType.getType(path))
+                .build();
     }
 
 }

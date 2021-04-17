@@ -18,7 +18,7 @@ package te4j.template.compiler.code;
 
 import te4j.template.compiler.TemplateCompileProcess;
 import te4j.template.compiler.path.AbstractCompiledPath;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 import te4j.template.path.TemplatePath;
 
 import java.io.ByteArrayOutputStream;
@@ -140,7 +140,7 @@ public final class RenderCode {
         if (field != null) {
             fieldTextMap.put(field, textBuffer.toByteArray());
             out.append("out.").append(process.getPutTemplateContent()).append('(');
-            out.append(process.getOutputPrefix(process.getOutputType()));
+            out.append(process.getOutputType().getPrefix());
             out.append(field);
             out.append(");");
             textBuffer.reset();

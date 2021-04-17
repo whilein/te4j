@@ -16,65 +16,37 @@
 
 package te4j.template.context;
 
-import te4j.Te4j;
 import te4j.modifiable.watcher.ModifyWatcherManager;
+import te4j.template.option.minify.Minify;
+import te4j.template.option.output.Output;
+
+import java.util.Collection;
 
 /**
  * @author lero4ka16
  */
-public final class TemplateContextBuilder {
+public interface TemplateContextBuilder {
 
-    private boolean useResources;
-    private ModifyWatcherManager modifyWatcherManager;
+    TemplateContextBuilder output(Output... types);
 
-    private int outputTypes;
-    private int replace;
+    TemplateContextBuilder output(Collection<Output> types);
 
-    public TemplateContextBuilder() {
-    }
+    TemplateContextBuilder outputAll();
 
-    public TemplateContextBuilder(TemplateContext another) {
-        this.useResources = another.useResources();
-        this.modifyWatcherManager = another.getModifyWatcherManager();
-        this.outputTypes = another.getOutputTypes();
-        this.replace = another.getReplace();
-    }
+    TemplateContextBuilder disableAutoReloading();
 
-    public TemplateContextBuilder outputTypes(int bits) {
-        this.outputTypes = bits;
-        return this;
-    }
+    TemplateContextBuilder enableAutoReloading(ModifyWatcherManager modifyWatcherManager);
 
-    public TemplateContextBuilder disableHotReloading() {
-        this.modifyWatcherManager = null;
-        return this;
-    }
+    TemplateContextBuilder enableAutoReloading();
 
-    public TemplateContextBuilder enableHotReloading(ModifyWatcherManager modifyWatcherManager) {
-        this.modifyWatcherManager = modifyWatcherManager;
-        return this;
-    }
+    TemplateContextBuilder useResources();
 
-    public TemplateContextBuilder enableHotReloading() {
-        return enableHotReloading(Te4j.getDefaultModifyWatcher());
-    }
+    TemplateContextBuilder minify(Minify... options);
 
-    public TemplateContextBuilder useResources() {
-        this.useResources = true;
-        return this;
-    }
+    TemplateContextBuilder minify(Collection<Minify> options);
 
-    public TemplateContextBuilder replace(int value) {
-        this.replace = value;
-        return this;
-    }
+    TemplateContextBuilder minifyAll();
 
-    public TemplateContext build() {
-        if (outputTypes == 0) {
-            outputTypes(Te4j.STRING | Te4j.BYTES);
-        }
-
-        return new TemplateContext(useResources, modifyWatcherManager, outputTypes, replace);
-    }
+    TemplateContext build();
 
 }

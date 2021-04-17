@@ -17,8 +17,7 @@
 package te4j.template.source;
 
 import te4j.template.Template;
-import te4j.template.context.TemplateContext;
-import te4j.util.type.ref.TypeReference;
+import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +48,9 @@ public final class NameSource implements TemplateSource {
     }
 
     @Override
-    public <T> Template<T> load(TemplateContext ctx, TypeReference<T> type) {
-        return ctx.load(type, name);
+    public <T> Template<T> load(TemplateLoader<T> loader) {
+        return loader.from(name);
     }
+
+
 }

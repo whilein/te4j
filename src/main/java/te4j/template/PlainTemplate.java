@@ -25,30 +25,42 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
-public final class PlainTemplate<T> extends Template<T> {
+public final class PlainTemplate<T> implements Template<T> {
 
     private final byte[] value;
 
     private final int offset;
     private final int length;
 
-    private final String chars;
+    private final String[] includes = new String[0];
 
-    public PlainTemplate(byte[] value, int offset, int length) {
+    private volatile String chars;
+
+    private PlainTemplate(byte[] value, int offset, int length) {
         this.value = value;
         this.offset = offset;
         this.length = length;
+    }
 
-        this.chars = new String(value, offset, length);
+    public static <T> Template<T> create(byte[] value, int offset, int length) {
+        return new PlainTemplate<>(value, offset, length);
     }
 
     @Override
     public @NotNull String[] getIncludes() {
-        return new String[0];
+        return includes;
     }
 
     @Override
     public @NotNull String renderAsString(@NotNull T object) {
+        if (chars == null) {
+            synchronized (this) {
+                if (chars == null) {
+                    chars = new String(value, offset, length);
+                }
+            }
+        }
+
         return chars;
     }
 

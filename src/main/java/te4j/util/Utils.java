@@ -16,11 +16,18 @@
 
 package te4j.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author lero4ka16
@@ -31,6 +38,20 @@ public final class Utils {
 
     private Utils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static byte[] read(String name, boolean resource) throws IOException {
+        if (resource) {
+            try (InputStream is = ClassLoader.getSystemResourceAsStream(name)) {
+                if (is == null) {
+                    throw new FileNotFoundException("Resource not found: " + name);
+                }
+
+                return Utils.readBytes(is);
+            }
+        } else {
+            return Files.readAllBytes(Paths.get(name));
+        }
     }
 
     public static byte[] readFile(File file) throws IOException {
@@ -103,8 +124,29 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static boolean deleteDirectory(File dir) {
+    public static boolean deleteDirectory(@NotNull Path dir) {
+        try {
+            try (DirectoryStream<Path> paths = Files.newDirectoryStream(dir)) {
+                for (Path path : paths) {
+                    if (Files.isDirectory(path)) {
+                        boolean result = deleteDirectory(path);
+                        if (!result) return false;
+                    } else {
+                        Files.delete(path);
+                    }
+                }
+            }
+
+            Files.delete(dir);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean deleteDirectory(@NotNull File dir) {
         File[] files = dir.listFiles();
+        assert files != null;
 
         for (File file : files) {
             boolean result;

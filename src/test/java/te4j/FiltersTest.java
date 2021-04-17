@@ -61,7 +61,7 @@ public class FiltersTest {
     private static final List<Integer> SHUFFLED_OBJECT_LIST = Arrays.asList(3, 4, 1, 5, 2);
 
     public <T> void testInTemplate(T pojo, Class<T> cls, String text, String expect, boolean notExpect) {
-        String actual = Te4j.loadString(cls, text).renderAsString(pojo);
+        String actual = Te4j.load(cls).fromString(text).renderAsString(pojo);
 
         if (notExpect) {
             assertNotEquals(expect, actual);

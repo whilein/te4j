@@ -16,8 +16,8 @@
 
 package te4j.template.exception;
 
-import te4j.template.reader.token.TemplateToken;
-import te4j.template.reader.token.TemplateTokenType;
+import te4j.template.parser.token.Token;
+import te4j.template.parser.token.TokenType;
 
 import java.util.Arrays;
 
@@ -26,21 +26,21 @@ import java.util.Arrays;
  */
 public class TemplateUnexpectedTokenException extends RuntimeException {
 
-    private final TemplateTokenType[] expect;
-    private final TemplateToken token;
+    private final TokenType[] expect;
+    private final Token token;
     private final int position;
 
-    public TemplateUnexpectedTokenException(TemplateTokenType[] expect, TemplateToken token, int position) {
+    public TemplateUnexpectedTokenException(TokenType[] expect, Token token, int position) {
         this.expect = expect;
         this.token = token;
         this.position = position;
     }
 
-    public TemplateTokenType[] getExpect() {
+    public TokenType[] getExpect() {
         return expect;
     }
 
-    public TemplateToken getToken() {
+    public Token getToken() {
         return token;
     }
 

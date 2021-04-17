@@ -18,7 +18,7 @@ package te4j.template.method.impl;
 
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author lero4ka16
@@ -34,6 +34,10 @@ public class ConditionMethod implements TemplateMethod {
         this.condition = condition;
         this.block = block;
         this.elseBlock = elseBlock;
+    }
+
+    public static ConditionMethod create(String condition, ParsedTemplate block, ParsedTemplate elseBlock) {
+        return new ConditionMethod(condition, block, elseBlock);
     }
 
     public String getCondition() {

@@ -14,16 +14,16 @@
  *    limitations under the License.
  */
 
-package te4j.template.reader.token;
+package te4j.template.parser.token;
 
 /**
  * @author lero4ka16
  */
-public enum TemplateTokenType {
+public enum TokenType {
 
     BEGIN, END_FOR, ELSE, END_IF, END_CASE, CASE_DEFAULT;
 
-    public static TemplateTokenType getType(String path) {
+    public static TokenType getType(String path) {
         switch (path) {
             case "endfor":
                 return END_FOR;

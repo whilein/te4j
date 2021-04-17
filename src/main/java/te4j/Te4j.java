@@ -20,32 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filters;
 import te4j.filter.MapBasedFilters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
-import te4j.template.Template;
+import te4j.template.context.DefaultTemplateContextBuilder;
 import te4j.template.context.TemplateContext;
 import te4j.template.context.TemplateContextBuilder;
-import te4j.template.parse.ParsedTemplate;
-import te4j.util.type.ref.TypeRef;
+import te4j.template.context.loader.TemplateLoader;
+import te4j.template.context.parser.TemplateParser;
 import te4j.util.type.ref.TypeReference;
-
-import java.io.File;
-import java.nio.file.Path;
 
 /**
  * @author lero4ka16
  */
 public final class Te4j {
-
-    public static final int DEL_CR = 1;
-    public static final int DEL_LF = 2;
-    public static final int DEL_REPEATING_SPACES = 4;
-    public static final int DEL_TAB = 8;
-
-    public static final int DEL_ALL = DEL_CR | DEL_LF | DEL_REPEATING_SPACES | DEL_TAB;
-
-    public static final int STRING = 1;
-    public static final int BYTES = 2;
-
-    public static final int[] OUTPUT_TYPES = new int[]{STRING, BYTES};
 
     private static final Filters FILTERS
             = MapBasedFilters.createDefaults();
@@ -54,9 +39,9 @@ public final class Te4j {
             = new ModifyWatcherManager();
 
     private static final TemplateContext DEFAULTS = custom()
-            .replace(DEL_ALL)
-            .outputTypes(STRING | BYTES)
-            .enableHotReloading(DEFAULT_MODIFY_WATCHER)
+            .minifyAll()
+            .outputAll()
+            .enableAutoReloading(DEFAULT_MODIFY_WATCHER)
             .build();
 
     private Te4j() {
@@ -71,6 +56,18 @@ public final class Te4j {
         return FILTERS;
     }
 
+    public static <T> TemplateLoader<T> load(@NotNull TypeReference<T> type) {
+        return DEFAULTS.load(type);
+    }
+
+    public static <T> TemplateLoader<T> load(@NotNull Class<T> cls) {
+        return DEFAULTS.load(cls);
+    }
+
+    public static TemplateParser parse() {
+        return DEFAULTS.parse();
+    }
+
     /**
      * @return Default template context
      */
@@ -78,92 +75,10 @@ public final class Te4j {
         return DEFAULTS;
     }
 
-    public static @NotNull <T> Template<T> loadBytes(@NotNull TypeReference<T> type,
-                                                     byte @NotNull [] data) {
-        return DEFAULTS.loadBytes(type, data);
-    }
-
-    public static @NotNull <T> Template<T> loadString(@NotNull TypeReference<T> type,
-                                                      @NotNull String data) {
-        return DEFAULTS.loadString(type, data);
-    }
-
-    public static @NotNull <T> Template<T> load(@NotNull TypeReference<T> type,
-                                                @NotNull String name) {
-        return DEFAULTS.load(type, name);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
-                                                    @NotNull File file) {
-        return DEFAULTS.loadFile(type, file);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull TypeReference<T> type,
-                                                    @NotNull Path path) {
-        return DEFAULTS.loadFile(type, path);
-    }
-
-    public static @NotNull <T> Template<T> load(@NotNull TypeRef<T> type,
-                                                @NotNull String name) {
-        return DEFAULTS.load(type, name);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull TypeRef<T> type,
-                                                    @NotNull File file) {
-        return DEFAULTS.loadFile(type, file);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull TypeRef<T> type,
-                                                    @NotNull Path path) {
-        return DEFAULTS.loadFile(type, path);
-    }
-
-    public static @NotNull <T> Template<T> loadBytes(@NotNull Class<T> type,
-                                                     byte @NotNull [] bytes) {
-        return DEFAULTS.loadBytes(type, bytes);
-    }
-
-    public static @NotNull <T> Template<T> loadString(@NotNull Class<T> type,
-                                                      @NotNull String data) {
-        return DEFAULTS.loadString(type, data);
-    }
-
-    public static @NotNull <T> Template<T> load(@NotNull Class<T> type,
-                                                @NotNull String name) {
-        return DEFAULTS.load(type, name);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
-                                                    @NotNull File file) {
-        return DEFAULTS.loadFile(type, file);
-    }
-
-    public static @NotNull <T> Template<T> loadFile(@NotNull Class<T> type,
-                                                    @NotNull Path path) {
-        return DEFAULTS.loadFile(type, path);
-    }
-
-    public static ParsedTemplate parseBytes(byte[] bytes) {
-        return DEFAULTS.parseBytes(bytes);
-    }
-
-
-    public static @NotNull ParsedTemplate parse(@NotNull String name) {
-        return DEFAULTS.parse(name);
-    }
-
-    public static @NotNull ParsedTemplate parseFile(@NotNull File file) {
-        return DEFAULTS.parseFile(file);
-    }
-
-    public static @NotNull ParsedTemplate parseFile(@NotNull Path path) {
-        return DEFAULTS.parseFile(path);
-    }
-
     /**
      * @return New custom template context builder
      */
     public static @NotNull TemplateContextBuilder custom() {
-        return new TemplateContextBuilder();
+        return DefaultTemplateContextBuilder.create();
     }
 }

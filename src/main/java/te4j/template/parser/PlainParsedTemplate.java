@@ -14,14 +14,18 @@
  *    limitations under the License.
  */
 
-package te4j.template.parse;
+package te4j.template.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
+import te4j.template.AutoReloadingTemplate;
 import te4j.template.PlainTemplate;
 import te4j.template.Template;
-import te4j.template.context.TemplateContext;
+import te4j.template.context.loader.TemplateLoader;
+import te4j.template.context.parser.TemplateParser;
+import te4j.template.option.minify.Minify;
+import te4j.template.option.output.Output;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
 import te4j.util.type.ref.TypeReference;
@@ -29,26 +33,44 @@ import te4j.util.type.ref.TypeReference;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lero4ka16
  */
-public final class PlainParsedTemplate extends ParsedTemplate {
+public final class PlainParsedTemplate extends AbstractParsedTemplate {
 
-    public PlainParsedTemplate(TemplateContext context,
-                               byte[] content, int offset, int length) {
-        super(context, content, offset, length);
+    private PlainParsedTemplate(byte[] content, int offset, int length) {
+        super(content, offset, length);
+    }
+
+    public static ParsedTemplate create(byte[] content, int offset, int length) {
+        checkArguments(content, offset, length);
+
+        int trimmedBytes = trim(content, offset, length);
+
+        return new PlainParsedTemplate(
+                content,
+                offset + trimmedBytes,
+                length - trimmedBytes
+        );
     }
 
     @Override
-    public <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
-                                   @NotNull String parentFile,
-                                   @NotNull TemplateSource source,
-                                   @NotNull TypeReference<T> type) {
-        Template<T> result = new PlainTemplate<>(content, offset, length);
+    public <T> Template<T> compile(
+            @Nullable ModifyWatcherManager modifyWatcherManager,
+            @NotNull TypeReference<T> type,
+            @NotNull TemplateParser parser,
+            @NotNull Set<Output> outputTypes,
+            @NotNull Set<Minify> minifyOptions,
+            @NotNull String parentFile,
+            @NotNull TemplateSource src,
+            @NotNull TemplateLoader<T> loader
+    ) {
+        Template<T> result = PlainTemplate.create(content, offset, length);
 
         if (modifyWatcherManager != null) {
-            result = Template.wrapHotReloading(modifyWatcherManager, context, result, type, source);
+            result = AutoReloadingTemplate.create(result, loader, src, modifyWatcherManager);
         }
 
         return result;

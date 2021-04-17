@@ -16,18 +16,22 @@
 
 package te4j.util.formatter;
 
-import te4j.Te4j;
+import te4j.template.option.minify.Minify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 public final class TextFormatter {
 
     private final byte[] buf;
     private final int off;
     private final int len;
+
+    private Set<Minify> minifyOptions;
+    private boolean escaping = true;
 
     public TextFormatter(byte[] buf, int off, int len) {
         this.buf = buf;
@@ -43,11 +47,8 @@ public final class TextFormatter {
         this(value.getBytes(StandardCharsets.UTF_8), 0, value.length());
     }
 
-    protected boolean escaping = true;
-    protected int replace;
-
-    public TextFormatter replace(int value) {
-        this.replace = value;
+    public TextFormatter minify(Set<Minify> minifyOptions) {
+        this.minifyOptions = minifyOptions;
         return this;
     }
 
@@ -108,7 +109,7 @@ public final class TextFormatter {
 
                     break;
                 case '\n':
-                    if ((replace & Te4j.DEL_LF) != 0) {
+                    if (minifyOptions.contains(Minify.DEL_LF)) {
                         continue;
                     }
 
@@ -118,7 +119,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case '\t':
-                    if ((replace & Te4j.DEL_TAB) != 0) {
+                    if (minifyOptions.contains(Minify.DEL_TAB)) {
                         continue;
                     }
 
@@ -128,7 +129,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case '\r':
-                    if ((replace & Te4j.DEL_CR) != 0) {
+                    if (minifyOptions.contains(Minify.DEL_CR)) {
                         continue;
                     }
 
@@ -138,7 +139,7 @@ public final class TextFormatter {
                         continue;
                     }
                 case ' ':
-                    if ((replace & Te4j.DEL_REPEATING_SPACES) != 0) {
+                    if (minifyOptions.contains(Minify.DEL_REPEATING_SPACES)) {
                         insertSpace = true;
                         continue;
                     }

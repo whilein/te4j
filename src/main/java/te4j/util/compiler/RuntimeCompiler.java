@@ -14,31 +14,31 @@
  *    limitations under the License.
  */
 
-package te4j.template;
+package te4j.util.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import te4j.template.output.TemplateOutputBuffer;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Collection;
 
 /**
  * @author lero4ka16
  */
-public interface Template<T> {
+public interface RuntimeCompiler {
 
-    ThreadLocal<TemplateOutputBuffer> bytesOptimized
-            = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+    @NotNull String getClassName();
 
-    ThreadLocal<StringBuilder> stringOptimized
-            = ThreadLocal.withInitial(StringBuilder::new);
+    @Nullable String getSuperclass();
 
-    @NotNull String[] getIncludes();
+    void setSuperclass(@Nullable String superclass);
 
-    @NotNull String renderAsString(@NotNull T object);
+    @Nullable Collection<String> getInterfaces();
 
-    byte @NotNull [] renderAsBytes(@NotNull T object);
+    void setInterfaces(@Nullable Collection<String> interfaces);
 
-    void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
+    @NotNull StringBuilder getContent();
+
+    @NotNull Class<?> compile() throws IOException;
 
 }

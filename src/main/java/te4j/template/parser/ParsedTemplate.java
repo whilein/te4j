@@ -14,41 +14,49 @@
  *    limitations under the License.
  */
 
-package te4j.template.context;
+package te4j.template.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
+import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.context.parser.TemplateParser;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
+import te4j.template.path.TemplatePath;
+import te4j.template.source.TemplateSource;
 import te4j.util.type.ref.TypeReference;
 
+import java.util.List;
 import java.util.Set;
 
 /**
  * @author lero4ka16
  */
-public interface TemplateContext {
+public interface ParsedTemplate {
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type);
+    int getOffset();
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls);
+    int getLength();
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type, boolean enableAutoReloading);
+    byte @NotNull [] getRawContent();
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls, boolean enableAutoReloading);
+    byte @NotNull [] getContent();
 
-    @NotNull TemplateParser parse();
+    <T> Template<T> compile(
+            @Nullable ModifyWatcherManager modifyWatcherManager,
+            @NotNull TypeReference<T> type,
+            @NotNull TemplateParser parser,
+            @NotNull Set<Output> outputTypes,
+            @NotNull Set<Minify> minifyOptions,
+            @NotNull String parentFile,
+            @NotNull TemplateSource src,
+            @NotNull TemplateLoader<T> loader
+    );
 
-    boolean useResources();
+    boolean hasPaths();
 
-    @Nullable ModifyWatcherManager getModifyWatcherManager();
-
-    @NotNull Set<Output> getOutputTypes();
-
-    @NotNull Set<Minify> getMinifyOptions();
-
+    List<TemplatePath> getPaths();
 
 }

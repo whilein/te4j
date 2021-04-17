@@ -14,37 +14,27 @@
  *    limitations under the License.
  */
 
-package te4j.template.reader.token;
+package te4j.template.parser.token;
 
+import org.immutables.value.Value;
 import te4j.template.exception.TemplateUnexpectedTokenException;
 
 /**
  * @author lero4ka16
  */
-public class TemplateToken {
+@Value.Immutable
+public abstract class Token {
 
-    private final String value;
-    private final TemplateTokenType type;
+    public abstract String getValue();
 
-    public TemplateToken(String value, TemplateTokenType type) {
-        this.value = value;
-        this.type = type;
-    }
+    public abstract TokenType getType();
 
-    public void expect(int position, TemplateTokenType... types) throws TemplateUnexpectedTokenException {
-        for (TemplateTokenType expectType : types) {
-            if (expectType == type) return;
+    public void expect(int position, TokenType... types) throws TemplateUnexpectedTokenException {
+        for (TokenType expectType : types) {
+            if (expectType == getType()) return;
         }
 
         throw new TemplateUnexpectedTokenException(types, this, position);
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public TemplateTokenType getType() {
-        return type;
     }
 
 }

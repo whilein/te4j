@@ -14,31 +14,27 @@
  *    limitations under the License.
  */
 
-package te4j.template;
+package te4j.template.context.parser;
 
 import org.jetbrains.annotations.NotNull;
-import te4j.template.output.TemplateOutputBuffer;
+import te4j.template.parser.ParsedTemplate;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * @author lero4ka16
  */
-public interface Template<T> {
+public interface TemplateParser {
 
-    ThreadLocal<TemplateOutputBuffer> bytesOptimized
-            = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+    @NotNull ParsedTemplate from(@NotNull String name);
 
-    ThreadLocal<StringBuilder> stringOptimized
-            = ThreadLocal.withInitial(StringBuilder::new);
+    @NotNull ParsedTemplate fromBytes(byte @NotNull [] binary);
 
-    @NotNull String[] getIncludes();
+    @NotNull ParsedTemplate fromString(@NotNull String text);
 
-    @NotNull String renderAsString(@NotNull T object);
+    @NotNull ParsedTemplate fromFile(@NotNull File file);
 
-    byte @NotNull [] renderAsBytes(@NotNull T object);
-
-    void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
+    @NotNull ParsedTemplate fromFile(@NotNull Path path);
 
 }

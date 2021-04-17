@@ -14,27 +14,18 @@
  *    limitations under the License.
  */
 
-package te4j.template.parse;
+package te4j.template.parser;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import te4j.modifiable.watcher.ModifyWatcherManager;
-import te4j.template.Template;
-import te4j.template.context.TemplateContext;
-import te4j.template.path.TemplatePath;
-import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.TypeReference;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 import java.util.function.IntPredicate;
 
 /**
  * @author lero4ka16
  */
-public abstract class ParsedTemplate {
-
-    protected final TemplateContext context;
+public abstract class AbstractParsedTemplate implements ParsedTemplate {
 
     protected final byte[] content;
 
@@ -43,8 +34,19 @@ public abstract class ParsedTemplate {
 
     private byte[] _content;
 
-    public ParsedTemplate(TemplateContext context, byte[] content,
-                          int offset, int length) {
+    protected AbstractParsedTemplate(
+            byte[] content,
+            int offset,
+            int length
+    ) {
+        this.content = content;
+        this.offset = offset;
+        this.length = length;
+    }
+
+    protected static void checkArguments(@NotNull byte[] content, int offset, int length) {
+        Objects.requireNonNull(content);
+
         if (offset == 0 && length == 0 && content.length == 0) {
             throw new IllegalArgumentException("template is empty");
         }
@@ -58,30 +60,11 @@ public abstract class ParsedTemplate {
             throw new IllegalArgumentException("length must be between 0 and "
                     + (content.length - offset) + ", but " + length);
         }
-
-        this.context = context;
-        this.content = content;
-        this.offset = offset;
-        this.length = length;
-
-        trim();
     }
 
-    public int getOffset() {
-        return offset;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public TemplateContext getContext() {
-        return context;
-    }
-
-    private boolean hasNewlines() {
+    protected static boolean hasNewlines(byte[] content, int off, int length) {
         for (int i = 0; i < length; i++) {
-            if (content[offset + i] == '\n') {
+            if (content[off + i] == '\n') {
                 return true;
             }
         }
@@ -89,37 +72,54 @@ public abstract class ParsedTemplate {
         return false;
     }
 
-    public void trim() {
-        boolean inline = !hasNewlines();
-        if (inline) return;
+    protected static int trim(byte[] content, int off, int len) {
+        boolean inline = !hasNewlines(content, off, len);
+        if (inline) return 0;
+
+        int result = 0;
 
         // trim spaces until crlf
-        trim(this::space);
+        result += trim(AbstractParsedTemplate::isSpace, content, off, len);
         // trim beginning crlf
-        trim(this::crlf);
+        result += trim(AbstractParsedTemplate::isCRLF, content, off, len);
 
-        _content = null;
+        return result;
     }
 
-    private boolean space(int value) {
+    private static boolean isSpace(int value) {
         return value == ' ' || value == '\t';
     }
 
-    private boolean crlf(int value) {
+    private static boolean isCRLF(int value) {
         return value == '\r' || value == '\n';
     }
 
-    private void trim(IntPredicate value) {
-        while (length != 0 && value.test(content[offset] & 0xFF)) {
-            offset++;
-            length--;
+    private static int trim(IntPredicate value, byte[] content, int off, int len) {
+        int n = 0;
+
+        while (len - n != 0 && value.test(content[off + n] & 0xFF)) {
+            n++;
         }
+
+        return n;
     }
 
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    @Override
     public byte @NotNull [] getRawContent() {
         return content;
     }
 
+    @Override
     public byte @NotNull [] getContent() {
         if (_content == null) {
             _content = offset != 0 || length != content.length
@@ -129,14 +129,5 @@ public abstract class ParsedTemplate {
 
         return _content;
     }
-
-    public abstract <T> Template<T> compile(@Nullable ModifyWatcherManager modifyWatcherManager,
-                                            @NotNull String parentFile,
-                                            @NotNull TemplateSource source,
-                                            @NotNull TypeReference<T> type);
-
-    public abstract boolean hasPaths();
-
-    public abstract List<TemplatePath> getPaths();
 
 }

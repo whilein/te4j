@@ -50,7 +50,7 @@ public class TemplateTest {
 
     private TemplateContext context;
     private TemplateContext trimContext;
-    private TemplateContext hotReloadContext;
+    private TemplateContext autoReloadContext;
 
     private ModifyWatcherManager modifyManager;
 
@@ -69,16 +69,16 @@ public class TemplateTest {
 
         context = Te4j.custom()
                 .useResources()
-                .replace(Te4j.DEL_ALL)
+                .minifyAll()
                 .build();
 
         trimContext = Te4j.custom()
                 .useResources()
                 .build();
 
-        hotReloadContext = Te4j.custom()
-                .replace(Te4j.DEL_ALL)
-                .enableHotReloading(modifyManager)
+        autoReloadContext = Te4j.custom()
+                .minifyAll()
+                .enableAutoReloading(modifyManager)
                 .build();
 
         tests = new File("tests");
@@ -106,41 +106,44 @@ public class TemplateTest {
     }
 
     @Test
-    public void testHotReload() throws InterruptedException {
-        Path plain1 = Paths.get("tests/hotreload_plain_1.txt");
-        Path plain2 = Paths.get("tests/hotreload_plain_2.txt");
-        Path plain3 = Paths.get("tests/hotreload_plain_3.txt");
-        Path plain4 = Paths.get("tests/hotreload_plain_4.txt");
+    public void testAutoReload() throws InterruptedException {
+        Path plain1 = Paths.get("tests/autoreload_plain_1.txt");
+        Path plain2 = Paths.get("tests/autoreload_plain_2.txt");
+        Path plain3 = Paths.get("tests/autoreload_plain_3.txt");
+        Path plain4 = Paths.get("tests/autoreload_plain_4.txt");
 
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain1);
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain2);
-        copyResource("WEB-INF/hotreload_plain_3.txt", plain3);
-        copyResource("WEB-INF/hotreload_plain_1.txt", plain4);
+        copyResource("WEB-INF/autoreload_plain_1.txt", plain1);
+        copyResource("WEB-INF/autoreload_plain_1.txt", plain2);
+        copyResource("WEB-INF/autoreload_plain_3.txt", plain3);
+        copyResource("WEB-INF/autoreload_plain_1.txt", plain4);
 
         Thread.sleep(1000);
 
-        Template<Object> template1 = hotReloadContext.loadFile(Object.class, plain1);
-        Template<Object> template2 = hotReloadContext.loadFile(Object.class, plain2);
-        Template<Object> template3 = hotReloadContext.loadFile(Object.class, plain3);
-        Template<Object> template4 = hotReloadContext.loadString(Object.class, "<* include tests/hotreload_plain_1.txt *>");
+        Template<Object> template1 = autoReloadContext.load(Object.class).fromFile(plain1);
+        Template<Object> template2 = autoReloadContext.load(Object.class).fromFile(plain2);
+        Template<Object> template3 = autoReloadContext.load(Object.class).fromFile(plain3);
 
-        assertEquals("Before hot reload", template1.renderAsString(dummy));
-        assertEquals("Before hot reload", template2.renderAsString(dummy));
-        assertEquals("Before hot reloadBefore hot reload", template3.renderAsString(dummy));
-        assertEquals("Before hot reload", template4.renderAsString(dummy));
+        Template<Object> template4 = autoReloadContext
+                .load(Object.class)
+                .fromString("<* include tests/autoreload_plain_1.txt *>");
 
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain1);
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain2);
-        copyResource("WEB-INF/hotreload_plain_2.txt", plain4);
-        copyResource("WEB-INF/hotreload_plain_4.txt", plain3);
+        assertEquals("Before auto reload", template1.renderAsString(dummy));
+        assertEquals("Before auto reload", template2.renderAsString(dummy));
+        assertEquals("Before auto reloadBefore auto reload", template3.renderAsString(dummy));
+        assertEquals("Before auto reload", template4.renderAsString(dummy));
+
+        copyResource("WEB-INF/autoreload_plain_2.txt", plain1);
+        copyResource("WEB-INF/autoreload_plain_2.txt", plain2);
+        copyResource("WEB-INF/autoreload_plain_2.txt", plain4);
+        copyResource("WEB-INF/autoreload_plain_4.txt", plain3);
 
         // Слушание событий происходит в отдельном потоке
         // ждём немного, перед тем, чтобы сделать проверку
         Thread.sleep(1000);
-        assertEquals("After hot reload", template1.renderAsString(dummy));
-        assertEquals("After hot reload", template2.renderAsString(dummy));
-        assertEquals("After hot reload", template3.renderAsString(dummy));
-        assertEquals("After hot reload", template4.renderAsString(dummy));
+        assertEquals("After auto reload", template1.renderAsString(dummy));
+        assertEquals("After auto reload", template2.renderAsString(dummy));
+        assertEquals("After auto reload", template3.renderAsString(dummy));
+        assertEquals("After auto reload", template4.renderAsString(dummy));
     }
 
     @Test
@@ -232,7 +235,7 @@ public class TemplateTest {
 
     private <T> void testTemplate(TemplateContext context, String resource, String expectText,
                                   T object, TypeReference<T> type) {
-        String result = context.load(type, resource).renderAsString(object);
+        String result = context.load(type).from(resource).renderAsString(object);
         assertEquals(expectText, result);
     }
 

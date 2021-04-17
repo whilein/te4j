@@ -17,7 +17,7 @@
 package te4j.template.compiler.code;
 
 import te4j.template.environment.LoopEnvironment;
-import te4j.template.parse.ParsedTemplate;
+import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author lero4ka16

@@ -14,31 +14,32 @@
  *    limitations under the License.
  */
 
-package te4j.template;
+package te4j.template.option.minify;
 
-import org.jetbrains.annotations.NotNull;
-import te4j.template.output.TemplateOutputBuffer;
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @author lero4ka16
  */
-public interface Template<T> {
+public enum Minify {
 
-    ThreadLocal<TemplateOutputBuffer> bytesOptimized
-            = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+    DEL_CR, DEL_LF, DEL_REPEATING_SPACES, DEL_TAB;
 
-    ThreadLocal<StringBuilder> stringOptimized
-            = ThreadLocal.withInitial(StringBuilder::new);
+    private static Set<Minify> values;
 
-    @NotNull String[] getIncludes();
+    public static Set<Minify> getValues() {
+        if (values == null) {
+            synchronized (Minify.class) {
+                if (values == null) {
+                    values = Collections.unmodifiableSet(EnumSet.allOf(Minify.class));
+                }
+            }
+        }
 
-    @NotNull String renderAsString(@NotNull T object);
+        return values;
+    }
 
-    byte @NotNull [] renderAsBytes(@NotNull T object);
-
-    void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
 
 }
