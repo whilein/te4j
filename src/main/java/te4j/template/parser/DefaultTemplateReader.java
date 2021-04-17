@@ -38,6 +38,7 @@ import te4j.util.io.DataReader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public final class DefaultTemplateReader implements TemplateReader {
@@ -47,11 +48,17 @@ public final class DefaultTemplateReader implements TemplateReader {
     private final byte[] value;
     private final DataReader reader;
 
-    public DefaultTemplateReader(byte[] value, Set<Minify> minifyOptions) {
+    private DefaultTemplateReader(byte[] value, Set<Minify> minifyOptions, DataReader reader) {
         this.value = value;
-
         this.minifyOptions = minifyOptions;
-        this.reader = new BytesReader(value);
+        this.reader = reader;
+    }
+
+    public static TemplateReader create(byte @NotNull [] value, @NotNull Set<Minify> minifyOptions) {
+        Objects.requireNonNull(value, "value");
+        Objects.requireNonNull(minifyOptions, "minifyOptions");
+
+        return new DefaultTemplateReader(value, minifyOptions, new BytesReader(value));
     }
 
     private ParsedTemplate newTemplate(List<TemplatePath> paths, int begin, int end, boolean inner) {
@@ -64,7 +71,17 @@ public final class DefaultTemplateReader implements TemplateReader {
                         .minify(minifyOptions)
                         .formatAsBytes();
 
-                template = PlainParsedTemplate.create(processed, 0, processed.length);
+                if (processed.length == 0) {
+                    template = EmptyParsedTemplate.getInstance();
+
+                    System.out.println("WARN: Processed is empty!");
+                    System.out.println("WARN: '" + new String(value, begin, end - begin) + "'");
+                    System.out.println("WARN: " + begin + " -> " + end);
+                    System.out.println("WARN: " + minifyOptions);
+                    System.out.println("WARN: '" + new String(value) + "'");
+                } else {
+                    template = PlainParsedTemplate.create(processed, 0, processed.length);
+                }
             } else {
                 template = PlainParsedTemplate.create(value, begin, end - begin);
             }

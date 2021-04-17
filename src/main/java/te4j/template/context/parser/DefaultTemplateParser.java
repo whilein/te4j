@@ -50,11 +50,19 @@ public final class DefaultTemplateParser implements TemplateParser {
 
     @Override
     public @NotNull ParsedTemplate fromBytes(byte @NotNull [] binary) {
-        return new DefaultTemplateReader(binary, minifyOptions).readTemplate();
+        if (binary.length == 0) {
+            return EmptyParsedTemplate.getInstance();
+        }
+
+        return DefaultTemplateReader.create(binary, minifyOptions).readTemplate();
     }
 
     @Override
     public @NotNull ParsedTemplate fromString(@NotNull String text) {
+        if (text.isEmpty()) {
+            return EmptyParsedTemplate.getInstance();
+        }
+
         return fromBytes(text.getBytes(StandardCharsets.UTF_8));
     }
 

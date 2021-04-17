@@ -44,7 +44,7 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
         super(content, offset, length);
     }
 
-    public static ParsedTemplate create(byte[] content, int offset, int length) {
+    public static ParsedTemplate create(byte @NotNull [] content, int offset, int length) {
         checkArguments(content, offset, length);
 
         int trimmedBytes = trim(content, offset, length);

@@ -44,7 +44,7 @@ public abstract class AbstractParsedTemplate implements ParsedTemplate {
         this.length = length;
     }
 
-    protected static void checkArguments(@NotNull byte[] content, int offset, int length) {
+    protected static void checkArguments(byte @NotNull [] content, int offset, int length) {
         Objects.requireNonNull(content);
 
         if (offset == 0 && length == 0 && content.length == 0) {
