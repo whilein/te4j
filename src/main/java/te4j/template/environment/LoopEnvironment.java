@@ -26,15 +26,22 @@ import te4j.util.type.GenericInfo;
 public final class LoopEnvironment implements Environment {
 
     private final String counterField;
+    private final String lengthField;
 
     private boolean hasCounter;
+    private boolean hasLength;
 
-    public LoopEnvironment(String counterField) {
+    public LoopEnvironment(String counterField, String lengthField) {
         this.counterField = counterField;
+        this.lengthField = lengthField;
     }
 
     public boolean hasCounter() {
         return hasCounter;
+    }
+
+    public boolean hasLength() {
+        return hasLength;
     }
 
     @Override
@@ -45,17 +52,34 @@ public final class LoopEnvironment implements Environment {
 
         String value = iterator.next();
 
-        switch (value) {
-            case "index":
-                if (iterator.hasNext()) {
-                    throw new IllegalStateException(iterator.getText());
-                }
-
-                hasCounter = true;
-
-                return new PathAccessor(GenericInfo.PRIMITIVE_INT, counterField);
+        if (iterator.hasNext()) {
+            throw new IllegalStateException(iterator.getText());
         }
 
-        throw new IllegalStateException(iterator.getText());
+        PathAccessor accessor;
+
+        switch (value) {
+            case "idx":
+            case "index":
+                accessor = new PathAccessor(GenericInfo.PRIMITIVE_INT, counterField);
+                hasCounter = true;
+                break;
+            case "last":
+            case "is_last":
+                accessor = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, counterField + "==" + lengthField + "-1");
+                hasCounter = true;
+                hasLength = true;
+                break;
+            case "first":
+            case "is_first":
+                accessor = new PathAccessor(GenericInfo.PRIMITIVE_BOOLEAN, counterField + "==0");
+                hasCounter = true;
+                hasLength = true;
+                break;
+            default:
+                throw new IllegalStateException(iterator.getText());
+        }
+
+        return accessor;
     }
 }

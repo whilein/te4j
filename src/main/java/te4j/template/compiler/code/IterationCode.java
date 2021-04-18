@@ -26,6 +26,7 @@ public final class IterationCode {
 
     private final String namespace;
     private final String counterFieldName;
+    private final String lengthFieldName;
     
     private final LoopEnvironment loop;
     
@@ -39,7 +40,8 @@ public final class IterationCode {
     private final boolean castArrayList;
 
     public IterationCode(String namespace, String elementType, String from,
-                         String counterFieldName, ParsedTemplate content, LoopEnvironment loop,
+                         String counterFieldName, String lengthFieldName,
+                         ParsedTemplate content, LoopEnvironment loop,
                          boolean arrayList, boolean array, boolean castArrayList) {
         this.namespace = namespace;
         this.elementType = elementType;
@@ -49,8 +51,10 @@ public final class IterationCode {
         this.arrayList = arrayList;
         this.array = array;
         this.castArrayList = castArrayList;
-        
+
         this.counterFieldName = counterFieldName;
+        this.lengthFieldName = lengthFieldName;
+
     }
     
     public String getElementFieldName() {
@@ -60,15 +64,11 @@ public final class IterationCode {
     public String getArrayFieldName() {
         return "__array_" + namespace;
     }
-
-    public String getCountFieldName() {
-        return "__count_" + namespace;
-    }
     
     public void write(RenderCode out) {
         boolean arrayOrArrayList = arrayList || array;
 
-        int counterPosition = out.position();
+        int counterPosition;
 
         if (arrayOrArrayList) {
             if (arrayList) {
@@ -85,7 +85,7 @@ public final class IterationCode {
 
             out.append(from).append(";");
 
-            out.append("int ").append(getCountFieldName()).append("=").append(getArrayFieldName());
+            out.append("int ").append(lengthFieldName).append("=").append(getArrayFieldName());
 
             if (arrayList) {
                 out.append(".size();");
@@ -93,9 +93,11 @@ public final class IterationCode {
                 out.append(".length;");
             }
 
+            counterPosition = out.position();
+
             out.append("for(int ");
             out.append(counterFieldName).append("=0;");
-            out.append(counterFieldName).append("<").append(getCountFieldName()).append(";");
+            out.append(counterFieldName).append("<").append(lengthFieldName).append(";");
             out.append(counterFieldName).append("++)");
 
             out.append("{");
@@ -106,18 +108,31 @@ public final class IterationCode {
                     .append(counterFieldName)
                     .append(arrayList ? ");" : "];");
         } else {
-            out.append("for(").append(elementType).append(" ").append(getElementFieldName()).append(":").append(from).append(")");
+            out.append("java.util.Collection<").append(elementType).append(">").append(getArrayFieldName()).append("=").append(from).append(";");
+            counterPosition = out.position();
+
+            out.append("for(").append(elementType).append(" ").append(getElementFieldName()).append(":").append(getArrayFieldName()).append(")");
             out.append("{");
         }
 
         out.appendTemplate(content);
 
-        if (!arrayOrArrayList && loop.hasCounter()) {
-            out.setPosition(counterPosition);
-            out.append("int ").append(counterFieldName).append("=0;");
-            out.resetPosition();
+        if (!arrayOrArrayList) {
+            if (loop.hasCounter()) {
+                out.setPosition(counterPosition);
+                out.append("int ").append(counterFieldName).append("=0;");
+                out.resetPosition();
 
-            out.append(counterFieldName).append("++;");
+                out.append(counterFieldName).append("++;");
+            }
+
+            if (loop.hasLength()) {
+                // todo Iterable support (Iterable doesn't has .size() method)
+
+                out.setPosition(counterPosition);
+                out.append("int ").append(lengthFieldName).append("=").append(getArrayFieldName()).append(".size();");
+                out.resetPosition();
+            }
         }
 
         out.append("}");

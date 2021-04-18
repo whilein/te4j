@@ -163,14 +163,14 @@ public class TemplateTest {
     @Test
     public void testForeach() {
         testTemplate(context,
-                "WEB-INF/foreach.txt", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>10</a><a>20</a><a>30</a>",
+                "WEB-INF/foreach.txt", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>[true/false]: 10</a><a>[false/false]: 20</a><a>[false/true]: 30</a>",
                 new Pojo_2(10, 20, 30), ClassReference.create(Pojo_2.class));
     }
 
     @Test
     public void testForeachCollection() {
         testTemplate(context,
-                "WEB-INF/foreach.txt", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>15</a><a>25</a><a>35</a>",
+                "WEB-INF/foreach.txt", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>[true/false]: 15</a><a>[false/false]: 25</a><a>[false/true]: 35</a>",
                 new Pojo_5(15, 25, 35), ClassReference.create(Pojo_5.class));
     }
 

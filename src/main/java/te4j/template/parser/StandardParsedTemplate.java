@@ -29,7 +29,6 @@ import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.TypeReference;
 
 import java.util.List;
 import java.util.Objects;
@@ -76,7 +75,6 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
     @Override
     public <T> Template<T> compile(
             @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TypeReference<T> type,
             @NotNull TemplateParser parser,
             @NotNull Set<Output> outputTypes,
             @NotNull Set<Minify> minifyOptions,
@@ -86,7 +84,9 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
     ) {
         try {
             Template<T> result = new TemplateCompileProcess<>(
-                    type, parser, outputTypes, minifyOptions, this, parentFile
+                    loader.getType(), parser,
+                    outputTypes, minifyOptions,
+                    this, parentFile
             ).compile();
 
             if (modifyWatcherManager != null) {

@@ -28,7 +28,6 @@ import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.TypeReference;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -59,7 +58,6 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
     @Override
     public <T> Template<T> compile(
             @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TypeReference<T> type,
             @NotNull TemplateParser parser,
             @NotNull Set<Output> outputTypes,
             @NotNull Set<Minify> minifyOptions,

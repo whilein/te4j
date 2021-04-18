@@ -337,12 +337,13 @@ public final class TemplateCompileProcess<T> {
 
                 String id = path.getId();
                 String counter = "__counter_" + id + "_";
+                String length = "__length_" + id + "_";
 
-                LoopEnvironment loop = new LoopEnvironment(counter);
+                LoopEnvironment loop = new LoopEnvironment(counter, length);
 
                 IterationCode iterationCode = new IterationCode(
-                        id, listType.getName(), path.getAccessorValue(), counter, template, loop,
-                        returnType.isArrayList(), returnType.isArray(),
+                        id, listType.getName(), path.getAccessorValue(), counter, length,
+                        template, loop, returnType.isArrayList(), returnType.isArray(),
                         !List.class.isAssignableFrom(returnType.getRawType())
                 );
 
@@ -362,7 +363,6 @@ public final class TemplateCompileProcess<T> {
         ParsedTemplate block = method.getBlock();
         ConditionMethod elseIf = method.getElseIf();
         ParsedTemplate elseBlock = method.getElseBlock();
-
 
         out.append("if(").append(value).append("){");
         out.appendTemplate(block);

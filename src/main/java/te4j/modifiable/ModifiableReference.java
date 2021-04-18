@@ -34,11 +34,12 @@ public final class ModifiableReference extends WeakReference<Modifiable> {
         files = referent.getFiles();
     }
 
-    public boolean handleModify() {
+    public synchronized boolean handleModify() {
         Modifiable modifiable = get();
 
         if (modifiable != null) {
             modifiable.handleModify();
+
             files = modifiable.getFiles();
 
             return true;
@@ -47,7 +48,7 @@ public final class ModifiableReference extends WeakReference<Modifiable> {
         return false;
     }
 
-    public List<Path> getFiles() {
+    public synchronized List<Path> getFiles() {
         return files;
     }
 }

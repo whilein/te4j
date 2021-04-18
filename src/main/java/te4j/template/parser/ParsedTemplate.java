@@ -26,7 +26,6 @@ import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
 import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
-import te4j.util.type.ref.TypeReference;
 
 import java.util.List;
 import java.util.Set;
@@ -46,7 +45,6 @@ public interface ParsedTemplate {
 
     <T> Template<T> compile(
             @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TypeReference<T> type,
             @NotNull TemplateParser parser,
             @NotNull Set<Output> outputTypes,
             @NotNull Set<Minify> minifyOptions,

@@ -50,10 +50,16 @@ public final class DefaultTemplateContext implements TemplateContext {
         this.minifyOptions = minifyOptions;
     }
 
-    public static TemplateContext create(boolean useResources,
-                                         @Nullable ModifyWatcherManager modifyWatcherManager,
-                                         @NotNull Set<Output> outputTypes,
-                                         @NotNull Set<Minify> minifyOptions) {
+    public static @NotNull TemplateContextBuilder builder() {
+        return new DefaultTemplateContextBuilder();
+    }
+
+    public static @NotNull TemplateContext create(
+            boolean useResources,
+            @Nullable ModifyWatcherManager modifyWatcherManager,
+            @NotNull Set<Output> outputTypes,
+            @NotNull Set<Minify> minifyOptions
+    ) {
         Objects.requireNonNull(outputTypes);
         Objects.requireNonNull(minifyOptions);
 

@@ -121,7 +121,7 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
         ParsedTemplate template = parse.apply(parser);
 
         return template.compile(
-                modifyWatcherManager, type, parser, ctx.getOutputTypes(),
+                modifyWatcherManager, parser, ctx.getOutputTypes(),
                 ctx.getMinifyOptions(), parentFile, src, this
         );
     }
