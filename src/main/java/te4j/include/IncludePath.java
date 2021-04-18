@@ -14,33 +14,19 @@
  *    limitations under the License.
  */
 
-package te4j.template.output;
+package te4j.include;
+
+import lombok.NonNull;
 
 /**
  * @author lero4ka16
  */
-public interface TemplateOutput {
+public interface IncludePath {
 
-    void put(String value);
+    boolean hasExpressions();
 
-    void put(Object object);
+    @NonNull String format();
 
-    void put(double d);
-
-    void put(float f);
-
-    void put(long value);
-
-    void put(int value);
-
-    void write(byte[] bytes);
-
-    void write(byte[] bytes, int off, int len);
-
-    void write(int ch);
-
-    byte[] toByteArray();
-
-    void reset();
+    @NonNull String format(@NonNull Object element);
 
 }

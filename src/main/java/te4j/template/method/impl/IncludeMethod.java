@@ -20,7 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import te4j.include.Include;
+import te4j.include.IncludePath;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 
@@ -31,9 +31,9 @@ import te4j.template.method.TemplateMethodType;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IncludeMethod implements TemplateMethod {
 
-    private final Include file;
+    private final IncludePath file;
 
-    public static TemplateMethod create(@NonNull Include include) {
+    public static TemplateMethod create(@NonNull IncludePath include) {
         return new IncludeMethod(include);
     }
 

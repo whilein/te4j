@@ -39,7 +39,7 @@ public final class DefaultTemplatePathIterator implements TemplatePathIterator {
 
     @Override
     public void prev() {
-        if (startIndex == 0 && endIndex != -1) {
+        if (!hasPrev()) {
             throw new NoSuchElementException();
         }
 
@@ -59,7 +59,7 @@ public final class DefaultTemplatePathIterator implements TemplatePathIterator {
 
     @Override
     public String next() {
-        if (endIndex == -1) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         }
 

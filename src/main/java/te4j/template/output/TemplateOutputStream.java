@@ -16,6 +16,9 @@
 
 package te4j.template.output;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.exception.TemplateException;
 
 import java.io.IOException;
@@ -24,12 +27,13 @@ import java.io.OutputStream;
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TemplateOutputStream extends AbstractTemplateOutput {
 
     private final OutputStream os;
 
-    public TemplateOutputStream(OutputStream os) {
-        this.os = os;
+    public static @NonNull TemplateOutput create(@NonNull OutputStream os) {
+        return new TemplateOutputStream(os);
     }
 
     @Override
@@ -61,6 +65,11 @@ public final class TemplateOutputStream extends AbstractTemplateOutput {
 
     @Override
     public byte[] toByteArray() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void reset() {
         throw new UnsupportedOperationException();
     }
 

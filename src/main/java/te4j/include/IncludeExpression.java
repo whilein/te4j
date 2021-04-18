@@ -14,33 +14,31 @@
  *    limitations under the License.
  */
 
-package te4j.template.output;
+package te4j.include;
+
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author lero4ka16
  */
-public interface TemplateOutput {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class IncludeExpression implements IncludePathElement {
 
-    void put(String value);
+    private final String expression;
 
-    void put(Object object);
+    public static IncludePathElement create(@NonNull String expression) {
+        return new IncludeExpression(expression);
+    }
 
-    void put(double d);
+    @Override
+    public boolean isExpression() {
+        return true;
+    }
 
-    void put(float f);
-
-    void put(long value);
-
-    void put(int value);
-
-    void write(byte[] bytes);
-
-    void write(byte[] bytes, int off, int len);
-
-    void write(int ch);
-
-    byte[] toByteArray();
-
-    void reset();
-
+    @Override
+    public String getValue() {
+        return expression;
+    }
 }

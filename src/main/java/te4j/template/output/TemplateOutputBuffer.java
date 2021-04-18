@@ -16,22 +16,27 @@
 
 package te4j.template.output;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+
 import java.util.Arrays;
 
 /**
  * @author lero4ka16
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TemplateOutputBuffer extends AbstractTemplateOutput {
 
     private byte[] value;
     private int length;
 
-    public TemplateOutputBuffer() {
-        this(32);
+    public static @NonNull TemplateOutput create(int capacity) {
+        return new TemplateOutputBuffer(new byte[capacity], 0);
     }
 
-    public TemplateOutputBuffer(int capacity) {
-        this.value = new byte[capacity];
+    public static @NonNull TemplateOutput create() {
+        return create(32);
     }
 
     @Override
@@ -44,11 +49,7 @@ public final class TemplateOutputBuffer extends AbstractTemplateOutput {
         return Arrays.copyOf(value, length);
     }
 
-    public int getLength() {
-        return length;
-    }
-
-    public void ensure(int len) {
+    private void ensure(int len) {
         if (length + len > value.length) {
             value = Arrays.copyOf(value, Math.max(value.length + len, value.length * 2));
         }
@@ -60,10 +61,12 @@ public final class TemplateOutputBuffer extends AbstractTemplateOutput {
         value[length++] = (byte) b;
     }
 
+    @Override
     public void write(byte[] bytes) {
         write(bytes, 0, bytes.length);
     }
 
+    @Override
     public void write(byte[] bytes, int off, int len) {
         if (len == 0) return;
 
@@ -73,6 +76,7 @@ public final class TemplateOutputBuffer extends AbstractTemplateOutput {
         length += len;
     }
 
+    @Override
     public void reset() {
         length = 0;
     }

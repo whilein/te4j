@@ -14,33 +14,15 @@
  *    limitations under the License.
  */
 
-package te4j.template.output;
+package te4j.include;
 
 /**
  * @author lero4ka16
  */
-public interface TemplateOutput {
+public interface IncludePathElement {
 
-    void put(String value);
+    boolean isExpression();
 
-    void put(Object object);
-
-    void put(double d);
-
-    void put(float f);
-
-    void put(long value);
-
-    void put(int value);
-
-    void write(byte[] bytes);
-
-    void write(byte[] bytes, int off, int len);
-
-    void write(int ch);
-
-    byte[] toByteArray();
-
-    void reset();
+    String getValue();
 
 }

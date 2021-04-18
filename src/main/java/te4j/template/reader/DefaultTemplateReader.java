@@ -17,7 +17,7 @@
 package te4j.template.reader;
 
 import lombok.NonNull;
-import te4j.include.Include;
+import te4j.include.DefaultIncludePath;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
 import te4j.template.method.TemplateMethod;
@@ -210,7 +210,7 @@ public final class DefaultTemplateReader implements TemplateReader {
             default:
                 throw new IllegalArgumentException("unknown method: " + token.getMethod());
             case INCLUDE: {
-                method = IncludeMethod.create(new Include(path));
+                method = IncludeMethod.create(DefaultIncludePath.create(path));
                 break;
             }
             case FOR: {

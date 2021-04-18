@@ -17,7 +17,7 @@
 package te4j.template.compiler;
 
 import lombok.NonNull;
-import te4j.include.Include;
+import te4j.include.IncludePath;
 import te4j.template.Template;
 import te4j.template.compiler.code.IterationCode;
 import te4j.template.compiler.code.RenderCode;
@@ -41,8 +41,7 @@ import te4j.template.method.impl.SwitchCaseMethod;
 import te4j.template.method.impl.ValueMethod;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
-import te4j.template.output.AbstractTemplateOutput;
-import te4j.template.output.TemplateOutputBuffer;
+import te4j.template.output.TemplateOutput;
 import te4j.template.output.TemplateOutputStream;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.path.DefaultTemplatePathIterator;
@@ -77,13 +76,10 @@ public final class TemplateCompileProcess<T> {
             = OutputStream.class.getName();
 
     private static final String TEMPLATE_OUTPUT_CLASS
-            = AbstractTemplateOutput.class.getName();
+            = TemplateOutput.class.getName();
 
     private static final String TEMPLATE_OUTPUT_STREAM_CLASS
             = TemplateOutputStream.class.getName();
-
-    private static final String TEMPLATE_OUTPUT_BUFFER_CLASS
-            = TemplateOutputBuffer.class.getName();
 
     private static final String TEMPLATE_CLASS
             = Template.class.getName();
@@ -291,9 +287,9 @@ public final class TemplateCompileProcess<T> {
                 IncludeMethod method = path.getMethod();
 
                 String fileName;
-                Include file = method.getFile();
+                IncludePath file = method.getFile();
 
-                if (file.hasValues()) {
+                if (file.hasExpressions()) {
                     SwitchCase switchCase = currentSwitchCase;
 
                     if (switchCase != null) {
@@ -467,7 +463,7 @@ public final class TemplateCompileProcess<T> {
         sb.append("public byte[] renderAsBytes(").append(type.getCanonicalName()).append(" object) {");
 
         if (hasBytesOptimization) {
-            sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
+            sb.append(TEMPLATE_OUTPUT_CLASS).append(" result = bytesOptimized.get();");
         } else {
             sb.append("StringBuilder result = stringOptimized.get();");
         }
@@ -488,7 +484,7 @@ public final class TemplateCompileProcess<T> {
             sb.append("StringBuilder result = stringOptimized.get();");
             sb.append("result.setLength(0);");
         } else {
-            sb.append(TEMPLATE_OUTPUT_BUFFER_CLASS).append(" result = bytesOptimized.get();");
+            sb.append(TEMPLATE_OUTPUT_CLASS).append(" result = bytesOptimized.get();");
             sb.append("result.reset();");
         }
 
@@ -506,7 +502,7 @@ public final class TemplateCompileProcess<T> {
         sb.append(OUTPUT_STREAM_CLASS).append(" os) throws java.io.IOException {");
 
         if (hasBytesOptimization) {
-            sb.append("render(object, new ").append(TEMPLATE_OUTPUT_STREAM_CLASS).append("(os));");
+            sb.append("render(object, ").append(TEMPLATE_OUTPUT_STREAM_CLASS).append(".create(os));");
         } else {
             sb.append("os.write(renderAsBytes(object));");
         }

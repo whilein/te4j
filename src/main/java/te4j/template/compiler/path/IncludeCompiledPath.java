@@ -16,7 +16,7 @@
 
 package te4j.template.compiler.path;
 
-import te4j.include.Include;
+import te4j.include.IncludePath;
 import te4j.template.path.TemplatePath;
 import te4j.util.type.GenericInfo;
 import te4j.util.type.TypeInfo;
@@ -26,15 +26,15 @@ import te4j.util.type.TypeInfo;
  */
 public final class IncludeCompiledPath extends AbstractCompiledPath {
 
-    private final Include file;
+    private final IncludePath file;
 
-    public IncludeCompiledPath(String id, Include file, TemplatePath path) {
+    public IncludeCompiledPath(String id, IncludePath file, TemplatePath path) {
         super(id, path);
 
         this.file = file;
     }
 
-    public Include getFile() {
+    public IncludePath getFile() {
         return file;
     }
 

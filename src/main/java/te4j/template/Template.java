@@ -17,6 +17,7 @@
 package te4j.template;
 
 import lombok.NonNull;
+import te4j.template.output.TemplateOutput;
 import te4j.template.output.TemplateOutputBuffer;
 
 import java.io.IOException;
@@ -27,8 +28,8 @@ import java.io.OutputStream;
  */
 public interface Template<T> {
 
-    ThreadLocal<TemplateOutputBuffer> bytesOptimized
-            = ThreadLocal.withInitial(TemplateOutputBuffer::new);
+    ThreadLocal<TemplateOutput> bytesOptimized
+            = ThreadLocal.withInitial(TemplateOutputBuffer::create);
 
     ThreadLocal<StringBuilder> stringOptimized
             = ThreadLocal.withInitial(StringBuilder::new);

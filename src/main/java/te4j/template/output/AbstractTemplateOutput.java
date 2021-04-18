@@ -16,8 +16,6 @@
 
 package te4j.template.output;
 
-import lombok.NonNull;
-
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -41,6 +39,8 @@ public abstract class AbstractTemplateOutput implements TemplateOutput {
             1_000_000_000_000_000L, 10_000_000_000_000_000L, 100_000_000_000_000_000L,
             1_000_000_000_000_000_000L
     };
+
+    static final byte[] NULL = "null".getBytes();
 
     int longLength(long value) {
         if (value < 1000000000) {
@@ -160,13 +160,17 @@ public abstract class AbstractTemplateOutput implements TemplateOutput {
     }
 
     @Override
-    public void put(@NonNull String value) {
-        write(value.getBytes(StandardCharsets.UTF_8));
+    public void put(String value) {
+        write(value == null ? NULL : value.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
     public void put(Object object) {
-        put(String.valueOf(object));
+        if (object == null) {
+            write(NULL);
+        } else {
+            put(object.toString());
+        }
     }
 
     @Override

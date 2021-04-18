@@ -16,44 +16,29 @@
 
 package te4j.include;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author lero4ka16
  */
-public final class IncludeArgument {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class IncludeString implements IncludePathElement {
 
-    private final Include file;
+    private final String string;
 
-    private final int begin;
-    private final int end;
-
-    public IncludeArgument(Include file, int begin, int end) {
-        this.file = file;
-        this.begin = begin;
-        this.end = end;
+    public static IncludePathElement create(@NonNull String string) {
+        return new IncludeString(string);
     }
 
-    public Include getFile() {
-        return file;
-    }
-
-    public int getBegin() {
-        return begin;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
+    @Override
     public boolean isExpression() {
-        return file.charAt(begin) == '[' && file.charAt(end - 1) == ']';
+        return false;
     }
 
-    public String getExpression() {
-        return file.substring(begin + 1, end - 1);
-    }
-
+    @Override
     public String getValue() {
-        return file.substring(begin, end);
+        return string;
     }
-
 }

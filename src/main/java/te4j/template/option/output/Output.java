@@ -16,6 +16,9 @@
 
 package te4j.template.option.output;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -23,20 +26,14 @@ import java.util.Set;
 /**
  * @author lero4ka16
  */
+@Getter
+@RequiredArgsConstructor
 public enum Output {
 
     STRING("STRING_"),
     BYTES("BYTES_");
 
     private final String prefix;
-
-    Output(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
 
     private static volatile Set<Output> values;
 

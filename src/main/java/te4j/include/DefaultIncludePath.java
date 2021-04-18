@@ -16,64 +16,66 @@
 
 package te4j.include;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.var;
 import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.util.resolver.DefaultMethodResolver;
 import te4j.util.resolver.MethodResolver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author lero4ka16
  */
-public final class Include {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class DefaultIncludePath implements IncludePath {
 
     private final String path;
-    private final List<IncludeArgument> args;
+    private final List<IncludePathElement> args;
 
-    public Include(String path) {
-        this.path = path;
-        this.args = new ArrayList<>();
-
+    public static IncludePath create(@NonNull String path) {
+        var args = new ArrayList<IncludePathElement>();
         int begin = 0;
 
         for (int i = 0; i < path.length(); i++) {
             char ch = path.charAt(i);
 
             if (ch == '[') {
-                add(begin, i);
+                args.add(IncludeString.create(path.substring(begin, i)));
                 begin = i + 1;
             } else if (ch == ']') {
-                add(begin - 1, i + 1);
+                args.add(IncludeExpression.create(path.substring(begin, i)));
                 begin = i + 1;
             }
         }
 
-        add(begin, path.length());
+        if (begin != path.length()) {
+            args.add(IncludeString.create(path.substring(begin)));
+        }
+
+        return new DefaultIncludePath(path, args);
     }
 
-    private void add(int from, int to) {
-        if (from == to) return;
-
-        this.args.add(new IncludeArgument(this, from, to));
-    }
-
-    public boolean hasValues() {
+    @Override
+    public boolean hasExpressions() {
         return args.size() != 1;
     }
 
+    @Override
     public String format() {
         return path;
     }
 
-    public Object resolve(String path, Object object) {
+    private Object resolve(String path, Object object) {
         if (path.equals("$")) { // чтобы не делать пустые скобки
             return object;
         }
 
-        Iterator<String> iterator = DefaultTemplatePathIterator.create(path);
+        var iterator = DefaultTemplatePathIterator.create(path);
 
         while (iterator.hasNext()) {
             String element = iterator.next();
@@ -99,26 +101,19 @@ public final class Include {
         return object;
     }
 
+    @Override
     public String format(Object element) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        for (IncludeArgument value : args) {
+        for (IncludePathElement value : args) {
             if (value.isExpression()) {
-                sb.append(resolve(value.getExpression(), element));
+                sb.append(resolve(value.getValue(), element));
             } else {
                 sb.append(value.getValue());
             }
         }
 
         return sb.toString();
-    }
-
-    public String substring(int begin, int end) {
-        return path.substring(begin, end);
-    }
-
-    public char charAt(int i) {
-        return path.charAt(i);
     }
 
     @Override
