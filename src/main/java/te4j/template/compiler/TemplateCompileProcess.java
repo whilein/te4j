@@ -50,6 +50,7 @@ import te4j.template.path.TemplatePathIterator;
 import te4j.util.compiler.JavaRuntimeCompiler;
 import te4j.util.compiler.RuntimeCompiler;
 import te4j.util.formatter.TextFormatter;
+import te4j.util.hash.ByteArrayHash;
 import te4j.util.hash.Hash;
 import te4j.util.type.TypeInfo;
 import te4j.util.type.ref.TypeReference;
@@ -386,7 +387,7 @@ public final class TemplateCompileProcess<T> {
 
     public void addBytes(Integer field, byte[] bytes) {
         String fieldName = outputType.getPrefix() + field;
-        String prevFieldName = byteValues.put(Hash.forArray(bytes), fieldName);
+        String prevFieldName = byteValues.put(ByteArrayHash.create(bytes), fieldName);
 
         switch (outputType) {
             case STRING:

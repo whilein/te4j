@@ -16,47 +16,8 @@
 
 package te4j.util.hash;
 
-import java.util.Arrays;
-
 /**
  * @author lero4ka16
  */
-public abstract class Hash {
-
-    private final int hash;
-
-    public Hash(int hash) {
-        this.hash = hash;
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    public static Hash forArray(byte[] array) {
-        return new Bytes(array);
-    }
-
-    private static class Bytes extends Hash {
-
-        private final byte[] value;
-
-        public Bytes(byte[] value) {
-            super(Arrays.hashCode(value));
-
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof Bytes)) return false;
-
-            Bytes that = (Bytes) obj;
-            return Arrays.equals(value, that.value);
-        }
-
-    }
-
+public interface Hash {
 }
