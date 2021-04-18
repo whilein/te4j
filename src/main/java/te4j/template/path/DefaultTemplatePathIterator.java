@@ -33,23 +33,26 @@ public final class DefaultTemplatePathIterator implements TemplatePathIterator {
     private int startIndex;
     private int endIndex;
 
+    private int index;
+
     public static @NonNull TemplatePathIterator create(@NonNull String path) {
         return new DefaultTemplatePathIterator(path);
     }
 
     @Override
     public void prev() {
-        if (startIndex == 0) {
+        if (index == 0) {
             throw new NoSuchElementException();
         }
 
         endIndex = startIndex;
         startIndex = path.lastIndexOf('.', startIndex - 2) + 1;
+        index--;
     }
 
     @Override
     public boolean hasPrev() {
-        return startIndex != 0;
+        return index != 0;
     }
 
     @Override
@@ -68,6 +71,7 @@ public final class DefaultTemplatePathIterator implements TemplatePathIterator {
             return path.substring(startIndex, endIndex == -1 ? path.length() : endIndex);
         } finally {
             startIndex = endIndex + 1;
+            index++;
         }
     }
 
