@@ -16,8 +16,7 @@
 
 package te4j.template.output;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 import java.nio.charset.StandardCharsets;
 
@@ -161,12 +160,12 @@ public abstract class AbstractTemplateOutput implements TemplateOutput {
     }
 
     @Override
-    public void put(@NotNull String value) {
+    public void put(@NonNull String value) {
         write(value.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
-    public void put(@Nullable Object object) {
+    public void put(Object object) {
         put(String.valueOf(object));
     }
 

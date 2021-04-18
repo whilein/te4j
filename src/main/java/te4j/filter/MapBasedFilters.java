@@ -16,8 +16,9 @@
 
 package te4j.filter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.filter.impl.Average;
 import te4j.filter.impl.Capitalize;
 import te4j.filter.impl.Cast;
@@ -43,19 +44,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MapBasedFilters implements Filters {
 
     private final Map<String, Filter> filters;
 
-    private MapBasedFilters(Map<String, Filter> filters) {
-        this.filters = filters;
-    }
-
-    public static Filters create(Map<String, Filter> filters) {
+    public static @NonNull Filters create(@NonNull Map<String, Filter> filters) {
         return new MapBasedFilters(filters);
     }
 
-    public static Filters createDefaults() {
+    public static @NonNull Filters createDefaults() {
         Filters filters = create(new ConcurrentHashMap<>());
         filters.addDefaults();
 
@@ -90,24 +88,21 @@ public final class MapBasedFilters implements Filters {
         add(new Hex());
         add(new EscapeTags());
         add(new ToString());
-
     }
 
-    @NotNull
     @Override
-    public Optional<? extends Filter> get(@NotNull String name) {
+    public @NonNull Optional<? extends Filter> get(@NonNull String name) {
         return Optional.ofNullable(filters.get(name));
     }
 
     @Override
-    public void add(@NotNull Filter filter) {
+    public void add(@NonNull Filter filter) {
         filters.put(filter.getName(), filter);
     }
 
-    @NotNull
     @Override
-    public String applyFilters(@Nullable List<String> filters, @NotNull String value) {
-        if (filters == null) {
+    public @NonNull String applyFilters(List<String> filters, @NonNull String value) {
+        if (filters == null || filters.isEmpty()) {
             return value;
         }
 

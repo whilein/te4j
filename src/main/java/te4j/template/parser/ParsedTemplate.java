@@ -16,8 +16,7 @@
 
 package te4j.template.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
@@ -39,18 +38,18 @@ public interface ParsedTemplate {
 
     int getLength();
 
-    byte @NotNull [] getRawContent();
+    byte @NonNull [] getRawContent();
 
-    byte @NotNull [] getContent();
+    byte @NonNull [] getContent();
 
     <T> Template<T> compile(
-            @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TemplateParser parser,
-            @NotNull Set<Output> outputTypes,
-            @NotNull Set<Minify> minifyOptions,
-            @NotNull String parentFile,
-            @NotNull TemplateSource src,
-            @NotNull TemplateLoader<T> loader
+            ModifyWatcherManager modifyWatcherManager,
+            @NonNull TemplateParser parser,
+            @NonNull Set<Output> outputTypes,
+            @NonNull Set<Minify> minifyOptions,
+            @NonNull String parentFile,
+            @NonNull TemplateSource src,
+            @NonNull TemplateLoader<T> loader
     );
 
     boolean hasPaths();

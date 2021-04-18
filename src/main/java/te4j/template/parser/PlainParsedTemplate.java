@@ -16,8 +16,7 @@
 
 package te4j.template.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.AutoReloadingTemplate;
 import te4j.template.PlainTemplate;
@@ -43,7 +42,7 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
         super(content, offset, length);
     }
 
-    public static ParsedTemplate create(byte @NotNull [] content, int offset, int length) {
+    public static ParsedTemplate create(byte @NonNull [] content, int offset, int length) {
         checkArguments(content, offset, length);
 
         int trimmedBytes = trim(content, offset, length);
@@ -57,13 +56,13 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
 
     @Override
     public <T> Template<T> compile(
-            @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TemplateParser parser,
-            @NotNull Set<Output> outputTypes,
-            @NotNull Set<Minify> minifyOptions,
-            @NotNull String parentFile,
-            @NotNull TemplateSource src,
-            @NotNull TemplateLoader<T> loader
+            ModifyWatcherManager modifyWatcherManager,
+            @NonNull TemplateParser parser,
+            @NonNull Set<Output> outputTypes,
+            @NonNull Set<Minify> minifyOptions,
+            @NonNull String parentFile,
+            @NonNull TemplateSource src,
+            @NonNull TemplateLoader<T> loader
     ) {
         Template<T> result = PlainTemplate.create(content, offset, length);
 

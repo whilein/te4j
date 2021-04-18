@@ -16,7 +16,7 @@
 
 package te4j.template.context.parser;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.template.exception.TemplateLoadException;
 import te4j.template.option.minify.Minify;
 import te4j.template.parser.EmptyParsedTemplate;
@@ -49,7 +49,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     }
 
     @Override
-    public @NotNull ParsedTemplate fromBytes(byte @NotNull [] binary) {
+    public @NonNull ParsedTemplate fromBytes(byte @NonNull [] binary) {
         if (binary.length == 0) {
             return EmptyParsedTemplate.getInstance();
         }
@@ -58,7 +58,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     }
 
     @Override
-    public @NotNull ParsedTemplate fromString(@NotNull String text) {
+    public @NonNull ParsedTemplate fromString(@NonNull String text) {
         if (text.isEmpty()) {
             return EmptyParsedTemplate.getInstance();
         }
@@ -67,7 +67,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     }
 
     @Override
-    public @NotNull ParsedTemplate from(@NotNull String name) {
+    public @NonNull ParsedTemplate from(@NonNull String name) {
         try {
             return fromBytes(Utils.read(name, useResources));
         } catch (IOException e) {
@@ -76,7 +76,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     }
 
     @Override
-    public @NotNull ParsedTemplate fromFile(@NotNull File file) {
+    public @NonNull ParsedTemplate fromFile(@NonNull File file) {
         try {
             return fromBytes(Utils.readFile(file));
         } catch (IOException e) {
@@ -85,7 +85,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     }
 
     @Override
-    public @NotNull ParsedTemplate fromFile(@NotNull Path path) {
+    public @NonNull ParsedTemplate fromFile(@NonNull Path path) {
         try {
             return fromBytes(Files.readAllBytes(path));
         } catch (IOException e) {

@@ -16,37 +16,27 @@
 
 package te4j.template.parser;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.IntPredicate;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractParsedTemplate implements ParsedTemplate {
 
     protected final byte[] content;
 
-    protected int offset;
-    protected int length;
+    protected final int offset;
+    protected final int length;
 
     private byte[] _content;
 
-    protected AbstractParsedTemplate(
-            byte[] content,
-            int offset,
-            int length
-    ) {
-        this.content = content;
-        this.offset = offset;
-        this.length = length;
-    }
-
-    protected static void checkArguments(byte @NotNull [] content, int offset, int length) {
-        Objects.requireNonNull(content);
-
+    protected static void checkArguments(byte[] content, int offset, int length) {
         if (offset == 0 && length == 0 && content.length == 0) {
             throw new IllegalArgumentException("template is empty");
         }
@@ -115,12 +105,12 @@ public abstract class AbstractParsedTemplate implements ParsedTemplate {
     }
 
     @Override
-    public byte @NotNull [] getRawContent() {
+    public byte @NonNull [] getRawContent() {
         return content;
     }
 
     @Override
-    public byte @NotNull [] getContent() {
+    public byte @NonNull [] getContent() {
         if (_content == null) {
             _content = offset != 0 || length != content.length
                     ? Arrays.copyOfRange(content, offset, offset + length)

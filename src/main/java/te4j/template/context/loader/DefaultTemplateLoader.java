@@ -16,8 +16,7 @@
 
 package te4j.template.context.loader;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
@@ -61,7 +60,7 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
     }
 
     @Override
-    public @NotNull TemplateLoader<T> withAutoReloadingEnabled(
+    public @NonNull TemplateLoader<T> withAutoReloadingEnabled(
             ModifyWatcherManager modifyWatcherManager,
             boolean value
     ) {
@@ -98,9 +97,9 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
      * @return Template loader
      */
     public static <T> TemplateLoader<T> create(
-            @NotNull TemplateContext ctx,
-            @NotNull TypeReference<T> type,
-            @Nullable ModifyWatcherManager modifyWatcherManager,
+            @NonNull TemplateContext ctx,
+            @NonNull TypeReference<T> type,
+            ModifyWatcherManager modifyWatcherManager,
             boolean useResources,
             boolean enableAutoReloading
     ) {
@@ -132,7 +131,7 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
      * @param binary Bytes
      * @return New compiled template
      */
-    public @NotNull Template<T> fromBytes(byte @NotNull [] binary) {
+    public @NonNull Template<T> fromBytes(byte @NonNull [] binary) {
         return compile(
                 parser -> parser.fromBytes(binary),
                 !enableAutoReloading || useResources ? null : modifyWatcherManager,
@@ -140,11 +139,11 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
         );
     }
 
-    public @NotNull Template<T> fromString(@NotNull String text) {
+    public @NonNull Template<T> fromString(@NonNull String text) {
         return fromBytes(text.getBytes(StandardCharsets.UTF_8));
     }
 
-    public @NotNull Template<T> from(@NotNull String name) {
+    public @NonNull Template<T> from(@NonNull String name) {
         return compile(
                 parser -> parser.from(name),
                 !enableAutoReloading || useResources ? null : modifyWatcherManager,
@@ -152,7 +151,7 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
         );
     }
 
-    public @NotNull Template<T> fromFile(@NotNull File file) {
+    public @NonNull Template<T> fromFile(@NonNull File file) {
         return compile(
                 parser -> parser.fromFile(file),
                 !enableAutoReloading ? null : modifyWatcherManager,
@@ -161,7 +160,7 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
         );
     }
 
-    public @NotNull Template<T> fromFile(@NotNull Path path) {
+    public @NonNull Template<T> fromFile(@NonNull Path path) {
         return compile(
                 parser -> parser.fromFile(path),
                 !enableAutoReloading ? null : modifyWatcherManager,

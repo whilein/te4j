@@ -16,8 +16,7 @@
 
 package te4j.util.compiler;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -27,18 +26,18 @@ import java.util.Collection;
  */
 public interface RuntimeCompiler {
 
-    @NotNull String getClassName();
+    @NonNull String getClassName();
 
-    @Nullable String getSuperclass();
+    String getSuperclass();
 
-    void setSuperclass(@Nullable String superclass);
+    void setSuperclass(String superclass);
 
-    @Nullable Collection<String> getInterfaces();
+    Collection<String> getInterfaces();
 
-    void setInterfaces(@Nullable Collection<String> interfaces);
+    void setInterfaces(Collection<String> interfaces);
 
-    @NotNull StringBuilder getContent();
+    @NonNull StringBuilder getContent();
 
-    @NotNull Class<?> compile() throws IOException;
+    @NonNull Class<?> compile() throws IOException;
 
 }

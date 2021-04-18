@@ -16,7 +16,9 @@
 
 package te4j.template;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import te4j.modifiable.Modifiable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
@@ -28,33 +30,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
+
+    private volatile Template<T> handle;
 
     private final TemplateLoader<T> loader;
     private final TemplateSource source;
 
-    private volatile Template<T> handle;
-
-    private AutoReloadingTemplate(Template<T> handle, TemplateLoader<T> loader, TemplateSource src) {
-        this.loader = loader;
-        this.source = src;
-        this.handle = handle;
-    }
-
-    public static <T> Template<T> create(
-            @NotNull Template<T> handle,
-            @NotNull TemplateLoader<T> loader,
-            @NotNull TemplateSource src,
-            @NotNull ModifyWatcherManager modifyWatcherManager
+    public static @NonNull <T> Template<T> create(
+            @NonNull Template<T> handle,
+            @NonNull TemplateLoader<T> loader,
+            @NonNull TemplateSource src,
+            @NonNull ModifyWatcherManager modifyWatcherManager
     ) {
-        Objects.requireNonNull(handle, "handle");
-        Objects.requireNonNull(loader, "loader");
-        Objects.requireNonNull(src, "src");
-        Objects.requireNonNull(modifyWatcherManager, "modifyWatcherManager");
-
         AutoReloadingTemplate<T> template = new AutoReloadingTemplate<>(
                 handle, loader.withAutoReloadingEnabled(null, false), src
         );
@@ -81,37 +72,35 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
     }
 
     @Override
-    public List<Path> getFiles() {
+    public @NonNull List<Path> getFiles() {
         String[] includes = getIncludes();
 
         List<Path> result = Arrays.stream(includes)
                 .map(include -> Paths.get(include).toAbsolutePath())
                 .collect(Collectors.toList());
 
-        if (source.hasPath()) {
-            result.add(source.getPath());
-        }
+        source.getPath().ifPresent(result::add);
 
         return result;
     }
 
     @Override
-    public @NotNull String[] getIncludes() {
+    public @NonNull String[] getIncludes() {
         return getHandle().getIncludes();
     }
 
     @Override
-    public @NotNull String renderAsString(@NotNull T object) {
+    public @NonNull String renderAsString(@NonNull T object) {
         return getHandle().renderAsString(object);
     }
 
     @Override
-    public byte @NotNull [] renderAsBytes(@NotNull T object) {
+    public byte @NonNull [] renderAsBytes(@NonNull T object) {
         return getHandle().renderAsBytes(object);
     }
 
     @Override
-    public void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException {
+    public void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException {
         getHandle().renderTo(object, os);
     }
 

@@ -16,8 +16,9 @@
 
 package te4j.template.context;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.DefaultTemplateLoader;
 import te4j.template.context.loader.TemplateLoader;
@@ -28,12 +29,12 @@ import te4j.template.option.output.Output;
 import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeReference;
 
-import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateContext implements TemplateContext {
 
     private final boolean useResources;
@@ -42,52 +43,41 @@ public final class DefaultTemplateContext implements TemplateContext {
     private final Set<Output> outputTypes;
     private final Set<Minify> minifyOptions;
 
-    private DefaultTemplateContext(boolean useResources, ModifyWatcherManager modifyWatcherManager,
-                                   Set<Output> outputTypes, Set<Minify> minifyOptions) {
-        this.useResources = useResources;
-        this.modifyWatcherManager = modifyWatcherManager;
-        this.outputTypes = outputTypes;
-        this.minifyOptions = minifyOptions;
-    }
-
-    public static @NotNull TemplateContextBuilder builder() {
+    public static @NonNull TemplateContextBuilder builder() {
         return new DefaultTemplateContextBuilder();
     }
 
-    public static @NotNull TemplateContext create(
+    public static @NonNull TemplateContext create(
             boolean useResources,
-            @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull Set<Output> outputTypes,
-            @NotNull Set<Minify> minifyOptions
+            ModifyWatcherManager modifyWatcherManager,
+            @NonNull Set<Output> outputTypes,
+            @NonNull Set<Minify> minifyOptions
     ) {
-        Objects.requireNonNull(outputTypes);
-        Objects.requireNonNull(minifyOptions);
-
         return new DefaultTemplateContext(useResources, modifyWatcherManager, outputTypes, minifyOptions);
     }
 
     @Override
-    public @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type) {
         return load(type, true);
     }
 
     @Override
-    public @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls) {
         return load(cls, true);
     }
 
     @Override
-    public @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type, boolean enableAutoReloading) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type, boolean enableAutoReloading) {
         return DefaultTemplateLoader.create(this, type, modifyWatcherManager, useResources, enableAutoReloading);
     }
 
     @Override
-    public @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls, boolean enableAutoReloading) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls, boolean enableAutoReloading) {
         return load(ClassReference.create(cls), enableAutoReloading);
     }
 
     @Override
-    public @NotNull TemplateParser parse() {
+    public @NonNull TemplateParser parse() {
         return DefaultTemplateParser.create(useResources, minifyOptions);
     }
 
@@ -97,17 +87,17 @@ public final class DefaultTemplateContext implements TemplateContext {
     }
 
     @Override
-    public @Nullable ModifyWatcherManager getModifyWatcherManager() {
+    public ModifyWatcherManager getModifyWatcherManager() {
         return modifyWatcherManager;
     }
 
     @Override
-    public @NotNull Set<Output> getOutputTypes() {
+    public @NonNull Set<Output> getOutputTypes() {
         return outputTypes;
     }
 
     @Override
-    public @NotNull Set<Minify> getMinifyOptions() {
+    public @NonNull Set<Minify> getMinifyOptions() {
         return minifyOptions;
     }
 

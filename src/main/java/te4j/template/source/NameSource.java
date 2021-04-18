@@ -16,39 +16,31 @@
 
 package te4j.template.source;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NameSource implements TemplateSource {
 
     private final String name;
 
-    private NameSource(String name) {
-        this.name = name;
-    }
-
-    public static TemplateSource create(@NotNull String name) {
-        Objects.requireNonNull(name, "name");
-
+    public static @NonNull TemplateSource create(@NonNull String name) {
         return new NameSource(name);
     }
 
     @Override
-    public boolean hasPath() {
-        return true;
-    }
-
-    @Override
-    public Path getPath() {
-        return Paths.get(name).toAbsolutePath();
+    public Optional<Path> getPath() {
+        return Optional.of(Paths.get(name).toAbsolutePath());
     }
 
     @Override

@@ -16,7 +16,9 @@
 
 package te4j.template;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PlainTemplate<T> implements Template<T> {
 
     private final byte[] value;
@@ -36,23 +39,17 @@ public final class PlainTemplate<T> implements Template<T> {
 
     private volatile String chars;
 
-    private PlainTemplate(byte[] value, int offset, int length) {
-        this.value = value;
-        this.offset = offset;
-        this.length = length;
-    }
-
-    public static <T> Template<T> create(byte[] value, int offset, int length) {
+    public static @NonNull <T> Template<T> create(@NonNull byte[] value, int offset, int length) {
         return new PlainTemplate<>(value, offset, length);
     }
 
     @Override
-    public @NotNull String[] getIncludes() {
+    public @NonNull String[] getIncludes() {
         return includes;
     }
 
     @Override
-    public @NotNull String renderAsString(@NotNull T object) {
+    public @NonNull String renderAsString(@NonNull T object) {
         if (chars == null) {
             synchronized (this) {
                 if (chars == null) {
@@ -65,12 +62,12 @@ public final class PlainTemplate<T> implements Template<T> {
     }
 
     @Override
-    public byte @NotNull [] renderAsBytes(@NotNull T object) {
+    public @NonNull byte[] renderAsBytes(@NonNull T object) {
         return Arrays.copyOfRange(value, offset, offset + length);
     }
 
     @Override
-    public void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException {
+    public void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException {
         os.write(value, offset, offset + length);
     }
 

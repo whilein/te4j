@@ -16,7 +16,7 @@
 
 package te4j.template.context.parser;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.template.parser.ParsedTemplate;
 
 import java.io.File;
@@ -27,14 +27,14 @@ import java.nio.file.Path;
  */
 public interface TemplateParser {
 
-    @NotNull ParsedTemplate from(@NotNull String name);
+    @NonNull ParsedTemplate from(@NonNull String name);
 
-    @NotNull ParsedTemplate fromBytes(byte @NotNull [] binary);
+    @NonNull ParsedTemplate fromBytes(byte @NonNull [] binary);
 
-    @NotNull ParsedTemplate fromString(@NotNull String text);
+    @NonNull ParsedTemplate fromString(@NonNull String text);
 
-    @NotNull ParsedTemplate fromFile(@NotNull File file);
+    @NonNull ParsedTemplate fromFile(@NonNull File file);
 
-    @NotNull ParsedTemplate fromFile(@NotNull Path path);
+    @NonNull ParsedTemplate fromFile(@NonNull Path path);
 
 }

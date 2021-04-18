@@ -17,6 +17,7 @@
 package te4j;
 
 import org.junit.jupiter.api.Test;
+import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.template.path.TemplatePathIterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,24 +30,28 @@ class TemplatePathIteratorTest {
 
     @Test
     public void testOnlyOneElement() {
-        TemplatePathIterator iterator = new TemplatePathIterator("element");
+        TemplatePathIterator iterator = DefaultTemplatePathIterator.create("element");
+        assertFalse(iterator.hasPrev());
         assertEquals("element", iterator.next());
         assertFalse(iterator.hasNext());
-        iterator.previous();
+        iterator.prev();
+        assertFalse(iterator.hasPrev());
         assertEquals("element", iterator.next());
         assertFalse(iterator.hasNext());
     }
 
     @Test
     public void testIterator() {
-        TemplatePathIterator iterator = new TemplatePathIterator("a.b.c.d.e.f");
+        TemplatePathIterator iterator = DefaultTemplatePathIterator.create("a.b.c.d.e.f");
+        assertFalse(iterator.hasPrev());
         assertEquals("a", iterator.next());
-        iterator.previous();
+        iterator.prev();
+        assertFalse(iterator.hasPrev());
         assertEquals("a", iterator.next());
         assertEquals("b", iterator.next());
         assertEquals("c", iterator.next());
         assertEquals("d", iterator.next());
-        iterator.previous();
+        iterator.prev();
         assertEquals("d", iterator.next());
         assertEquals("e", iterator.next());
         assertEquals("f", iterator.next());

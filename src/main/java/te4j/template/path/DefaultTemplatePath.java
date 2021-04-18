@@ -14,41 +14,48 @@
  *    limitations under the License.
  */
 
-package te4j.template.source;
+package te4j.template.path;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import te4j.template.Template;
-import te4j.template.context.loader.TemplateLoader;
-
-import java.nio.file.Path;
-import java.util.Optional;
+import te4j.template.method.TemplateMethod;
+import te4j.template.method.TemplateMethodType;
 
 /**
  * @author lero4ka16
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PathSource implements TemplateSource {
+public final class DefaultTemplatePath implements TemplatePath {
 
-    private final Path path;
+    private final int offset;
+    private final int length;
 
-    public static @NonNull TemplateSource create(@NonNull Path path) {
-        return new PathSource(path.toAbsolutePath());
+    private final TemplateMethod method;
+
+    public static TemplatePath create(int offset, int length, TemplateMethod method) {
+        return new DefaultTemplatePath(offset, length, method);
     }
 
     @Override
-    public Optional<Path> getPath() {
-        return Optional.of(path);
+    public int getOffset() {
+        return offset;
     }
 
     @Override
-    public <T> Template<T> load(TemplateLoader<T> loader) {
-        return loader.fromFile(path);
+    public int getLength() {
+        return length;
     }
 
     @Override
-    public String toString() {
-        return "Source[path=" + path + "]";
+    public @NonNull TemplateMethodType getMethodType() {
+        return method.getType();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public @NonNull <T extends TemplateMethod> T getMethod() {
+        return (T) method;
+    }
+
 }

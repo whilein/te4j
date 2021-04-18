@@ -16,6 +16,10 @@
 
 package te4j.template.method.impl;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
@@ -23,44 +27,24 @@ import te4j.template.parser.ParsedTemplate;
 /**
  * @author lero4ka16
  */
-public class ForeachMethod implements TemplateMethod {
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ForeachMethod implements TemplateMethod {
 
     private final String path;
     private final String as;
 
     private final ParsedTemplate block;
 
-    private ForeachMethod(String path, String as,
-                          ParsedTemplate block) {
-        this.path = path;
-        this.as = as;
-        this.block = block;
-    }
-
-    public static TemplateMethod create(String path, String as, ParsedTemplate block) {
+    public static @NonNull TemplateMethod create(
+            @NonNull String path, @NonNull String as,
+            @NonNull ParsedTemplate block) {
         return new ForeachMethod(path, as, block);
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getAs() {
-        return as;
-    }
-
-    public ParsedTemplate getBlock() {
-        return block;
     }
 
     @Override
     public TemplateMethodType getType() {
         return TemplateMethodType.FOR;
-    }
-
-    @Override
-    public String toString() {
-        return "Foreach[" + path + " : " + as + "; block=" + block + "]";
     }
 
 }

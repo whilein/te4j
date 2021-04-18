@@ -16,8 +16,7 @@
 
 package te4j.template.context;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.context.parser.TemplateParser;
@@ -32,23 +31,23 @@ import java.util.Set;
  */
 public interface TemplateContext {
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type);
+    @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type);
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls);
+    @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls);
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type, boolean enableAutoReloading);
+    @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type, boolean enableAutoReloading);
 
-    @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls, boolean enableAutoReloading);
+    @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls, boolean enableAutoReloading);
 
-    @NotNull TemplateParser parse();
+    @NonNull TemplateParser parse();
 
     boolean useResources();
 
-    @Nullable ModifyWatcherManager getModifyWatcherManager();
+    ModifyWatcherManager getModifyWatcherManager();
 
-    @NotNull Set<Output> getOutputTypes();
+    @NonNull Set<Output> getOutputTypes();
 
-    @NotNull Set<Minify> getMinifyOptions();
+    @NonNull Set<Minify> getMinifyOptions();
 
 
 }

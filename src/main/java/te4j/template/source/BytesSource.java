@@ -16,37 +16,30 @@
 
 package te4j.template.source;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BytesSource implements TemplateSource {
 
     private final byte[] bytes;
 
-    private BytesSource(byte[] bytes) {
-        this.bytes = bytes;
-    }
-
-    public static TemplateSource create(byte[] bytes) {
-        Objects.requireNonNull(bytes, "bytes");
-
+    public static @NonNull TemplateSource create(@NonNull byte[] bytes) {
         return new BytesSource(bytes);
     }
 
     @Override
-    public boolean hasPath() {
-        return false;
-    }
-
-    @Override
-    public Path getPath() {
-        return null;
+    public Optional<Path> getPath() {
+        return Optional.empty();
     }
 
     @Override

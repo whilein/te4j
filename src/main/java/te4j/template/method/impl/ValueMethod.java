@@ -16,32 +16,29 @@
 
 package te4j.template.method.impl;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 
 /**
  * @author lero4ka16
  */
-public class ValueMethod implements TemplateMethod {
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ValueMethod implements TemplateMethod {
 
     private final String value;
 
-    public ValueMethod(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
+    public static TemplateMethod create(@NonNull String value) {
+        return new ValueMethod(value);
     }
 
     @Override
     public TemplateMethodType getType() {
         return TemplateMethodType.VALUE;
-    }
-
-    @Override
-    public String toString() {
-        return "Value[" + value + "]";
     }
 
 }

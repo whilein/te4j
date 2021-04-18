@@ -16,19 +16,20 @@
 
 package te4j.template.source;
 
+import lombok.NonNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * @author lero4ka16
  */
 public interface TemplateSource {
 
-    boolean hasPath();
-    Path getPath();
+    @NonNull Optional<Path> getPath();
 
-    <T> Template<T> load(TemplateLoader<T> loader);
+    @NonNull <T> Template<T> load(@NonNull TemplateLoader<T> loader);
 
 }

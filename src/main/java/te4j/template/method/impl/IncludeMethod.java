@@ -16,6 +16,10 @@
 
 package te4j.template.method.impl;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.include.Include;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
@@ -23,16 +27,14 @@ import te4j.template.method.TemplateMethodType;
 /**
  * @author lero4ka16
  */
-public class IncludeMethod implements TemplateMethod {
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class IncludeMethod implements TemplateMethod {
 
     private final Include file;
 
-    public IncludeMethod(Include file) {
-        this.file = file;
-    }
-
-    public Include getFile() {
-        return file;
+    public static TemplateMethod create(@NonNull Include include) {
+        return new IncludeMethod(include);
     }
 
     @Override
@@ -40,8 +42,4 @@ public class IncludeMethod implements TemplateMethod {
         return TemplateMethodType.INCLUDE;
     }
 
-    @Override
-    public String toString() {
-        return "Include[" + file + "]";
-    }
 }

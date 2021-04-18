@@ -16,12 +16,13 @@
 
 package te4j.include;
 
-import te4j.template.path.TemplatePathIterator;
+import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.util.resolver.DefaultMethodResolver;
 import te4j.util.resolver.MethodResolver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public final class Include {
             return object;
         }
 
-        TemplatePathIterator iterator = new TemplatePathIterator(path);
+        Iterator<String> iterator = DefaultTemplatePathIterator.create(path);
 
         while (iterator.hasNext()) {
             String element = iterator.next();

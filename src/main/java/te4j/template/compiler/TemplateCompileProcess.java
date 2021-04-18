@@ -16,7 +16,7 @@
 
 package te4j.template.compiler;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.include.Include;
 import te4j.template.Template;
 import te4j.template.compiler.code.IterationCode;
@@ -45,6 +45,7 @@ import te4j.template.output.AbstractTemplateOutput;
 import te4j.template.output.TemplateOutputBuffer;
 import te4j.template.output.TemplateOutputStream;
 import te4j.template.parser.ParsedTemplate;
+import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.template.path.TemplatePath;
 import te4j.template.path.TemplatePathIterator;
 import te4j.util.compiler.JavaRuntimeCompiler;
@@ -115,12 +116,12 @@ public final class TemplateCompileProcess<T> {
     private String putTemplateContent;
 
     public TemplateCompileProcess(
-            @NotNull TypeReference<T> type,
-            @NotNull TemplateParser parser,
-            @NotNull Set<Output> outputTypes,
-            @NotNull Set<Minify> minifyOptions,
-            @NotNull ParsedTemplate template,
-            @NotNull String parentFile
+            @NonNull TypeReference<T> type,
+            @NonNull TemplateParser parser,
+            @NonNull Set<Output> outputTypes,
+            @NonNull Set<Minify> minifyOptions,
+            @NonNull ParsedTemplate template,
+            @NonNull String parentFile
     ) {
         this.parser = parser;
         this.outputTypes = outputTypes;
@@ -190,7 +191,7 @@ public final class TemplateCompileProcess<T> {
     }
 
     private PathAccessor compilePathAccessor(String path) {
-        TemplatePathIterator iterator = new TemplatePathIterator(path);
+        TemplatePathIterator iterator = DefaultTemplatePathIterator.create(path);
 
         if (!iterator.hasNext()) {
             return null;
@@ -212,7 +213,7 @@ public final class TemplateCompileProcess<T> {
         Environment environment = environments.get(element);
 
         if (environment == null) {
-            iterator.previous();
+            iterator.prev();
             environment = primaryEnvironment;
         }
 
@@ -361,7 +362,7 @@ public final class TemplateCompileProcess<T> {
 
     private void appendCondition(ConditionMethod method, String value, RenderCode out) {
         ParsedTemplate block = method.getBlock();
-        ConditionMethod elseIf = method.getElseIf();
+        ConditionMethod elseIf = (ConditionMethod) method.getElseIf();
         ParsedTemplate elseBlock = method.getElseBlock();
 
         out.append("if(").append(value).append("){");
@@ -424,7 +425,7 @@ public final class TemplateCompileProcess<T> {
         return outputType;
     }
 
-    private void addRenderMethod(@NotNull Output outputType) {
+    private void addRenderMethod(@NonNull Output outputType) {
         this.outputType = outputType;
         this.nameCounter = new AtomicInteger();
 

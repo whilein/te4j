@@ -16,7 +16,9 @@
 
 package te4j.util.compiler;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.util.Utils;
 
 import javax.tools.JavaCompiler;
@@ -29,12 +31,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JavaRuntimeCompiler implements RuntimeCompiler {
 
     private final String className;
@@ -43,20 +45,12 @@ public final class JavaRuntimeCompiler implements RuntimeCompiler {
     private Collection<String> interfaces;
     private String superclass;
 
-    private JavaRuntimeCompiler(String className, StringBuilder content) {
-        this.className = className;
-        this.content = content;
-    }
-
-    public static @NotNull RuntimeCompiler create(@NotNull String className, @NotNull StringBuilder content) {
-        Objects.requireNonNull(className, "className");
-        Objects.requireNonNull(content, "content");
-
+    public static @NonNull RuntimeCompiler create(@NonNull String className, @NonNull StringBuilder content) {
         return new JavaRuntimeCompiler(className, content);
     }
 
     @Override
-    public @NotNull String getClassName() {
+    public @NonNull String getClassName() {
         return className;
     }
 
@@ -81,7 +75,7 @@ public final class JavaRuntimeCompiler implements RuntimeCompiler {
     }
 
     @Override
-    public @NotNull StringBuilder getContent() {
+    public @NonNull StringBuilder getContent() {
         return content;
     }
 

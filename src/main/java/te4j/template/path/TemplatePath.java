@@ -16,44 +16,20 @@
 
 package te4j.template.path;
 
+import lombok.NonNull;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 
 /**
  * @author lero4ka16
  */
-public class TemplatePath {
+public interface TemplatePath {
 
-    private final int offset;
-    private final int length;
+    int getOffset();
 
-    private final TemplateMethod method;
+    int getLength();
 
-    public TemplatePath(int offset, int length, TemplateMethod method) {
-        this.offset = offset;
-        this.length = length;
-        this.method = method;
-    }
+    @NonNull TemplateMethodType getMethodType();
 
-    public int getOffset() {
-        return offset;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public TemplateMethodType getMethodType() {
-        return method.getType();
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends TemplateMethod> T getMethod() {
-        return (T) method;
-    }
-
-    public String toString() {
-        return "Path[method=" + method.toString() + ", off=" + offset + ", len=" + length + "]";
-    }
-
+    @NonNull <T extends TemplateMethod> T getMethod();
 }

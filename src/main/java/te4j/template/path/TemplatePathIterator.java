@@ -16,53 +16,19 @@
 
 package te4j.template.path;
 
+import lombok.NonNull;
+
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * @author lero4ka16
  */
-public class TemplatePathIterator implements Iterator<String> {
+public interface TemplatePathIterator extends Iterator<String> {
 
-    private final String text;
+    void prev();
 
-    private int startIndex;
-    private int endIndex;
+    boolean hasPrev();
 
-    public TemplatePathIterator(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void previous() {
-        if (endIndex == 0) {
-            throw new NoSuchElementException();
-        }
-
-        endIndex = startIndex;
-        startIndex = text.lastIndexOf('.', startIndex - 2) + 1;
-    }
-
-    @Override
-    public String next() {
-        if (endIndex == -1) {
-            throw new NoSuchElementException();
-        }
-
-        try {
-            endIndex = text.indexOf('.', startIndex + 1);
-            return text.substring(startIndex, endIndex == -1 ? text.length() : endIndex);
-        } finally {
-            startIndex = endIndex + 1;
-        }
-    }
-
-    @Override
-    public boolean hasNext() {
-        return endIndex != -1;
-    }
+    @NonNull String getPath();
 
 }

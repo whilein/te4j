@@ -213,7 +213,7 @@ public class TemplateTest {
     @Test
     public void testSwitchCase_Foreach() {
         testTemplate(context,
-                "WEB-INF/switchcase.txt", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>5</a><a>10</a><a>15</a>",
+                "WEB-INF/switchcase.txt", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>[true/false]: 5</a><a>[false/false]: 10</a><a>[false/true]: 15</a>",
                 new Pojo_4(new int[]{5, 10, 15}), ClassReference.create(Pojo_4.class));
     }
 

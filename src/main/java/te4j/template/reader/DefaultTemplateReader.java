@@ -16,7 +16,7 @@
 
 package te4j.template.reader;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.include.Include;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
@@ -37,6 +37,7 @@ import te4j.template.parser.token.ImmutableTokenizedTemplate;
 import te4j.template.parser.token.Token;
 import te4j.template.parser.token.TokenType;
 import te4j.template.parser.token.TokenizedTemplate;
+import te4j.template.path.DefaultTemplatePath;
 import te4j.template.path.TemplatePath;
 import te4j.util.formatter.TextFormatter;
 import te4j.util.io.BytesReader;
@@ -60,7 +61,7 @@ public final class DefaultTemplateReader implements TemplateReader {
         this.reader = reader;
     }
 
-    public static TemplateReader create(byte @NotNull [] value, @NotNull Set<Minify> minifyOptions) {
+    public static TemplateReader create(byte @NonNull [] value, @NonNull Set<Minify> minifyOptions) {
         Objects.requireNonNull(value, "value");
         Objects.requireNonNull(minifyOptions, "minifyOptions");
 
@@ -93,7 +94,7 @@ public final class DefaultTemplateReader implements TemplateReader {
     }
 
     @Override
-    public @NotNull ParsedTemplate readTemplate() {
+    public @NonNull ParsedTemplate readTemplate() {
         int begin = reader.position();
 
         List<TemplatePath> paths = new ArrayList<>();
@@ -162,8 +163,10 @@ public final class DefaultTemplateReader implements TemplateReader {
         int pathEnd = reader.position();
         int valueEnd = pathEnd - 2; // }}
 
-        String value = reader.substring(valueBegin, valueEnd).trim();
-        return new TemplatePath(pathBegin, pathEnd - pathBegin, new ValueMethod(value));
+        return DefaultTemplatePath.create(
+                pathBegin, pathEnd - pathBegin,
+                ValueMethod.create(reader.substring(valueBegin, valueEnd).trim())
+        );
     }
 
     private TokenizedTemplate readInner(TokenType... types) throws TemplateUnexpectedTokenException {
@@ -207,7 +210,7 @@ public final class DefaultTemplateReader implements TemplateReader {
             default:
                 throw new IllegalArgumentException("unknown method: " + token.getMethod());
             case INCLUDE: {
-                method = new IncludeMethod(new Include(path));
+                method = IncludeMethod.create(new Include(path));
                 break;
             }
             case FOR: {
@@ -258,10 +261,10 @@ public final class DefaultTemplateReader implements TemplateReader {
                 break;
         }
 
-        return new TemplatePath(begin, reader.position() - begin, method);
+        return DefaultTemplatePath.create(begin, reader.position() - begin, method);
     }
 
-    private ConditionMethod readCondition(String path) {
+    private TemplateMethod readCondition(String path) {
         TokenizedTemplate inner = readInner(TokenType.ELSE, TokenType.ELIF, TokenType.END_IF);
 
         switch (inner.getToken().getType()) {

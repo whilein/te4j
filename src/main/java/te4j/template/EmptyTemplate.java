@@ -16,7 +16,7 @@
 
 package te4j.template;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.io.OutputStream;
 
@@ -25,7 +25,7 @@ import java.io.OutputStream;
  */
 public final class EmptyTemplate<T> implements Template<T> {
 
-    private final byte[] bytes = new byte[0];
+    private final byte[] content = new byte[0];
     private final String[] includes = new String[0];
 
     private static class Singleton {
@@ -34,26 +34,26 @@ public final class EmptyTemplate<T> implements Template<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Template<T> getInstance() {
+    public static @NonNull <T> Template<T> getInstance() {
         return Singleton.INSTANCE;
     }
 
     @Override
-    public @NotNull String[] getIncludes() {
+    public @NonNull String[] getIncludes() {
         return includes;
     }
 
     @Override
-    public @NotNull String renderAsString(@NotNull Object object) {
+    public @NonNull String renderAsString(@NonNull Object object) {
         return "";
     }
 
     @Override
-    public byte @NotNull [] renderAsBytes(@NotNull Object object) {
-        return bytes;
+    public byte @NonNull [] renderAsBytes(@NonNull Object object) {
+        return content;
     }
 
     @Override
-    public void renderTo(@NotNull Object object, @NotNull OutputStream os) {
+    public void renderTo(@NonNull Object object, @NonNull OutputStream os) {
     }
 }

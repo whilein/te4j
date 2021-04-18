@@ -16,8 +16,7 @@
 
 package te4j.filter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +32,7 @@ public interface Filters {
      *
      * @param filter Filter
      */
-    void add(@NotNull Filter filter);
+    void add(@NonNull Filter filter);
 
     /**
      * Add default filters
@@ -46,7 +45,7 @@ public interface Filters {
      * @param name Filter's name
      * @return Filter
      */
-    @NotNull Optional<? extends Filter> get(@NotNull String name);
+    @NonNull Optional<? extends Filter> get(@NonNull String name);
 
     /**
      * Apply filters to string
@@ -57,6 +56,6 @@ public interface Filters {
      */
 
     // TODO return string with applied filters and return type
-    @NotNull String applyFilters(@Nullable List<String> filters, @NotNull String target);
+    @NonNull String applyFilters(List<String> filters, @NonNull String target);
 
 }

@@ -16,8 +16,7 @@
 
 package te4j.template.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.AutoReloadingTemplate;
 import te4j.template.Template;
@@ -31,7 +30,6 @@ import te4j.template.path.TemplatePath;
 import te4j.template.source.TemplateSource;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -48,9 +46,12 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
         this.paths = paths;
     }
 
-    public static ParsedTemplate create(@NotNull List<TemplatePath> paths,
-                                        byte[] content, int offset, int length) {
-        Objects.requireNonNull(paths, "paths");
+    public static ParsedTemplate create(
+            @NonNull List<TemplatePath> paths,
+            @NonNull byte[] content,
+            int offset,
+            int length
+    ) {
         checkArguments(content, offset, length);
 
         if (paths.isEmpty()) {
@@ -74,13 +75,13 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
 
     @Override
     public <T> Template<T> compile(
-            @Nullable ModifyWatcherManager modifyWatcherManager,
-            @NotNull TemplateParser parser,
-            @NotNull Set<Output> outputTypes,
-            @NotNull Set<Minify> minifyOptions,
-            @NotNull String parentFile,
-            @NotNull TemplateSource src,
-            @NotNull TemplateLoader<T> loader
+            ModifyWatcherManager modifyWatcherManager,
+            @NonNull TemplateParser parser,
+            @NonNull Set<Output> outputTypes,
+            @NonNull Set<Minify> minifyOptions,
+            @NonNull String parentFile,
+            @NonNull TemplateSource src,
+            @NonNull TemplateLoader<T> loader
     ) {
         try {
             Template<T> result = new TemplateCompileProcess<>(

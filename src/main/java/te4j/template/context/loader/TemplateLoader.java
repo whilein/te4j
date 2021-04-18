@@ -16,7 +16,7 @@
 
 package te4j.template.context.loader;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.util.type.ref.TypeReference;
@@ -36,7 +36,7 @@ public interface TemplateLoader<T> {
      */
     boolean isAutoReloadingEnabled();
 
-    @NotNull TemplateLoader<T> withAutoReloadingEnabled(ModifyWatcherManager modifyWatcherManager, boolean value);
+    @NonNull TemplateLoader<T> withAutoReloadingEnabled(ModifyWatcherManager modifyWatcherManager, boolean value);
 
     /**
      * Compile new template from bytes
@@ -44,14 +44,14 @@ public interface TemplateLoader<T> {
      * @param binary Bytes
      * @return New compiled template
      */
-    @NotNull Template<T> fromBytes(byte @NotNull [] binary);
+    @NonNull Template<T> fromBytes(@NonNull byte[] binary);
 
-    @NotNull Template<T> fromString(@NotNull String text);
+    @NonNull Template<T> fromString(@NonNull String text);
 
-    @NotNull Template<T> from(@NotNull String name);
+    @NonNull Template<T> from(@NonNull String name);
 
-    @NotNull Template<T> fromFile(@NotNull File file);
+    @NonNull Template<T> fromFile(@NonNull File file);
 
-    @NotNull Template<T> fromFile(@NotNull Path path);
+    @NonNull Template<T> fromFile(@NonNull Path path);
 
 }

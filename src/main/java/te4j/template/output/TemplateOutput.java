@@ -16,17 +16,16 @@
 
 package te4j.template.output;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 
 /**
  * @author lero4ka16
  */
 public interface TemplateOutput {
 
-    void put(@NotNull String value);
+    void put(@NonNull String value);
 
-    void put(@Nullable Object object);
+    void put(Object object);
 
     void put(double d);
 

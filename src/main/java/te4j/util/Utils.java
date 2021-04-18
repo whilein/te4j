@@ -16,7 +16,7 @@
 
 package te4j.util;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -124,7 +124,7 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static boolean deleteDirectory(@NotNull Path dir) {
+    public static boolean deleteDirectory(@NonNull Path dir) {
         try {
             try (DirectoryStream<Path> paths = Files.newDirectoryStream(dir)) {
                 for (Path path : paths) {
@@ -144,7 +144,7 @@ public final class Utils {
         }
     }
 
-    public static boolean deleteDirectory(@NotNull File dir) {
+    public static boolean deleteDirectory(@NonNull File dir) {
         File[] files = dir.listFiles();
         assert files != null;
 

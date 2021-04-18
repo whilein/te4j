@@ -16,7 +16,7 @@
 
 package te4j.template.reader;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import te4j.template.parser.ParsedTemplate;
 
 /**
@@ -24,6 +24,6 @@ import te4j.template.parser.ParsedTemplate;
  */
 public interface TemplateReader {
 
-    @NotNull ParsedTemplate readTemplate();
+    @NonNull ParsedTemplate readTemplate();
 
 }

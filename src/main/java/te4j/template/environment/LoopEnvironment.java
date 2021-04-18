@@ -47,13 +47,13 @@ public final class LoopEnvironment implements Environment {
     @Override
     public PathAccessor resolve(TemplatePathIterator iterator) {
         if (!iterator.hasNext()) {
-            throw new IllegalStateException(iterator.getText());
+            throw new IllegalStateException(iterator.getPath());
         }
 
         String value = iterator.next();
 
         if (iterator.hasNext()) {
-            throw new IllegalStateException(iterator.getText());
+            throw new IllegalStateException(iterator.getPath());
         }
 
         PathAccessor accessor;
@@ -77,7 +77,7 @@ public final class LoopEnvironment implements Environment {
                 hasLength = true;
                 break;
             default:
-                throw new IllegalStateException(iterator.getText());
+                throw new IllegalStateException(iterator.getPath());
         }
 
         return accessor;

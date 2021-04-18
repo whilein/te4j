@@ -16,11 +16,12 @@
 
 package te4j;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import te4j.filter.Filters;
 import te4j.filter.MapBasedFilters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
-import te4j.template.context.DefaultTemplateContextBuilder;
+import te4j.template.context.DefaultTemplateContext;
 import te4j.template.context.TemplateContext;
 import te4j.template.context.TemplateContextBuilder;
 import te4j.template.context.loader.TemplateLoader;
@@ -30,55 +31,52 @@ import te4j.util.type.ref.TypeReference;
 /**
  * @author lero4ka16
  */
-public final class Te4j {
+@UtilityClass
+public class Te4j {
 
-    private static final Filters FILTERS
+    private final Filters FILTERS
             = MapBasedFilters.createDefaults();
 
-    private static final ModifyWatcherManager DEFAULT_MODIFY_WATCHER
+    private final ModifyWatcherManager DEFAULT_MODIFY_WATCHER
             = new ModifyWatcherManager();
 
-    private static final TemplateContext DEFAULTS = custom()
+    private final TemplateContext DEFAULTS = custom()
             .minifyAll()
             .outputAll()
             .enableAutoReloading(DEFAULT_MODIFY_WATCHER)
             .build();
 
-    private Te4j() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static ModifyWatcherManager getDefaultModifyWatcher() {
+    public @NonNull ModifyWatcherManager getDefaultModifyWatcher() {
         return DEFAULT_MODIFY_WATCHER;
     }
 
-    public static @NotNull Filters getFilters() {
+    public @NonNull Filters getFilters() {
         return FILTERS;
     }
 
-    public static <T> TemplateLoader<T> load(@NotNull TypeReference<T> type) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type) {
         return DEFAULTS.load(type);
     }
 
-    public static <T> TemplateLoader<T> load(@NotNull Class<T> cls) {
+    public @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls) {
         return DEFAULTS.load(cls);
     }
 
-    public static TemplateParser parse() {
+    public @NonNull TemplateParser parse() {
         return DEFAULTS.parse();
     }
 
     /**
      * @return Default template context
      */
-    public static @NotNull TemplateContext defaults() {
+    public @NonNull TemplateContext defaults() {
         return DEFAULTS;
     }
 
     /**
      * @return New custom template context builder
      */
-    public static @NotNull TemplateContextBuilder custom() {
-        return DefaultTemplateContextBuilder.create();
+    public @NonNull TemplateContextBuilder custom() {
+        return DefaultTemplateContext.builder();
     }
 }

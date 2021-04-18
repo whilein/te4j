@@ -16,70 +16,39 @@
 
 package te4j.template.method.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
 
-import java.util.Objects;
-
 /**
  * @author lero4ka16
  */
-public class ConditionMethod implements TemplateMethod {
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ConditionMethod implements TemplateMethod {
 
     private final String condition;
-    private final ConditionMethod elseIf;
+    private final TemplateMethod elseIf;
     private final ParsedTemplate block, elseBlock;
 
-    private ConditionMethod(String condition,
-                            ConditionMethod elseIf,
-                            ParsedTemplate block,
-                            ParsedTemplate elseBlock) {
-        this.condition = condition;
-        this.elseIf = elseIf;
-        this.block = block;
-        this.elseBlock = elseBlock;
-    }
-
-    public static ConditionMethod create(
-            @NotNull String condition,
-            @NotNull ParsedTemplate block,
-            @Nullable ParsedTemplate elseBlock
+    public static TemplateMethod create(
+            @NonNull String condition,
+            @NonNull ParsedTemplate block,
+            ParsedTemplate elseBlock
     ) {
-        Objects.requireNonNull(condition, "condition");
-        Objects.requireNonNull(block, "block");
-
         return new ConditionMethod(condition, null, block, elseBlock);
     }
 
-    public static ConditionMethod create(
-            @NotNull String condition,
-            @NotNull ParsedTemplate block,
-            @NotNull ConditionMethod elseIf
+    public static TemplateMethod create(
+            @NonNull String condition,
+            @NonNull ParsedTemplate block,
+            @NonNull TemplateMethod elseIf
     ) {
-        Objects.requireNonNull(condition, "condition");
-        Objects.requireNonNull(block, "block");
-        Objects.requireNonNull(elseIf, "elseIf");
-
         return new ConditionMethod(condition, elseIf, block, null);
-    }
-
-    public ConditionMethod getElseIf() {
-        return elseIf;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public ParsedTemplate getBlock() {
-        return block;
-    }
-
-    public ParsedTemplate getElseBlock() {
-        return elseBlock;
     }
 
     @Override
