@@ -20,13 +20,48 @@ import org.junit.jupiter.api.Test;
 import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.template.path.TemplatePathIterator;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author lero4ka16
  */
 class TemplatePathIteratorTest {
+
+    @Test
+    public void testPrev() {
+        TemplatePathIterator iterator = DefaultTemplatePathIterator.create("a");
+        assertFalse(iterator.hasPrev());
+        assertTrue(iterator.hasNext());
+
+        iterator.next();
+
+        assertTrue(iterator.hasPrev());
+        assertFalse(iterator.hasNext());
+
+        iterator.prev();
+
+        assertFalse(iterator.hasPrev());
+        assertTrue(iterator.hasNext());
+
+        try {
+            iterator.prev();
+            fail();
+        } catch (NoSuchElementException ignored) {
+        }
+
+        iterator.next();
+
+        try {
+            iterator.next();
+            fail();
+        } catch (NoSuchElementException ignored) {
+        }
+    }
 
     @Test
     public void testOnlyOneElement() {
