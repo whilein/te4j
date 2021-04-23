@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 
@@ -27,12 +28,15 @@ import te4j.template.method.TemplateMethodType;
  * @author lero4ka16
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ValueMethod implements TemplateMethod {
 
-    private final String value;
+    String value;
 
-    public static TemplateMethod create(@NonNull String value) {
+    public static TemplateMethod create(
+            final @NonNull String value
+    ) {
         return new ValueMethod(value);
     }
 

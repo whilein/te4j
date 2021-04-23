@@ -16,20 +16,20 @@
 
 package te4j.util.resolver;
 
-import te4j.util.Utils;
+import te4j.util.IOUtils;
 
 public enum MethodNameCase {
 
     UPPER_CAMEL_CASE {
         @Override
         public String apply(String text) {
-            return Utils.toCamelCase(true, text);
+            return IOUtils.toCamelCase(true, text);
         }
     },
     LOWER_CAMEL_CASE {
         @Override
         public String apply(String text) {
-            return Utils.toCamelCase(false, text);
+            return IOUtils.toCamelCase(false, text);
         }
     };
 

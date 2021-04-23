@@ -18,6 +18,7 @@ package te4j.template.option.output;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import te4j.util.lazy.Lazy;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -35,18 +36,12 @@ public enum Output {
 
     private final String prefix;
 
-    private static volatile Set<Output> values;
+    private static final Lazy<Set<Output>> values = Lazy.threadsafe(
+            () -> Collections.unmodifiableSet(EnumSet.allOf(Output.class))
+    );
 
     public static Set<Output> getValues() {
-        if (values == null) {
-            synchronized (Output.class) {
-                if (values == null) {
-                    values = Collections.unmodifiableSet(EnumSet.allOf(Output.class));
-                }
-            }
-        }
-
-        return values;
+        return values.get();
     }
 
 }

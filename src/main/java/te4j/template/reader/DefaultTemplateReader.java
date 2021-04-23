@@ -19,6 +19,7 @@ package te4j.template.reader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.include.DefaultIncludePath;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
@@ -49,26 +50,27 @@ import te4j.util.io.DataReader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateReader implements TemplateReader {
 
-    private final Set<Minify> minifyOptions;
+    Set<Minify> minifyOptions;
 
-    private final byte[] value;
-    private final DataReader reader;
+    byte[] value;
+    DataReader reader;
 
-    private final char methodBegin, methodEnd, methodMarker, valueBegin, valueEnd;
+    char methodBegin;
+    char methodEnd;
+    char methodMarker;
+    char valueBegin;
+    char valueEnd;
 
     public static TemplateReader create(
-            @NonNull TemplateStyle style,
-            @NonNull byte[] value,
-            @NonNull Set<Minify> minifyOptions) {
-        Objects.requireNonNull(value, "value");
-        Objects.requireNonNull(minifyOptions, "minifyOptions");
-
+            final @NonNull TemplateStyle style,
+            final @NonNull byte[] value,
+            final @NonNull Set<Minify> minifyOptions) {
         return new DefaultTemplateReader(
                 minifyOptions, value, new BytesReader(value),
                 style.style(StyleAspect.BEGIN_METHOD),

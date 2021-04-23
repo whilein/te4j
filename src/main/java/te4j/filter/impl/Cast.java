@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -27,11 +28,12 @@ import java.lang.reflect.Type;
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Cast implements Filter {
 
-    private final String name;
-    private final Type to;
+    String name;
+    Type to;
 
     public static @NonNull Filter create(@NonNull Type to) {
         return new Cast(TypeUtils.getCanonicalName(to), to);

@@ -19,19 +19,21 @@ package te4j.template.path;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.NoSuchElementException;
 
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplatePathIterator implements TemplatePathIterator {
 
-    private final String path;
+    final String path;
 
-    private int startIndex;
-    private int endIndex;
+    int startIndex;
+    int endIndex;
 
     public static @NonNull TemplatePathIterator create(@NonNull String path) {
         return new DefaultTemplatePathIterator(path);

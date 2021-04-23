@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
-import te4j.util.Utils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ import java.util.Random;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Shuffle implements Filter {
 
-    private static final Random RANDOM = Utils.isJUnitTest() ? new Random(1) : new Random();
+    private static final Random RANDOM = new Random();
 
     public static @NonNull Filter create() {
         return new Shuffle();

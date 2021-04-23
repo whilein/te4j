@@ -24,7 +24,7 @@ import te4j.template.option.style.TemplateStyle;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.reader.DefaultTemplateReader;
-import te4j.util.Utils;
+import te4j.util.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +72,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     @Override
     public @NonNull ParsedTemplate from(@NonNull String name) {
         try {
-            return fromBytes(Utils.read(name, useResources));
+            return fromBytes(IOUtils.read(name, useResources));
         } catch (IOException e) {
             return EmptyParsedTemplate.getInstance();
         }
@@ -81,7 +81,7 @@ public final class DefaultTemplateParser implements TemplateParser {
     @Override
     public @NonNull ParsedTemplate fromFile(@NonNull File file) {
         try {
-            return fromBytes(Utils.readFile(file));
+            return fromBytes(IOUtils.readFile(file));
         } catch (IOException e) {
             throw new TemplateLoadException("Cannot read template", e);
         }

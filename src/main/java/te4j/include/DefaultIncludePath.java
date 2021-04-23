@@ -19,6 +19,7 @@ package te4j.include;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.var;
 import te4j.template.path.DefaultTemplatePathIterator;
 import te4j.util.resolver.DefaultMethodResolver;
@@ -31,11 +32,12 @@ import java.util.List;
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultIncludePath implements IncludePath {
 
-    private final String path;
-    private final List<IncludePathElement> args;
+    String path;
+    List<IncludePathElement> args;
 
     public static IncludePath create(@NonNull String path) {
         var args = new ArrayList<IncludePathElement>();

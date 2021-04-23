@@ -19,6 +19,7 @@ package te4j.filter;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.filter.impl.Average;
 import te4j.filter.impl.Capitalize;
 import te4j.filter.impl.Cast;
@@ -43,10 +44,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MapBasedFilters implements Filters {
 
-    private final Map<String, Filter> filters;
+    Map<String, Filter> filters;
 
     public static @NonNull Filters create(@NonNull Map<String, Filter> filters) {
         return new MapBasedFilters(filters);

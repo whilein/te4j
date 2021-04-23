@@ -16,17 +16,20 @@
 
 package te4j.template;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
 
 import java.io.OutputStream;
 
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public final class EmptyTemplate<T> implements Template<T> {
 
-    private final byte[] content = new byte[0];
-    private final String[] includes = new String[0];
+    byte[] content = new byte[0];
+    String[] includes = new String[0];
 
     private static class Singleton {
         @SuppressWarnings("rawtypes")

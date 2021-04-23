@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
@@ -28,25 +29,28 @@ import te4j.template.parser.ParsedTemplate;
  * @author lero4ka16
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConditionMethod implements TemplateMethod {
 
-    private final String condition;
-    private final TemplateMethod elseIf;
-    private final ParsedTemplate block, elseBlock;
+    String condition;
+    TemplateMethod elseIf;
+
+    ParsedTemplate block;
+    ParsedTemplate elseBlock;
 
     public static TemplateMethod create(
-            @NonNull String condition,
-            @NonNull ParsedTemplate block,
-            ParsedTemplate elseBlock
+            final @NonNull String condition,
+            final @NonNull ParsedTemplate block,
+            final ParsedTemplate elseBlock
     ) {
         return new ConditionMethod(condition, null, block, elseBlock);
     }
 
     public static TemplateMethod create(
-            @NonNull String condition,
-            @NonNull ParsedTemplate block,
-            @NonNull TemplateMethod elseIf
+            final @NonNull String condition,
+            final @NonNull ParsedTemplate block,
+            final @NonNull TemplateMethod elseIf
     ) {
         return new ConditionMethod(condition, elseIf, block, null);
     }
@@ -54,11 +58,6 @@ public final class ConditionMethod implements TemplateMethod {
     @Override
     public TemplateMethodType getType() {
         return TemplateMethodType.CONDITION;
-    }
-
-    @Override
-    public String toString() {
-        return "Condition[" + condition + ", " + (elseIf == null ? ("block=" + block + (elseBlock == null ? "" : ", else=" + elseBlock)) : ("elseIf=" + elseIf)) + "]";
     }
 
 }

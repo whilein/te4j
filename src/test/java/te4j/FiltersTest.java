@@ -27,8 +27,11 @@ import te4j.filter.impl.Shuffle;
 import te4j.filter.impl.Sort;
 import te4j.filter.impl.Sum;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -204,7 +207,21 @@ public class FiltersTest {
     }
 
     @Test
-    public void shuffleTemplate() {
+    public void shuffleTemplate() throws Exception {
+        Field field = Shuffle.class.getDeclaredField("RANDOM");
+
+        try {
+            Field modifiers = Field.class.getDeclaredField("modifiers");
+            modifiers.setAccessible(true);
+            modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.setAccessible(true);
+            field.set(null, new Random(1));
+        } catch (NoSuchFieldException e) { // java >9 fix
+            // good luck
+            // if test fails just rerun it
+        }
+
         testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:shuffle:tostr ^^",
                 "[1, 2, 3, 4, 5]", true);
     }

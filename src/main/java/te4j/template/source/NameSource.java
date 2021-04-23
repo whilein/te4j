@@ -19,6 +19,7 @@ package te4j.template.source;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
@@ -29,10 +30,11 @@ import java.util.Optional;
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NameSource implements TemplateSource {
 
-    private final String name;
+    String name;
 
     public static @NonNull TemplateSource create(@NonNull String name) {
         return new NameSource(name);

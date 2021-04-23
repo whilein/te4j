@@ -17,6 +17,7 @@
 package te4j.util;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,35 +33,32 @@ import java.nio.file.Paths;
 /**
  * @author lero4ka16
  */
-public final class Utils {
+@UtilityClass
+public class IOUtils {
 
     private static final byte[] EMPTY_BYTES = new byte[0];
 
-    private Utils() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static byte[] read(String name, boolean resource) throws IOException {
+    public byte[] read(String name, boolean resource) throws IOException {
         if (resource) {
             try (InputStream is = ClassLoader.getSystemResourceAsStream(name)) {
                 if (is == null) {
                     throw new FileNotFoundException("Resource not found: " + name);
                 }
 
-                return Utils.readBytes(is);
+                return IOUtils.readBytes(is);
             }
         } else {
             return Files.readAllBytes(Paths.get(name));
         }
     }
 
-    public static byte[] readFile(File file) throws IOException {
+    public byte[] readFile(File file) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             return readBytes(is, (int) file.length());
         }
     }
 
-    public static byte[] readBytes(InputStream is) throws IOException {
+    public byte[] readBytes(InputStream is) throws IOException {
         byte[] result = new byte[1024];
         int n;
 
@@ -73,7 +71,7 @@ public final class Utils {
         return baos.toByteArray();
     }
 
-    public static byte[] readBytes(InputStream is, int size) throws IOException {
+    public byte[] readBytes(InputStream is, int size) throws IOException {
         if (size < 0) {
             throw new IllegalArgumentException("size");
         }
@@ -101,7 +99,7 @@ public final class Utils {
      * @param value Текст
      * @return Обработанный текст
      */
-    public static String toCamelCase(boolean upper, String value) {
+    public String toCamelCase(boolean upper, String value) {
         StringBuilder sb = new StringBuilder(value.length());
         boolean nextCapitalized = upper;
 
@@ -124,7 +122,7 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static boolean deleteDirectory(@NonNull Path dir) {
+    public boolean deleteDirectory(@NonNull Path dir) {
         try {
             try (DirectoryStream<Path> paths = Files.newDirectoryStream(dir)) {
                 for (Path path : paths) {
@@ -144,7 +142,7 @@ public final class Utils {
         }
     }
 
-    public static boolean deleteDirectory(@NonNull File dir) {
+    public boolean deleteDirectory(@NonNull File dir) {
         File[] files = dir.listFiles();
         assert files != null;
 
@@ -161,16 +159,6 @@ public final class Utils {
         }
 
         return dir.delete();
-    }
-
-    public static boolean isJUnitTest() {
-        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
-            if (element.getClassName().startsWith("org.junit.")) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

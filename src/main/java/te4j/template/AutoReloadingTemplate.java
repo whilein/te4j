@@ -19,10 +19,12 @@ package te4j.template;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
 import te4j.modifiable.Modifiable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.source.TemplateSource;
+import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,22 +34,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
 
-    private volatile Template<T> handle;
-
-    private final TemplateLoader<T> loader;
-    private final TemplateSource source;
+    Lazy<Template<T>> handle;
+    TemplateSource source;
 
     public static @NonNull <T> Template<T> create(
-            @NonNull Template<T> handle,
-            @NonNull TemplateLoader<T> loader,
-            @NonNull TemplateSource src,
-            @NonNull ModifyWatcherManager modifyWatcherManager
+            final @NonNull Template<T> handle,
+            final @NonNull TemplateLoader<T> loader,
+            final @NonNull TemplateSource src,
+            final @NonNull ModifyWatcherManager modifyWatcherManager
     ) {
+        TemplateLoader<T> disabledAutoReloading = loader.withDisabledAutoReloading();
+
         AutoReloadingTemplate<T> template = new AutoReloadingTemplate<>(
-                handle, loader.withDisabledAutoReloading(), src
+                Lazy.threadsafe(handle, () -> src.load(disabledAutoReloading)),
+                src
         );
 
         modifyWatcherManager.register(template);
@@ -56,19 +60,12 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
     }
 
     private Template<T> getHandle() {
-        if (handle == null) {
-            synchronized (this) {
-                if (handle == null) {
-                    handle = source.load(loader);
-                }
-            }
-        }
-
-        return handle;
+        return handle.get();
     }
 
-    public synchronized void handleModify() {
-        handle = null;
+    @Override
+    public void handleModify() {
+        handle.clear();
     }
 
     @Override
@@ -76,7 +73,8 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
         String[] includes = getIncludes();
 
         List<Path> result = Arrays.stream(includes)
-                .map(include -> Paths.get(include).toAbsolutePath())
+                .map(Paths::get)
+                .map(Path::toAbsolutePath)
                 .collect(Collectors.toList());
 
         source.getPath().ifPresent(result::add);
@@ -90,17 +88,17 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
     }
 
     @Override
-    public @NonNull String renderAsString(@NonNull T object) {
+    public @NonNull String renderAsString(final @NonNull T object) {
         return getHandle().renderAsString(object);
     }
 
     @Override
-    public byte @NonNull [] renderAsBytes(@NonNull T object) {
+    public byte @NonNull [] renderAsBytes(final @NonNull T object) {
         return getHandle().renderAsBytes(object);
     }
 
     @Override
-    public void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException {
+    public void renderTo(final @NonNull T object, final @NonNull OutputStream os) throws IOException {
         getHandle().renderTo(object, os);
     }
 

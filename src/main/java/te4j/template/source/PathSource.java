@@ -19,6 +19,7 @@ package te4j.template.source;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
@@ -28,10 +29,11 @@ import java.util.Optional;
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PathSource implements TemplateSource {
 
-    private final Path path;
+    Path path;
 
     public static @NonNull TemplateSource create(@NonNull Path path) {
         return new PathSource(path.toAbsolutePath());

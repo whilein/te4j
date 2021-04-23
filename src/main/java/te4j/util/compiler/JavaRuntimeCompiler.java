@@ -19,7 +19,7 @@ package te4j.util.compiler;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import te4j.util.Utils;
+import te4j.util.IOUtils;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -138,7 +138,7 @@ public final class JavaRuntimeCompiler implements RuntimeCompiler {
 
             return cls;
         } finally {
-            Utils.deleteDirectory(tmp);
+            IOUtils.deleteDirectory(tmp);
         }
     }
 

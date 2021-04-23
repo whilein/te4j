@@ -26,7 +26,7 @@ import te4j.template.context.TemplateContext;
 import te4j.template.option.output.Output;
 import te4j.template.option.style.MutableTemplateStyle;
 import te4j.template.option.style.StyleAspect;
-import te4j.util.Utils;
+import te4j.util.IOUtils;
 import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeRef;
 import te4j.util.type.ref.TypeReference;
@@ -63,7 +63,7 @@ public class TemplateTest {
 
     @AfterEach
     public void clean() {
-        Utils.deleteDirectory(tests);
+        IOUtils.deleteDirectory(tests);
     }
 
     @BeforeEach

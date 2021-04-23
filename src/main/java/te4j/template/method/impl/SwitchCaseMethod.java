@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
@@ -28,19 +29,21 @@ import te4j.template.parser.ParsedTemplate;
  * @author lero4ka16
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SwitchCaseMethod implements TemplateMethod {
 
-    private final String value;
-    private final String from;
+    String value;
+    String from;
 
-    private final ParsedTemplate block, defaultBlock;
+    ParsedTemplate block;
+    ParsedTemplate defaultBlock;
 
     public static TemplateMethod create(
-            @NonNull String value,
-            String from,
-            @NonNull ParsedTemplate block,
-            ParsedTemplate defaultBlock
+            final @NonNull String value,
+            final String from,
+            final @NonNull ParsedTemplate block,
+            final ParsedTemplate defaultBlock
     ) {
         return new SwitchCaseMethod(value, from, block, defaultBlock);
     }

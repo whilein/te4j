@@ -19,19 +19,21 @@ package te4j.template.path;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplatePath implements TemplatePath {
 
-    private final int offset;
-    private final int length;
+    int offset;
+    int length;
 
-    private final TemplateMethod method;
+    TemplateMethod method;
 
     public static TemplatePath create(int offset, int length, TemplateMethod method) {
         return new DefaultTemplatePath(offset, length, method);

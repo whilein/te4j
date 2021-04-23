@@ -20,19 +20,21 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.compiler.exp.Exp;
 
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ExpOutputArrayWrite implements ExpOutputWrite {
 
-    private final ExpOutput output;
-    private final Exp[] values;
+    final ExpOutput output;
+    final Exp[] values;
 
     @Getter
-    private int index;
+    int index;
 
     public static ExpOutputWrite create(@NonNull ExpOutput output, @NonNull Exp[] values) {
         return new ExpOutputArrayWrite(output, values);

@@ -19,6 +19,8 @@ package te4j.template;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,20 +29,21 @@ import java.util.Arrays;
 /**
  * @author lero4ka16
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PlainTemplate<T> implements Template<T> {
 
-    private final byte[] value;
+    byte[] value;
 
-    private final int offset;
-    private final int length;
+    int offset;
+    int length;
 
-    private final String[] includes = new String[0];
+    Lazy<String> chars;
 
-    private volatile String chars;
+    String[] includes = new String[0];
 
     public static @NonNull <T> Template<T> create(@NonNull byte[] value, int offset, int length) {
-        return new PlainTemplate<>(value, offset, length);
+        return new PlainTemplate<>(value, offset, length, Lazy.threadsafe(() -> new String(value, offset, length)));
     }
 
     @Override
@@ -50,15 +53,7 @@ public final class PlainTemplate<T> implements Template<T> {
 
     @Override
     public @NonNull String renderAsString(@NonNull T object) {
-        if (chars == null) {
-            synchronized (this) {
-                if (chars == null) {
-                    chars = new String(value, offset, length);
-                }
-            }
-        }
-
-        return chars;
+        return chars.get();
     }
 
     @Override

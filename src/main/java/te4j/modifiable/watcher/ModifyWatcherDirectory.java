@@ -16,6 +16,9 @@
 
 package te4j.modifiable.watcher;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.modifiable.ModifiableReference;
 
 import java.nio.file.Path;
@@ -28,14 +31,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 final class ModifyWatcherDirectory {
 
-    private final WatchKey key;
-    private final Map<Path, Set<ModifiableReference>> files = new HashMap<>();
+    WatchKey key;
 
-    public ModifyWatcherDirectory(WatchKey key) {
-        this.key = key;
-    }
+    Map<Path, Set<ModifiableReference>> files
+            = new HashMap<>();
 
     public synchronized boolean hasFiles() {
         return !files.isEmpty();

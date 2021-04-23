@@ -15,8 +15,8 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor 'org.immutables:value:2.8.2'
     compileOnly 'org.immutables:value:2.8.2'
+    annotationProcessor 'org.immutables:value:2.8.2'
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'

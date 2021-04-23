@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.parser.ParsedTemplate;
@@ -28,17 +29,19 @@ import te4j.template.parser.ParsedTemplate;
  * @author lero4ka16
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ForeachMethod implements TemplateMethod {
 
-    private final String path;
-    private final String as;
+    String path;
+    String as;
 
-    private final ParsedTemplate block;
+    ParsedTemplate block;
 
     public static @NonNull TemplateMethod create(
-            @NonNull String path, @NonNull String as,
-            @NonNull ParsedTemplate block) {
+            final @NonNull String path,
+            final @NonNull String as,
+            final @NonNull ParsedTemplate block) {
         return new ForeachMethod(path, as, block);
     }
 
