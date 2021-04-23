@@ -33,7 +33,7 @@
 Te4j (Template Engine For Java) - Fastest and easy template engine
 
 ### Pros
-- Extremely fast (`127k` renders per second on 4790K)
+- Extremely fast (`132k` renders per second on 4790K)
 - Easy and simple syntax
 - No dependencies
 
@@ -119,7 +119,7 @@ More examples in docs
     <dependency>
         <groupId>com.github.lero4ka16</groupId>
         <artifactId>te4j</artifactId>
-        <version>1.1.1</version>
+        <version>2.0.0</version>
     </dependency>
 </dependencies>
 ```
@@ -127,7 +127,7 @@ More examples in docs
 ### Gradle
 ```groovy
 dependencies {
-    implementation 'com.github.lero4ka16:te4j:1.1.1'
+    implementation 'com.github.lero4ka16:te4j:2.0.0'
 }
 ```
 
