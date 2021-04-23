@@ -467,13 +467,20 @@ public final class TemplateCompileProcess<T> {
 
         if (hasBytesOptimization) {
             sb.append(TEMPLATE_OUTPUT_CLASS).append(" result = bytesOptimized.get();");
+            sb.append("result.reset();");
         } else {
             sb.append("StringBuilder result = stringOptimized.get();");
+            sb.append("result.setLength(0);");
         }
 
-        sb.append("result.reset();");
         sb.append("render(object, result);");
-        sb.append("return result.toByteArray();");
+
+        if (hasBytesOptimization) {
+            sb.append("return result.toByteArray();");
+        } else {
+            sb.append("return result.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);");
+        }
+
         sb.append("}");
 
         addContent(sb.toString());

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
+import te4j.template.option.output.Output;
 import te4j.template.option.style.MutableTemplateStyle;
 import te4j.template.option.style.StyleAspect;
 import te4j.util.Utils;
@@ -74,6 +75,7 @@ public class TemplateTest {
         context = Te4j.custom()
                 .useResources()
                 .minifyAll()
+                .output(Output.STRING)
                 .build();
 
         customStyleContext = Te4j.custom()
