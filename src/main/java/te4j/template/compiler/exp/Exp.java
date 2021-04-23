@@ -16,31 +16,18 @@
 
 package te4j.template.compiler.exp;
 
-import te4j.util.type.TypeInfo;
+import lombok.NonNull;
+import te4j.filter.Filters;
+import te4j.template.compiler.exp.output.ExpOutput;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.Type;
 
-abstract class Exp {
+public interface Exp {
 
-    protected List<String> filters;
+    Type getType();
 
-    public abstract ExpReturnType getReturnType();
+    void addFilter(@NonNull Filters filters, @NonNull String filter);
 
-    void addFilter(String filter) {
-        if (filters == null) {
-            filters = new LinkedList<>();
-        }
-
-        filters.add(filter);
-    }
-
-    public String compile() {
-        return ExpCompile.singleton(this);
-    }
-
-    public abstract TypeInfo getObjectType();
-
-    protected abstract void compile(ExpCompile compile);
+    void write(ExpOutput output);
 
 }

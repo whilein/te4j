@@ -14,27 +14,16 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler;
+
+import te4j.template.compiler.exp.Exp;
+import te4j.template.compiler.exp.Operator;
 
 /**
  * @author lero4ka16
  */
-public final class ExpParsedList {
+public interface ExpOperator extends Exp {
 
-    private final Class<?> type;
-    private final Object[] values;
-
-    public ExpParsedList(Class<?> type, Object[] values) {
-        this.type = type;
-        this.values = values;
-    }
-
-    public Class<?> getType() {
-        return type;
-    }
-
-    public Object[] getValues() {
-        return values;
-    }
+    Operator getOperator();
 
 }

@@ -14,36 +14,40 @@
  *    limitations under the License.
  */
 
-package te4j.filter;
+package te4j.template.compiler.exp.output;
 
 import lombok.NonNull;
-
-import java.util.Optional;
+import te4j.template.compiler.exp.Exp;
+import te4j.template.compiler.exp.filter.ExpFilters;
 
 /**
  * @author lero4ka16
  */
+public interface ExpOutput extends ExpOutputElement {
 
-public interface Filters {
+    Exp getExp();
+
+    void applyFilters(@NonNull ExpFilters filters);
+
+    void prepend(@NonNull String text);
+
+    void append(@NonNull String text);
+
+    void prepend(@NonNull Exp exp, @NonNull String text);
+
+    void append(@NonNull Exp exp, @NonNull String text);
+
+    ExpOutputWrite startWrite(@NonNull Exp[] values);
+
+    ExpOutputWrite getWrite();
+
+    void stopWrite();
 
     /**
-     * Add filter
+     * Get or create next token
      *
-     * @param filter Filter
+     * @return Token, not null
      */
-    void add(@NonNull Filter filter);
-
-    /**
-     * Add default filters
-     */
-    void addDefaults();
-
-    /**
-     * Get filter by name (case sensitive)
-     *
-     * @param name Filter's name
-     * @return Filter
-     */
-    @NonNull Optional<? extends Filter> get(@NonNull String name);
+    @NonNull ExpOutput next(@NonNull Exp exp);
 
 }

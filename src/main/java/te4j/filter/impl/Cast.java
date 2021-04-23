@@ -16,26 +16,44 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Cast implements Filter {
 
-    private final String to;
+    private final String name;
+    private final Type to;
 
-    public Cast(String to) {
-        this.to = to;
+    public static @NonNull Filter create(@NonNull Type to) {
+        return new Cast(TypeUtils.getCanonicalName(to), to);
+    }
+
+    public static @NonNull Filter create(@NonNull String name, @NonNull Type to) {
+        return new Cast(name, to);
     }
 
     @Override
     public String getName() {
-        return to;
+        return name;
     }
 
     @Override
-    public String wrap(String value) {
-        return "(" + to + ") " + value;
+    public @NonNull Type getWrappedType(@NonNull Type type) {
+        return type;
     }
+
+    @Override
+    public String apply(@NonNull String value, @NonNull Type type) {
+        return "(" + TypeUtils.getCanonicalName(to) + ") (" + value + ")";
+    }
+
 }

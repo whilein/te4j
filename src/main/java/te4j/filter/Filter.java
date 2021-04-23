@@ -16,14 +16,28 @@
 
 package te4j.filter;
 
+import lombok.NonNull;
+
+import java.lang.reflect.Type;
+import java.util.function.BiFunction;
+
 /**
  * @author lero4ka16
  */
-public interface Filter {
+public interface Filter extends BiFunction<String, Type, String> {
 
-    String getName();
+    @NonNull String getName();
 
-    default String wrap(String value) {
+    /**
+     * Get new type of object according to it type,
+     * if new type is null, the filter is not applicable to <code>type</code>
+     *
+     * @param type Old type
+     * @return New Type
+     */
+    Type getWrappedType(@NonNull Type type);
+
+    default @NonNull String apply(@NonNull String value, @NonNull Type type) {
         return getClass().getName() + ".process(" + value + ")";
     }
 

@@ -14,15 +14,32 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler.exp.filter;
+
+import lombok.NonNull;
+import te4j.filter.Filters;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
-public interface ExpList extends Exp {
+public final class ExpDisabledFilters implements ExpFilters {
 
-    Class<?> getElementType();
+    public static final ExpFilters INSTANCE = new ExpDisabledFilters();
 
-    Object[] getValues();
+    @Override
+    public Type getType() {
+        return null;
+    }
 
+    @Override
+    public @NonNull String format(@NonNull String accessor) {
+        return accessor;
+    }
+
+    @Override
+    public void add(@NonNull Filters filters, @NonNull String name) {
+        throw new UnsupportedOperationException();
+    }
 }

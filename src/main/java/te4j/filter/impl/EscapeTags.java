@@ -16,12 +16,19 @@
 
 package te4j.filter.impl;
 
+import lombok.NonNull;
 import te4j.filter.Filter;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
 public final class EscapeTags implements Filter {
+
+    public static @NonNull Filter create() {
+        return new EscapeTags();
+    }
 
     public static String process(String value) {
         StringBuilder out = null;
@@ -51,6 +58,11 @@ public final class EscapeTags implements Filter {
     @Override
     public String getName() {
         return "escapetags";
+    }
+
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        return type == String.class ? type : null;
     }
 
 }

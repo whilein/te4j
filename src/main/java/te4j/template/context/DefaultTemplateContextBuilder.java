@@ -16,7 +16,9 @@
 
 package te4j.template.context;
 
+import lombok.NonNull;
 import te4j.Te4j;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
@@ -33,12 +35,18 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
 
     private boolean useResources;
     private ModifyWatcherManager modifyWatcherManager;
+    private Filters filters;
 
     private final Set<Output> outputTypes = EnumSet.noneOf(Output.class);
     private final Set<Minify> minifyOptions = EnumSet.noneOf(Minify.class);
 
     public static TemplateContextBuilder create() {
         return new DefaultTemplateContextBuilder();
+    }
+
+    public @NonNull TemplateContextBuilder filters(Filters filters) {
+        this.filters = filters;
+        return this;
     }
 
     @Override
@@ -102,7 +110,11 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
             outputAll();
         }
 
-        return DefaultTemplateContext.create(useResources, modifyWatcherManager, outputTypes, minifyOptions);
+        if (filters == null) {
+            filters = Te4j.getFilters();
+        }
+
+        return DefaultTemplateContext.create(filters, useResources, modifyWatcherManager, outputTypes, minifyOptions);
     }
 
 

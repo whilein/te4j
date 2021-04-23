@@ -14,15 +14,15 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler.exp.output;
+
+import lombok.NonNull;
 
 /**
  * @author lero4ka16
  */
-public interface ExpList extends Exp {
+public interface ExpOutputElement {
 
-    Class<?> getElementType();
-
-    Object[] getValues();
+    @NonNull String flush();
 
 }

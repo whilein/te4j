@@ -16,19 +16,44 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Floor implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Floor();
+    }
+
     @Override
     public String getName() {
         return "floor";
     }
 
     @Override
-    public String wrap(String value) {
+    public Type getWrappedType(@NonNull Type type) {
+        if (type instanceof Class<?>) {
+            Class<?> cls = (Class<?>) type;
+
+            if (TypeUtils.isNumber(cls)) {
+                return double.class;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
         return "Math.floor(" + value + ")";
     }
 }

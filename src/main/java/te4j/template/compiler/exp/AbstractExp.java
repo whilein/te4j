@@ -16,13 +16,29 @@
 
 package te4j.template.compiler.exp;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import te4j.filter.Filters;
+import te4j.template.compiler.exp.filter.ExpFilters;
+
+import java.lang.reflect.Type;
+
 /**
  * @author lero4ka16
  */
-public interface ExpList extends Exp {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class AbstractExp implements Exp {
 
-    Class<?> getElementType();
+    protected final ExpFilters filters;
 
-    Object[] getValues();
+    @Override
+    public Type getType() {
+        return filters.getType();
+    }
 
+    @Override
+    public void addFilter(@NonNull Filters filters, @NonNull String filter) {
+        this.filters.add(filters, filter);
+    }
 }

@@ -16,49 +16,37 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
+
+import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Wrap implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Wrap();
+    }
 
     @Override
     public String getName() {
         return "wrap";
     }
 
-    public static Byte process(byte i) {
-        return i;
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        return type instanceof Class<?> ? TypeUtils.getWrapper((Class<?>) type) : null;
     }
 
-    public static Character process(char i) {
-        return i;
+    @Override
+    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+        return Objects.requireNonNull(TypeUtils.getWrapper((Class<?>) type)).getName() + ".valueOf(" + value + ")";
     }
-
-    public static Boolean process(boolean i) {
-        return i;
-    }
-
-    public static Short process(short i) {
-        return i;
-    }
-
-    public static Double process(double i) {
-        return i;
-    }
-
-    public static Integer process(int i) {
-        return i;
-    }
-
-    public static Long process(long i) {
-        return i;
-    }
-
-    public static Float process(float i) {
-        return i;
-    }
-
-
 }

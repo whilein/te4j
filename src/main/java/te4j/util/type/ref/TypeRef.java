@@ -16,6 +16,8 @@
 
 package te4j.util.type.ref;
 
+import te4j.util.TypeUtils;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -30,7 +32,7 @@ public abstract class TypeRef<T> implements TypeReference<T> {
     protected TypeRef() {
         this.type = ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
-        this.rawType = getClass(type);
+        this.rawType = TypeUtils.toClass(type);
     }
 
     @Override
@@ -40,7 +42,7 @@ public abstract class TypeRef<T> implements TypeReference<T> {
 
     @Override
     public final String getCanonicalName() {
-        return getCanonicalName(rawType, type);
+        return TypeUtils.getCanonicalName(type);
     }
 
     @Override
@@ -51,42 +53,6 @@ public abstract class TypeRef<T> implements TypeReference<T> {
     @Override
     public final Class<T> getType() {
         return rawType;
-    }
-
-    private static String getCanonicalName(Class<?> cls, Type type) {
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-
-            StringBuilder sb = new StringBuilder(cls.getCanonicalName());
-            boolean b = false;
-
-            sb.append('<');
-            for (Type param : parameterizedType.getActualTypeArguments()) {
-                if (b) {
-                    sb.append(',');
-                } else {
-                    b = true;
-                }
-
-                sb.append(getCanonicalName(getClass(param), param));
-            }
-            sb.append('>');
-
-            return sb.toString();
-        }
-
-        return cls.getCanonicalName();
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private static <T> Class<T> getClass(Type type) {
-        if (type instanceof Class) {
-            return (Class<T>) type;
-        } else {
-            ParameterizedType genericType = (ParameterizedType) type;
-            return (Class<T>) genericType.getRawType();
-        }
     }
 
 }

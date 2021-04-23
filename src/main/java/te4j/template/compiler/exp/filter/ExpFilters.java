@@ -14,15 +14,27 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler.exp.filter;
+
+import lombok.NonNull;
+import te4j.filter.Filters;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
-public interface ExpList extends Exp {
+public interface ExpFilters {
 
-    Class<?> getElementType();
+    /**
+     * Get type, may return null
+     *
+     * @return Type
+     */
+    Type getType();
 
-    Object[] getValues();
+    @NonNull String format(@NonNull String accessor);
+
+    void add(@NonNull Filters filters, @NonNull String name);
 
 }

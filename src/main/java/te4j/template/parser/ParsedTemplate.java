@@ -17,6 +17,7 @@
 package te4j.template.parser;
 
 import lombok.NonNull;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
@@ -43,6 +44,7 @@ public interface ParsedTemplate {
     byte @NonNull [] getContent();
 
     <T> Template<T> compile(
+            @NonNull Filters filters,
             ModifyWatcherManager modifyWatcherManager,
             @NonNull TemplateParser parser,
             @NonNull Set<Output> outputTypes,

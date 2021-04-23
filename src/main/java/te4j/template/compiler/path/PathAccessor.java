@@ -20,6 +20,9 @@ import te4j.util.type.GenericInfo;
 import te4j.util.type.NullTypeInfo;
 import te4j.util.type.TypeInfo;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
 /**
  * @author lero4ka16
  */
@@ -35,6 +38,10 @@ public final class PathAccessor {
     public PathAccessor(TypeInfo returnType, String accessor) {
         this.returnType = returnType;
         this.accessor = accessor;
+    }
+
+    public PathAccessor(Type type, String acccessor) {
+        this(new GenericInfo(type, new Annotation[0]), acccessor);
     }
 
     public TypeInfo getReturnType() {

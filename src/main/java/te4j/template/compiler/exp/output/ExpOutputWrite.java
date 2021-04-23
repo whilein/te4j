@@ -14,24 +14,28 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler.exp.output;
 
-import java.util.Set;
+import lombok.NonNull;
+import te4j.template.compiler.exp.Exp;
 
-enum ExpReturnType {
+/**
+ * @author lero4ka16
+ */
+public interface ExpOutputWrite extends AutoCloseable {
 
-    LOGICAL, STRING, NUMERICAL, OBJECT, ENUM, NULL;
+    @NonNull ExpOutput getOutput();
 
-    public static final ExpReturnType[] VALUES = values();
+    int getIndex();
 
-    public static ExpReturnType getPriorityType(Set<ExpReturnType> types) {
-        for (ExpReturnType type : VALUES) {
-            if (types.contains(type)) {
-                return type;
-            }
-        }
+    boolean moveNext();
 
-        return null;
-    }
+    Exp next();
+
+    Exp current();
+
+    Exp prev();
+
+    void close();
 
 }

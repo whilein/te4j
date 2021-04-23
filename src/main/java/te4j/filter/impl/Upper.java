@@ -16,19 +16,35 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Upper implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Upper();
+    }
+
     @Override
     public String getName() {
         return "upper";
     }
 
     @Override
-    public String wrap(String value) {
-        return value + ".toUpperCase()";
+    public Type getWrappedType(@NonNull Type type) {
+        return type == String.class ? String.class : null;
+    }
+
+    @Override
+    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+        return "(" + value + ").toUpperCase()";
     }
 }

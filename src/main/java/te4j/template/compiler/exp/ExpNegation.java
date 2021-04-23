@@ -16,22 +16,19 @@
 
 package te4j.template.compiler.exp;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author lero4ka16
  */
-enum ExpNegation {
+@Getter
+@RequiredArgsConstructor
+public enum ExpNegation {
 
     LOGICAL("!"), NUMERICAL("-"), NONE("");
 
     private final String prefix;
-
-    ExpNegation(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
 
     public static ExpNegation byChar(int ch) {
         switch (ch) {

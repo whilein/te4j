@@ -16,15 +16,42 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Sum implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Sum();
+    }
+
     @Override
     public String getName() {
         return "sum";
+    }
+
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        Type component = TypeUtils.getComponentType(type);
+
+        if (component instanceof Class<?>) {
+            Class<?> componentClass = (Class<?>) component;
+
+            if (!componentClass.isArray()) {
+                return componentClass;
+            }
+        }
+
+        return null;
     }
 
     public static int process(byte[] value) {
@@ -52,6 +79,26 @@ public final class Sum implements Filter {
 
         for (int i : value) {
             res += i;
+        }
+
+        return res;
+    }
+
+    public static int process(Boolean[] value) {
+        int res = 0;
+
+        for (boolean i : value) {
+            res += i ? 1 : 0;
+        }
+
+        return res;
+    }
+
+    public static int process(boolean[] value) {
+        int res = 0;
+
+        for (boolean i : value) {
+            res += i ? 1 : 0;
         }
 
         return res;
@@ -91,7 +138,7 @@ public final class Sum implements Filter {
         double res = 0;
 
         for (Object object : value) {
-            res += ((Number) object).doubleValue();
+            res += object instanceof Number ? ((Number) object).doubleValue() : object == Boolean.TRUE ? 1 : 0;
         }
 
         return res;
@@ -101,11 +148,10 @@ public final class Sum implements Filter {
         double res = 0;
 
         for (Object object : value) {
-            res += ((Number) object).doubleValue();
+            res += object instanceof Number ? ((Number) object).doubleValue() : object == Boolean.TRUE ? 1 : 0;
         }
 
         return res;
     }
-
 
 }

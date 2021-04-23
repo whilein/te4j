@@ -16,19 +16,38 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Ceil implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Ceil();
+    }
+
     @Override
     public String getName() {
         return "ceil";
     }
 
     @Override
-    public String wrap(String value) {
+    public Type getWrappedType(@NonNull Type type) {
+        return (type instanceof Class<?> && TypeUtils.isNumber((Class<?>) type))
+                ? double.class
+                : null;
+    }
+
+    @Override
+    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
         return "Math.ceil(" + value + ")";
     }
 

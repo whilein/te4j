@@ -16,19 +16,35 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Trim implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Trim();
+    }
+
     @Override
     public String getName() {
         return "trim";
     }
 
     @Override
-    public String wrap(String value) {
-        return value + ".trim()";
+    public Type getWrappedType(@NonNull Type type) {
+        return type == String.class ? String.class : null;
+    }
+
+    @Override
+    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+        return "(" + value + ").trim()";
     }
 }

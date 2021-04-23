@@ -17,11 +17,12 @@
 package te4j.template.compiler;
 
 import lombok.NonNull;
+import te4j.filter.Filters;
 import te4j.include.IncludePath;
 import te4j.template.Template;
 import te4j.template.compiler.code.IterationCode;
 import te4j.template.compiler.code.RenderCode;
-import te4j.template.compiler.exp.ExpParsedList;
+import te4j.template.compiler.exp.ExpList;
 import te4j.template.compiler.exp.ExpParser;
 import te4j.template.compiler.path.AbstractCompiledPath;
 import te4j.template.compiler.path.DefaultCompiledPath;
@@ -113,6 +114,7 @@ public final class TemplateCompileProcess<T> {
     private String putTemplateContent;
 
     public TemplateCompileProcess(
+            @NonNull Filters filters,
             @NonNull TypeReference<T> type,
             @NonNull TemplateParser parser,
             @NonNull Set<Output> outputTypes,
@@ -130,7 +132,7 @@ public final class TemplateCompileProcess<T> {
         this.primaryEnvironment = new PrimaryEnvironment("object", type.getRawType(), type.getType());
 
         this.template = template;
-        this.expParser = new ExpParser(this::compilePathAccessor);
+        this.expParser = new ExpParser(filters, this::compilePathAccessor);
 
         this.compiler = JavaRuntimeCompiler.create("GeneratedTemplate", new StringBuilder());
         this.compiler.setInterfaces(Collections.singletonList(TEMPLATE_CLASS + "<" + type.getCanonicalName() + ">"));
@@ -245,10 +247,10 @@ public final class TemplateCompileProcess<T> {
                     type = (Class<?>) info.getType();
                     values = type.getEnumConstants();
                 } else {
-                    ExpParsedList parsedList = expParser.parseList(from);
+                    ExpList parsedList = expParser.parseList(from);
 
                     values = parsedList.getValues();
-                    type = parsedList.getType();
+                    type = parsedList.getElementType();
                 }
 
                 SwitchCase oldSwitchCase = currentSwitchCase;

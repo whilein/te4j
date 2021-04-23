@@ -16,20 +16,31 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+
+import java.lang.reflect.Type;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Capitalize implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Capitalize();
+    }
+
     @Override
     public String getName() {
         return "capitalize";
     }
 
     @Override
-    public String wrap(String value) {
-        return getClass().getName() + ".process(" + value + ")";
+    public Type getWrappedType(@NonNull Type type) {
+        return type == String.class ? type : null;
     }
 
     public static String process(String value) {

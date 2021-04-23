@@ -16,34 +16,11 @@
 
 package te4j.template.compiler.exp;
 
-import te4j.util.type.GenericInfo;
-import te4j.util.type.TypeInfo;
+/**
+ * @author lero4ka16
+ */
+public interface ExpNumber extends Exp {
 
-final class ExpNumber extends Exp {
-
-    private final String number;
-
-    public ExpNumber(String number) {
-        this.number = number;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    @Override
-    public ExpReturnType getReturnType() {
-        return ExpReturnType.NUMERICAL;
-    }
-
-    @Override
-    public TypeInfo getObjectType() {
-        return GenericInfo.NUMBER;
-    }
-
-    @Override
-    protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filters, number);
-    }
+    Number getNumber();
 
 }

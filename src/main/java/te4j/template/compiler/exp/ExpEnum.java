@@ -16,30 +16,11 @@
 
 package te4j.template.compiler.exp;
 
-import te4j.util.type.GenericInfo;
-import te4j.util.type.TypeInfo;
+/**
+ * @author lero4ka16
+ */
+public interface ExpEnum extends Exp {
 
-final class ExpEnum extends Exp {
-
-    private final String value;
-
-    public ExpEnum(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public ExpReturnType getReturnType() {
-        return ExpReturnType.ENUM;
-    }
-
-    @Override
-    public TypeInfo getObjectType() {
-        return GenericInfo.STRING;
-    }
-
-    @Override
-    protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filters, value);
-    }
+    String getName();
 
 }

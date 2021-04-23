@@ -17,6 +17,7 @@
 package te4j.template.parser;
 
 import lombok.NonNull;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.AutoReloadingTemplate;
 import te4j.template.Template;
@@ -75,6 +76,7 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
 
     @Override
     public <T> Template<T> compile(
+            @NonNull Filters filters,
             ModifyWatcherManager modifyWatcherManager,
             @NonNull TemplateParser parser,
             @NonNull Set<Output> outputTypes,
@@ -85,7 +87,7 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
     ) {
         try {
             Template<T> result = new TemplateCompileProcess<>(
-                    loader.getType(), parser,
+                    filters, loader.getType(), parser,
                     outputTypes, minifyOptions,
                     this, parentFile
             ).compile();

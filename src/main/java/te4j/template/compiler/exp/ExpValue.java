@@ -17,60 +17,12 @@
 package te4j.template.compiler.exp;
 
 import te4j.template.compiler.path.PathAccessor;
-import te4j.util.type.NullTypeInfo;
-import te4j.util.type.TypeInfo;
 
-final class ExpValue extends Exp {
+/**
+ * @author lero4ka16
+ */
+public interface ExpValue extends Exp {
 
-    private final PathAccessor accessor;
-
-    private final String value;
-    private final TypeInfo objectType;
-
-    private final ExpReturnType type;
-
-    public ExpValue(PathAccessor accessor, ExpNegation negation) {
-        this.accessor = accessor;
-        this.value = negation.getPrefix() + accessor.getAccessor();
-
-        this.objectType = accessor.getReturnType();
-
-        if (objectType instanceof NullTypeInfo) {
-            this.type = ExpReturnType.NULL;
-        } else if (objectType.getType() instanceof Class) {
-            Class<?> cls = (Class<?>) objectType.getType();
-
-            if (cls == String.class) {
-                this.type = ExpReturnType.STRING;
-            } else if (cls == boolean.class || cls == Boolean.class) {
-                this.type = ExpReturnType.LOGICAL;
-            } else if (!cls.isArray() && (cls.isPrimitive() || Number.class.isAssignableFrom(cls))) {
-                this.type = ExpReturnType.NUMERICAL;
-            } else {
-                this.type = ExpReturnType.OBJECT;
-            }
-        } else {
-            this.type = ExpReturnType.OBJECT;
-        }
-    }
-
-    public PathAccessor getAccessor() {
-        return accessor;
-    }
-
-    @Override
-    public ExpReturnType getReturnType() {
-        return type;
-    }
-
-    @Override
-    public TypeInfo getObjectType() {
-        return objectType;
-    }
-
-    @Override
-    protected void compile(ExpCompile compile) {
-        compile.appendFiltered(filters, value);
-    }
+    PathAccessor getAccessor();
 
 }

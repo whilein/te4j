@@ -16,21 +16,59 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
 
+import java.lang.reflect.Type;
 import java.util.Iterator;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Min implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Min();
+    }
+
     @Override
     public String getName() {
         return "min";
     }
 
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        Type component = TypeUtils.getComponentType(type);
+
+        if (component instanceof Class<?>) {
+            Class<?> componentClass = (Class<?>) component;
+
+            if (!componentClass.isArray() // byte[][] or Collection<byte[]> is forbidden
+                    && TypeUtils.isPrimitiveOrWrapper(componentClass)) {
+                return componentClass;
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean process(boolean[] value) {
+        if (value == null || value.length == 0)
+            throw new IllegalStateException("Input is empty!");
+
+        for (boolean element : value) {
+            if (!element) return false;
+        }
+
+        return true;
+    }
+
     public static char process(char[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         char res = value[0];
@@ -45,7 +83,7 @@ public final class Min implements Filter {
     }
 
     public static byte process(byte[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         byte res = value[0];
@@ -60,7 +98,7 @@ public final class Min implements Filter {
     }
 
     public static short process(short[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         short res = value[0];
@@ -75,7 +113,7 @@ public final class Min implements Filter {
     }
 
     public static int process(int[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         int res = value[0];
@@ -90,7 +128,7 @@ public final class Min implements Filter {
     }
 
     public static long process(long[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         long res = value[0];
@@ -105,7 +143,7 @@ public final class Min implements Filter {
     }
 
     public static float process(float[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         float res = value[0];
@@ -120,7 +158,7 @@ public final class Min implements Filter {
     }
 
     public static double process(double[] value) {
-        if (value.length == 0)
+        if (value == null || value.length == 0)
             throw new IllegalStateException("Input is empty!");
 
         double res = value[0];
@@ -134,16 +172,16 @@ public final class Min implements Filter {
         return res;
     }
 
-    public static <N extends Number & Comparable<N>> Number process(Iterable<N> value) {
-        Iterator<N> iterator = value.iterator();
+    public static <T extends Comparable<T>> T process(Iterable<T> value) {
+        Iterator<T> iterator = value.iterator();
 
         if (!iterator.hasNext())
             throw new IllegalStateException("Input is empty!");
 
-        N res = iterator.next();
+        T res = iterator.next();
 
         while (iterator.hasNext()) {
-            N that = iterator.next();
+            T that = iterator.next();
 
             if (res.compareTo(that) > 0) {
                 res = that;
@@ -153,13 +191,14 @@ public final class Min implements Filter {
         return res;
     }
 
-    public static <N extends Number & Comparable<N>> Number process(N[] value) {
-        if (value.length == 0) throw new IllegalStateException("Input is empty!");
+    public static <T extends Comparable<T>> T process(T[] value) {
+        if (value == null || value.length == 0)
+            throw new IllegalStateException("Input is empty!");
 
-        N res = value[0];
+        T res = value[0];
 
-        for (int i = 1; i < value.length; i++) {
-            N that = value[i];
+        for (int i = 1, j = value.length; i < j; i++) {
+            T that = value[i];
 
             if (res.compareTo(that) > 0) {
                 res = that;
@@ -168,4 +207,5 @@ public final class Min implements Filter {
 
         return res;
     }
+
 }

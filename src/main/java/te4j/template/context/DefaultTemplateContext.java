@@ -19,6 +19,7 @@ package te4j.template.context;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.DefaultTemplateLoader;
 import te4j.template.context.loader.TemplateLoader;
@@ -37,6 +38,8 @@ import java.util.Set;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateContext implements TemplateContext {
 
+    private final Filters filters;
+
     private final boolean useResources;
     private final ModifyWatcherManager modifyWatcherManager;
 
@@ -48,12 +51,13 @@ public final class DefaultTemplateContext implements TemplateContext {
     }
 
     public static @NonNull TemplateContext create(
+            @NonNull Filters filters,
             boolean useResources,
             ModifyWatcherManager modifyWatcherManager,
             @NonNull Set<Output> outputTypes,
             @NonNull Set<Minify> minifyOptions
     ) {
-        return new DefaultTemplateContext(useResources, modifyWatcherManager, outputTypes, minifyOptions);
+        return new DefaultTemplateContext(filters, useResources, modifyWatcherManager, outputTypes, minifyOptions);
     }
 
     @Override
@@ -79,6 +83,11 @@ public final class DefaultTemplateContext implements TemplateContext {
     @Override
     public @NonNull TemplateParser parse() {
         return DefaultTemplateParser.create(useResources, minifyOptions);
+    }
+
+    @Override
+    public @NonNull Filters getFilters() {
+        return filters;
     }
 
     @Override

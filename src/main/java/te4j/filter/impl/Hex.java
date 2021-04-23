@@ -16,19 +16,33 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Hex implements Filter {
     private static final char[] HEX = "0123456789ABCDEF".toCharArray();
+
+    public static @NonNull Filter create() {
+        return new Hex();
+    }
 
     @Override
     public String getName() {
         return "hex";
+    }
+
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        return type == String.class || type == byte[].class ? String.class : null;
     }
 
     public static String process(String value) {

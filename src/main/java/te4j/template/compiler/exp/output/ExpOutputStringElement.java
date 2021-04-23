@@ -14,15 +14,26 @@
  *    limitations under the License.
  */
 
-package te4j.template.compiler.exp;
+package te4j.template.compiler.exp.output;
+
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author lero4ka16
  */
-public interface ExpList extends Exp {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ExpOutputStringElement implements ExpOutputElement {
 
-    Class<?> getElementType();
+    private final String value;
 
-    Object[] getValues();
+    public static @NonNull ExpOutputElement create(String value) {
+        return new ExpOutputStringElement(value);
+    }
 
+    @Override
+    public String flush() {
+        return value;
+    }
 }

@@ -17,6 +17,7 @@
 package te4j.template.context;
 
 import lombok.NonNull;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.context.parser.TemplateParser;
@@ -40,6 +41,8 @@ public interface TemplateContext {
     @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls, boolean enableAutoReloading);
 
     @NonNull TemplateParser parse();
+
+    @NonNull Filters getFilters();
 
     boolean useResources();
 

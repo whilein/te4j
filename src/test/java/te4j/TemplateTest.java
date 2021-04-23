@@ -16,6 +16,7 @@
 
 package te4j;
 
+import lombok.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,6 +89,20 @@ public class TemplateTest {
     @AfterEach
     public void finish() {
         modifyManager.terminate();
+    }
+
+    @Data
+    public static class Pojo_If {
+        private final int number;
+    }
+
+    @Test
+    public void testIf() {
+        Template<Pojo_If> template = context.load(Pojo_If.class)
+                .fromString("<* if (number + \"ABC\"):lower == \"123abc\" *>True<* else *>False<* endif *>");
+
+        assertEquals("True", template.renderAsString(new Pojo_If(123)));
+        assertEquals("False", template.renderAsString(new Pojo_If(321)));
     }
 
     @Test

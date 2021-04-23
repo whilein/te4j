@@ -16,7 +16,20 @@
 
 package te4j.template.compiler.exp;
 
+import lombok.RequiredArgsConstructor;
+import te4j.filter.Filters;
+import te4j.template.compiler.ExpOperator;
+import te4j.template.compiler.exp.impl.ImmutableExpEnum;
+import te4j.template.compiler.exp.impl.ImmutableExpList;
+import te4j.template.compiler.exp.impl.ImmutableExpNumber;
+import te4j.template.compiler.exp.impl.ImmutableExpOperator;
+import te4j.template.compiler.exp.impl.ImmutableExpParentheses;
+import te4j.template.compiler.exp.impl.ImmutableExpString;
+import te4j.template.compiler.exp.impl.ImmutableExpValue;
+import te4j.template.compiler.exp.output.ExpOutput;
+import te4j.template.compiler.exp.output.ExpStringOutput;
 import te4j.template.compiler.path.PathAccessor;
+import te4j.util.TypeUtils;
 import te4j.util.io.CharsReader;
 import te4j.util.io.DataReader;
 
@@ -24,64 +37,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
 public final class ExpParser {
 
+    private final Filters filters;
     private final Function<String, PathAccessor> mapper;
-
-    public ExpParser(Function<String, PathAccessor> mapper) {
-        this.mapper = mapper;
-    }
 
     public PathAccessor recompile(String value) {
         Exp exp = parse(value);
-        String result = exp.compile();
 
-        PathAccessor newAccessor;
+        ExpOutput output = ExpStringOutput.create();
+        exp.write(output);
 
-        if (exp instanceof ExpValue) {
-            ExpValue expValue = (ExpValue) exp;
-            PathAccessor oldAccessor = expValue.getAccessor();
-
-            if (oldAccessor.getAccessor().equals(result)) {
-                newAccessor = oldAccessor;
-            } else {
-                newAccessor = new PathAccessor(exp.getObjectType(), result);
-            }
-        } else {
-            newAccessor = new PathAccessor(exp.getObjectType(), result);
-        }
-
-        return newAccessor;
+        return new PathAccessor(exp.getType(), output.flush());
     }
 
-    public ExpParsedList parseList(String value) {
+    public ExpList parseList(String value) {
         Exp exp = parse(value);
 
         if (!(exp instanceof ExpList)) {
             throw new UnsupportedOperationException();
         }
 
-        ExpList expList = (ExpList) exp;
-
-        return new ExpParsedList(
-                expList.getObjectType().getComponentType(),
-                expList.toArray()
-        );
+        return (ExpList) exp;
     }
 
     public Exp parse(String value) {
-        DataReader reader = new CharsReader("(" + value + ")");
-        Exp exp = parseNext(null, reader, 0);
-
-        if (exp instanceof ExpParentheses) {
-            ExpParentheses parentheses = (ExpParentheses) exp;
-
-            if (parentheses.canOpenParentheses()) {
-                return parentheses.openParentheses();
-            }
-        }
-
-        return exp;
+        return parseNext(null, new CharsReader("(" + value + ")"), 0);
     }
 
     private Exp parseNext(Exp prev, DataReader reader, int eof) {
@@ -139,7 +121,7 @@ public final class ExpParser {
                             throw new IllegalStateException("Unexpected filter");
                         }
 
-                        token.addFilter(filter);
+                        token.addFilter(filters, filter);
                         ch = reader.read();
                     }
 
@@ -167,38 +149,15 @@ public final class ExpParser {
             prev = token;
         }
 
-        return tokens.size() == 1 ? tokens.get(0) : new ExpParentheses(tokens.toArray(new Exp[0]));
-    }
-
-    private Class<?> getClass(String name) {
-        switch (name) {
-            case "byte":
-                return byte.class;
-            case "short":
-                return short.class;
-            case "int":
-                return int.class;
-            case "long":
-                return long.class;
-            case "float":
-                return float.class;
-            case "char":
-                return char.class;
-            case "boolean":
-                return boolean.class;
-            case "double":
-                return double.class;
-            default:
-                try {
-                    return Class.forName(name);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+        if (tokens.isEmpty()) {
+            throw new IllegalStateException("Parentheses is empty!");
         }
+
+        return tokens.size() == 1 ? tokens.get(0) : ImmutableExpParentheses.create(tokens.toArray(new Exp[0]));
     }
 
     private Exp parseList(DataReader reader) {
-        Class<?> type = Object.class;
+        Class<?> type = null;
 
         int pos = reader.position();
         int ch = reader.read();
@@ -208,10 +167,14 @@ public final class ExpParser {
                 ch = reader.read();
 
                 if (ch == ',' || ch == ']') {
-                    type = getClass(reader.substring(pos + 1, reader.position() - 1).trim());
+                    try {
+                        type = TypeUtils.forName(reader.substring(pos + 1, reader.position() - 1).trim());
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     if (ch == ']') {
-                        return new ExpList(type, new Exp[0]);
+                        return ImmutableExpList.create(type, new Exp[0]);
                     }
 
                     break;
@@ -235,7 +198,7 @@ public final class ExpParser {
             if (ch != ',') throw new IllegalStateException("Unexpected char: " + (char) ch);
         }
 
-        return new ExpList(type, tokens.toArray(new Exp[0]));
+        return ImmutableExpList.create(type, tokens.toArray(new Exp[0]));
     }
 
     private Exp parseString(DataReader reader, int quote) {
@@ -246,11 +209,11 @@ public final class ExpParser {
             if (ch == quote) break;
         }
 
-        return new ExpString(reader.substring(start, reader.position() - 1));
+        return ImmutableExpString.create(reader.substring(start, reader.position() - 1));
     }
 
     private Exp parseEnum(String text) {
-        return new ExpEnum(text);
+        return ImmutableExpEnum.create(text);
     }
 
     private Exp parseOperator(DataReader reader) {
@@ -283,7 +246,7 @@ public final class ExpParser {
         Operator type = Operator.get(types, op)
                 .orElseThrow(() -> new IllegalStateException("Unknown operator: " + op));
 
-        return new ExpOperator(type);
+        return ImmutableExpOperator.create(type);
     }
 
     private String parseText(DataReader reader, int eof) {
@@ -323,7 +286,7 @@ public final class ExpParser {
         }
 
         if (ch >= '0' && ch <= '9') {
-            return new ExpNumber(value);
+            return ImmutableExpNumber.create(value);
         }
 
         String text = value.substring(idx);
@@ -333,7 +296,7 @@ public final class ExpParser {
             throw new IllegalStateException("Accessor not found: " + text);
         }
 
-        return new ExpValue(accessor, negation);
+        return ImmutableExpValue.create(accessor, negation);
     }
 
 }

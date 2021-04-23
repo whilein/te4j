@@ -16,9 +16,14 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
 import te4j.util.Utils;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,24 +34,34 @@ import java.util.Random;
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Shuffle implements Filter {
 
     private static final Random RANDOM = Utils.isJUnitTest() ? new Random(1) : new Random();
+
+    public static @NonNull Filter create() {
+        return new Shuffle();
+    }
 
     @Override
     public String getName() {
         return "shuffle";
     }
 
-    public static Object[] process(Object[] value) {
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        return TypeUtils.getComponentType(type) != null ? type : null;
+    }
+
+    public static boolean[] process(boolean[] value) {
         if (value.length == 0) return value;
 
-        Object[] result = Arrays.copyOf(value, value.length);
+        boolean[] result = Arrays.copyOf(value, value.length);
 
         for (int i = value.length - 1; i > 0; i--) {
             int j = RANDOM.nextInt(i + 1);
 
-            Object element = result[j];
+            boolean element = result[j];
             result[j] = result[i];
             result[i] = element;
         }
@@ -167,15 +182,28 @@ public final class Shuffle implements Filter {
         return result;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static Collection<Object> process(Collection<Object> value) {
+    public static <T> Collection<T> process(Collection<T> value) {
         if (value.isEmpty()) return value;
-        List collection = new ArrayList<>(value);
+        List<T> collection = new ArrayList<>(value);
         Collections.shuffle(collection, RANDOM);
 
         return collection;
     }
 
+    public static <T> T[] process(T[] value) {
+        if (value.length == 0) return value;
 
-    
+        T[] result = Arrays.copyOf(value, value.length);
+
+        for (int i = value.length - 1; i > 0; i--) {
+            int j = RANDOM.nextInt(i + 1);
+
+            T element = result[j];
+            result[j] = result[i];
+            result[i] = element;
+        }
+
+        return result;
+    }
+
 }

@@ -16,17 +16,43 @@
 
 package te4j.filter.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
  * @author lero4ka16
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Average implements Filter {
+
+    public static @NonNull Filter create() {
+        return new Average();
+    }
+
     @Override
     public String getName() {
         return "average";
+    }
+
+    @Override
+    public Type getWrappedType(@NonNull Type type) {
+        Type component = TypeUtils.getComponentType(type);
+
+        if (component instanceof Class<?>) {
+            Class<?> componentClass = (Class<?>) component;
+
+            if (TypeUtils.isNumber(componentClass)) {
+                return double.class;
+            }
+        }
+
+        return null;
     }
 
     public static double process(byte[] value) {
@@ -53,11 +79,11 @@ public final class Average implements Filter {
         return value.length == 0 ? 0 : Sum.process(value) / value.length;
     }
 
-    public static double process(Object[] value) {
+    public static double process(Number[] value) {
         return value.length == 0 ? 0 : Sum.process(value) / value.length;
     }
 
-    public static double process(Collection<?> value) {
+    public static double process(Collection<? extends Number> value) {
         return value.isEmpty() ? 0 : Sum.process(value) / value.size();
     }
 

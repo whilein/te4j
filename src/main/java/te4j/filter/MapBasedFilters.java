@@ -39,7 +39,6 @@ import te4j.filter.impl.Trim;
 import te4j.filter.impl.Upper;
 import te4j.filter.impl.Wrap;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,32 +61,32 @@ public final class MapBasedFilters implements Filters {
 
     @Override
     public void addDefaults() {
-        add(new Upper());
-        add(new Lower());
-        add(new Capitalize());
-        add(new StripTags());
-        add(new Trim());
-        add(new Sort());
-        add(new Shuffle());
-        add(new Cast("byte"));
-        add(new Cast("boolean"));
-        add(new Cast("short"));
-        add(new Cast("char"));
-        add(new Cast("int"));
-        add(new Cast("long"));
-        add(new Cast("double"));
-        add(new Cast("float"));
-        add(new Wrap());
-        add(new Floor());
-        add(new Ceil());
-        add(new Round());
-        add(new Sum());
-        add(new Max());
-        add(new Min());
-        add(new Average());
-        add(new Hex());
-        add(new EscapeTags());
-        add(new ToString());
+        add(Upper.create());
+        add(Lower.create());
+        add(Capitalize.create());
+        add(StripTags.create());
+        add(Trim.create());
+        add(Sort.create());
+        add(Shuffle.create());
+        add(Cast.create(byte.class));
+        add(Cast.create(boolean.class));
+        add(Cast.create(short.class));
+        add(Cast.create(char.class));
+        add(Cast.create(int.class));
+        add(Cast.create(long.class));
+        add(Cast.create(double.class));
+        add(Cast.create(float.class));
+        add(Wrap.create());
+        add(Floor.create());
+        add(Ceil.create());
+        add(Round.create());
+        add(Sum.create());
+        add(Max.create());
+        add(Min.create());
+        add(Average.create());
+        add(Hex.create());
+        add(EscapeTags.create());
+        add(ToString.create());
     }
 
     @Override
@@ -98,24 +97,6 @@ public final class MapBasedFilters implements Filters {
     @Override
     public void add(@NonNull Filter filter) {
         filters.put(filter.getName(), filter);
-    }
-
-    @Override
-    public @NonNull String applyFilters(List<String> filters, @NonNull String value) {
-        if (filters == null || filters.isEmpty()) {
-            return value;
-        }
-
-        for (String filterName : filters) {
-            Filter filter = get(filterName)
-                    .orElseThrow(
-                            () -> new IllegalStateException("Filter is missing: " + filterName)
-                    );
-
-            value = filter.wrap(value);
-        }
-
-        return value;
     }
 
 }

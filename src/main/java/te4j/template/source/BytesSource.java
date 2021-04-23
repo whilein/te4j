@@ -49,6 +49,6 @@ public final class BytesSource implements TemplateSource {
 
     @Override
     public String toString() {
-        return "Bytes[" + new String(bytes) + "]";
+        return new String(bytes);
     }
 }
