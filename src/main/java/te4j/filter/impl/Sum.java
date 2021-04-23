@@ -44,10 +44,20 @@ public final class Sum implements Filter {
         Type component = TypeUtils.getComponentType(type);
 
         if (component instanceof Class<?>) {
+            boolean isArray = type instanceof Class<?> && ((Class<?>) type).isArray();
+
             Class<?> componentClass = (Class<?>) component;
 
             if (!componentClass.isArray()) {
-                return componentClass;
+                if (componentClass == byte.class
+                        || componentClass == short.class
+                        || componentClass == int.class
+                        || componentClass == boolean.class
+                        || (componentClass == Boolean.class && isArray)) {
+                    return int.class;
+                }
+
+                return double.class;
             }
         }
 

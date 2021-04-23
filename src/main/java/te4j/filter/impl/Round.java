@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import te4j.filter.Filter;
+import te4j.util.TypeUtils;
 
 import java.lang.reflect.Type;
 
@@ -40,23 +41,13 @@ public final class Round implements Filter {
 
     @Override
     public Type getWrappedType(@NonNull Type type) {
-        if (type == double.class || type == Double.TYPE) {
+        if (type == double.class || type == Double.class) {
             return double.class;
-        }
-
-        // @formatter:off
-        if (
-                   type == byte .class || type == Byte     .TYPE
-                || type == short.class || type == Short    .TYPE
-                || type == int  .class || type == Integer  .TYPE
-                || type == long .class || type == Long     .TYPE
-                || type == float.class || type == Float    .TYPE
-                || type == char .class || type == Character.TYPE) {
+        } else if (type instanceof Class<?> && TypeUtils.isNumber((Class<?>) type)) {
             return float.class;
+        } else {
+            return null;
         }
-        // @formatter:on
-
-        return null;
     }
 
     @Override

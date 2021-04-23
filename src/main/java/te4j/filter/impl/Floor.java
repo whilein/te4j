@@ -41,15 +41,9 @@ public final class Floor implements Filter {
 
     @Override
     public Type getWrappedType(@NonNull Type type) {
-        if (type instanceof Class<?>) {
-            Class<?> cls = (Class<?>) type;
-
-            if (TypeUtils.isNumber(cls)) {
-                return double.class;
-            }
-        }
-
-        return null;
+        return (type instanceof Class<?> && TypeUtils.isNumber((Class<?>) type))
+                ? double.class
+                : null;
     }
 
     @Override
