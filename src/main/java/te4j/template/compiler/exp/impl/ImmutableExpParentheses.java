@@ -96,7 +96,11 @@ public final class ImmutableExpParentheses extends AbstractExp implements ExpPar
     private static boolean hasComparisonOperator(@NonNull Exp[] inner) {
         return doIteration(false, inner, (current, next, prev) -> {
             if (current instanceof ExpOperator) {
-                return ((ExpOperator) current).getOperator().isComparison();
+                boolean comparison = ((ExpOperator) current).getOperator().isComparison();
+
+                if (comparison) {
+                    return true;
+                }
             }
 
             return null;
