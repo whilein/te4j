@@ -55,6 +55,13 @@ public enum Operator {
         return this == EQUAL || this == NOT_EQUAL;
     }
 
+    public boolean isNumberComparison() {
+        return this == MORE_THAN
+                || this == MORE_THAN_OR_EQUAL
+                || this == LESS_THAN
+                || this == LESS_THAN_OR_EQUAL;
+    }
+
     public boolean isLogical() {
         return this == OR || this == AND;
     }

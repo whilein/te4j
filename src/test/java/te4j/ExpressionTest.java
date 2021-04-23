@@ -68,6 +68,7 @@ public class ExpressionTest {
         assertEquals(float[].class, parser.parse("[&float, 1, 2, 3, 4, 5]").getType());
         //assertEquals(float[].class, parser.parse("[1f, 2, 3, 4, 5]").getType());
         assertEquals(boolean.class, parser.parse("(10 + 20) % 2 == 0.0").getType());
+        assertEquals(boolean.class, parser.parse("100 <= 0.0").getType());
     }
 
     @Test

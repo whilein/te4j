@@ -93,12 +93,15 @@ public final class ImmutableExpParentheses extends AbstractExp implements ExpPar
         });
     }
 
-    private static boolean hasComparisonOperator(@NonNull Exp[] inner) {
+    private static boolean isLogical(@NonNull Exp[] inner) {
         return doIteration(false, inner, (current, next, prev) -> {
             if (current instanceof ExpOperator) {
-                boolean comparison = ((ExpOperator) current).getOperator().isComparison();
+                ExpOperator exp = (ExpOperator) current;
+                Operator operator = exp.getOperator();
 
-                if (comparison) {
+                if (operator.isComparison()
+                        || operator.isNumberComparison()
+                        || operator.isLogical()) {
                     return true;
                 }
             }
@@ -126,8 +129,8 @@ public final class ImmutableExpParentheses extends AbstractExp implements ExpPar
 
     private static @NonNull Type detectType(@NonNull Exp[] inner) {
         // 100% boolean
-        if (hasComparisonOperator(inner)) {
-            return Boolean.TYPE;
+        if (isLogical(inner)) {
+            return boolean.class;
         }
 
         // "" + "", "" + 10, "" + false
