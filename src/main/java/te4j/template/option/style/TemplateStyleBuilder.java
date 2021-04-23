@@ -21,8 +21,12 @@ import lombok.NonNull;
 /**
  * @author lero4ka16
  */
-public interface TemplateStyle {
+public interface TemplateStyleBuilder {
 
-    char style(@NonNull StyleAspect aspect);
+    @NonNull TemplateStyleBuilder inherit(@NonNull TemplateStyle another);
+
+    @NonNull TemplateStyleBuilder style(@NonNull StyleAspect aspect, char value);
+
+    @NonNull TemplateStyle build();
 
 }

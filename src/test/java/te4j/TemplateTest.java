@@ -24,7 +24,7 @@ import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.MutableTemplateStyle;
+import te4j.template.option.style.ImmutableTemplateStyle;
 import te4j.template.option.style.StyleAspect;
 import te4j.util.IOUtils;
 import te4j.util.type.ref.ClassReference;
@@ -80,12 +80,13 @@ public class TemplateTest {
 
         customStyleContext = Te4j.custom()
                 .style(
-                        MutableTemplateStyle.create()
+                        ImmutableTemplateStyle.builder()
                                 .style(StyleAspect.BEGIN_METHOD, '{')
                                 .style(StyleAspect.END_METHOD, '}')
                                 .style(StyleAspect.METHOD_MARKER, '%')
                                 .style(StyleAspect.BEGIN_VALUE, '{')
                                 .style(StyleAspect.END_VALUE, '}')
+                                .build()
                 )
                 .useResources()
                 .minifyAll()

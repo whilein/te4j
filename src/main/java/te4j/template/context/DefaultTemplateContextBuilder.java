@@ -22,7 +22,7 @@ import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.MutableTemplateStyle;
+import te4j.template.option.style.ImmutableTemplateStyle;
 import te4j.template.option.style.TemplateStyle;
 
 import java.util.Arrays;
@@ -123,7 +123,7 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
         }
 
         if (style == null) {
-            style = MutableTemplateStyle.create();
+            style = ImmutableTemplateStyle.getDefaults();
         }
 
         return DefaultTemplateContext.create(
