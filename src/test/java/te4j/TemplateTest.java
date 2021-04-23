@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
+import te4j.template.option.style.MutableTemplateStyle;
+import te4j.template.option.style.StyleAspect;
 import te4j.util.Utils;
 import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeRef;
@@ -52,6 +54,7 @@ public class TemplateTest {
     private TemplateContext context;
     private TemplateContext trimContext;
     private TemplateContext autoReloadContext;
+    private TemplateContext customStyleContext;
 
     private ModifyWatcherManager modifyManager;
 
@@ -69,6 +72,19 @@ public class TemplateTest {
         modifyManager = new ModifyWatcherManager();
 
         context = Te4j.custom()
+                .useResources()
+                .minifyAll()
+                .build();
+
+        customStyleContext = Te4j.custom()
+                .style(
+                        MutableTemplateStyle.create()
+                                .style(StyleAspect.BEGIN_METHOD, '{')
+                                .style(StyleAspect.END_METHOD, '}')
+                                .style(StyleAspect.METHOD_MARKER, '%')
+                                .style(StyleAspect.BEGIN_VALUE, '{')
+                                .style(StyleAspect.END_VALUE, '}')
+                )
                 .useResources()
                 .minifyAll()
                 .build();
@@ -94,6 +110,15 @@ public class TemplateTest {
     @Data
     public static class Pojo_If {
         private final int number;
+    }
+
+    @Test
+    public void testStyle() {
+        Template<Pojo_1> template = customStyleContext.load(Pojo_1.class)
+                .fromString("{% if name == \"Lera\" %}True{% else %}{{ name }}{% endif %}");
+
+        assertEquals("True", template.renderAsString(new Pojo_1("Lera")));
+        assertEquals("Ne Lera", template.renderAsString(new Pojo_1("Ne Lera")));
     }
 
     @Test

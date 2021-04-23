@@ -16,9 +16,12 @@
 
 package te4j.template.context;
 
+import lombok.NonNull;
+import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
+import te4j.template.option.style.TemplateStyle;
 
 import java.util.Collection;
 
@@ -26,6 +29,10 @@ import java.util.Collection;
  * @author lero4ka16
  */
 public interface TemplateContextBuilder {
+
+    @NonNull TemplateContextBuilder filters(Filters filters);
+
+    @NonNull TemplateContextBuilder style(TemplateStyle style);
 
     TemplateContextBuilder output(Output... types);
 

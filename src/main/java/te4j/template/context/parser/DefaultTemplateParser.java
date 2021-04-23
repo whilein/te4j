@@ -17,8 +17,10 @@
 package te4j.template.context.parser;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.template.exception.TemplateLoadException;
 import te4j.template.option.minify.Minify;
+import te4j.template.option.style.TemplateStyle;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.reader.DefaultTemplateReader;
@@ -34,18 +36,19 @@ import java.util.Set;
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor
 public final class DefaultTemplateParser implements TemplateParser {
 
+    private final TemplateStyle style;
     private final boolean useResources;
     private final Set<Minify> minifyOptions;
 
-    public DefaultTemplateParser(boolean useResources, Set<Minify> minifyOptions) {
-        this.useResources = useResources;
-        this.minifyOptions = minifyOptions;
-    }
-
-    public static TemplateParser create(boolean useResources, Set<Minify> minifyOptions) {
-        return new DefaultTemplateParser(useResources, minifyOptions);
+    public static @NonNull TemplateParser create(
+            @NonNull TemplateStyle style,
+            boolean useResources,
+            @NonNull Set<Minify> minifyOptions
+    ) {
+        return new DefaultTemplateParser(style, useResources, minifyOptions);
     }
 
     @Override
@@ -54,7 +57,7 @@ public final class DefaultTemplateParser implements TemplateParser {
             return EmptyParsedTemplate.getInstance();
         }
 
-        return DefaultTemplateReader.create(binary, minifyOptions).readTemplate();
+        return DefaultTemplateReader.create(style, binary, minifyOptions).readTemplate();
     }
 
     @Override

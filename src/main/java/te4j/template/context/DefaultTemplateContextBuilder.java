@@ -22,6 +22,8 @@ import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
+import te4j.template.option.style.MutableTemplateStyle;
+import te4j.template.option.style.TemplateStyle;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,12 +38,18 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
     private boolean useResources;
     private ModifyWatcherManager modifyWatcherManager;
     private Filters filters;
+    private TemplateStyle style;
 
     private final Set<Output> outputTypes = EnumSet.noneOf(Output.class);
     private final Set<Minify> minifyOptions = EnumSet.noneOf(Minify.class);
 
     public static TemplateContextBuilder create() {
         return new DefaultTemplateContextBuilder();
+    }
+
+    public @NonNull TemplateContextBuilder style(TemplateStyle style) {
+        this.style = style;
+        return this;
     }
 
     public @NonNull TemplateContextBuilder filters(Filters filters) {
@@ -114,7 +122,13 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
             filters = Te4j.getFilters();
         }
 
-        return DefaultTemplateContext.create(filters, useResources, modifyWatcherManager, outputTypes, minifyOptions);
+        if (style == null) {
+            style = MutableTemplateStyle.create();
+        }
+
+        return DefaultTemplateContext.create(
+                style, filters, useResources, modifyWatcherManager, outputTypes, minifyOptions
+        );
     }
 
 

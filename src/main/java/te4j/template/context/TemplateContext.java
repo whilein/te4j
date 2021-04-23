@@ -23,6 +23,7 @@ import te4j.template.context.loader.TemplateLoader;
 import te4j.template.context.parser.TemplateParser;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
+import te4j.template.option.style.TemplateStyle;
 import te4j.util.type.ref.TypeReference;
 
 import java.util.Set;
@@ -44,7 +45,9 @@ public interface TemplateContext {
 
     @NonNull Filters getFilters();
 
-    boolean useResources();
+    @NonNull TemplateStyle getStyle();
+
+    boolean isUseResources();
 
     ModifyWatcherManager getModifyWatcherManager();
 

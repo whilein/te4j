@@ -17,6 +17,7 @@
 package te4j.template.context;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import te4j.filter.Filters;
@@ -27,6 +28,7 @@ import te4j.template.context.parser.DefaultTemplateParser;
 import te4j.template.context.parser.TemplateParser;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
+import te4j.template.option.style.TemplateStyle;
 import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeReference;
 
@@ -35,9 +37,11 @@ import java.util.Set;
 /**
  * @author lero4ka16
  */
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateContext implements TemplateContext {
 
+    private final TemplateStyle style;
     private final Filters filters;
 
     private final boolean useResources;
@@ -51,13 +55,16 @@ public final class DefaultTemplateContext implements TemplateContext {
     }
 
     public static @NonNull TemplateContext create(
+            @NonNull TemplateStyle style,
             @NonNull Filters filters,
             boolean useResources,
             ModifyWatcherManager modifyWatcherManager,
             @NonNull Set<Output> outputTypes,
             @NonNull Set<Minify> minifyOptions
     ) {
-        return new DefaultTemplateContext(filters, useResources, modifyWatcherManager, outputTypes, minifyOptions);
+        return new DefaultTemplateContext(
+                style, filters, useResources, modifyWatcherManager, outputTypes, minifyOptions
+        );
     }
 
     @Override
@@ -82,32 +89,7 @@ public final class DefaultTemplateContext implements TemplateContext {
 
     @Override
     public @NonNull TemplateParser parse() {
-        return DefaultTemplateParser.create(useResources, minifyOptions);
-    }
-
-    @Override
-    public @NonNull Filters getFilters() {
-        return filters;
-    }
-
-    @Override
-    public boolean useResources() {
-        return useResources;
-    }
-
-    @Override
-    public ModifyWatcherManager getModifyWatcherManager() {
-        return modifyWatcherManager;
-    }
-
-    @Override
-    public @NonNull Set<Output> getOutputTypes() {
-        return outputTypes;
-    }
-
-    @Override
-    public @NonNull Set<Minify> getMinifyOptions() {
-        return minifyOptions;
+        return DefaultTemplateParser.create(style, useResources, minifyOptions);
     }
 
 }

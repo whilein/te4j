@@ -16,7 +16,9 @@
 
 package te4j.template.reader;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.include.DefaultIncludePath;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
@@ -28,6 +30,8 @@ import te4j.template.method.impl.IncludeMethod;
 import te4j.template.method.impl.SwitchCaseMethod;
 import te4j.template.method.impl.ValueMethod;
 import te4j.template.option.minify.Minify;
+import te4j.template.option.style.StyleAspect;
+import te4j.template.option.style.TemplateStyle;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.parser.PlainParsedTemplate;
@@ -48,6 +52,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateReader implements TemplateReader {
 
     private final Set<Minify> minifyOptions;
@@ -55,17 +60,23 @@ public final class DefaultTemplateReader implements TemplateReader {
     private final byte[] value;
     private final DataReader reader;
 
-    private DefaultTemplateReader(byte[] value, Set<Minify> minifyOptions, DataReader reader) {
-        this.value = value;
-        this.minifyOptions = minifyOptions;
-        this.reader = reader;
-    }
+    private final char methodBegin, methodEnd, methodMarker, valueBegin, valueEnd;
 
-    public static TemplateReader create(byte @NonNull [] value, @NonNull Set<Minify> minifyOptions) {
+    public static TemplateReader create(
+            @NonNull TemplateStyle style,
+            @NonNull byte[] value,
+            @NonNull Set<Minify> minifyOptions) {
         Objects.requireNonNull(value, "value");
         Objects.requireNonNull(minifyOptions, "minifyOptions");
 
-        return new DefaultTemplateReader(value, minifyOptions, new BytesReader(value));
+        return new DefaultTemplateReader(
+                minifyOptions, value, new BytesReader(value),
+                style.style(StyleAspect.BEGIN_METHOD),
+                style.style(StyleAspect.END_METHOD),
+                style.style(StyleAspect.METHOD_MARKER),
+                style.style(StyleAspect.BEGIN_VALUE),
+                style.style(StyleAspect.END_VALUE)
+        );
     }
 
     private ParsedTemplate newTemplate(List<TemplatePath> paths, int begin, int end, boolean inner) {
@@ -112,17 +123,29 @@ public final class DefaultTemplateReader implements TemplateReader {
             int position = reader.position();
             TemplatePath path;
 
-            switch (value) {
-                case '^': // possible value begin
+            if (valueBegin == methodBegin) { // custom style
+                if (value == valueBegin) {
                     reader.roll();
                     path = readValue();
-                    break;
-                case '<': // possible operation begin
+
+                    if (path == null) {
+                        reader.position(position - 1);
+                        path = readOperation();
+                        System.out.println(path);
+                    }
+                } else {
+                    continue;
+                }
+            } else {
+                if (value == valueBegin) { // possible value begin
+                    reader.roll();
+                    path = readValue();
+                } else if (value == methodBegin) { // possible operation begin
                     reader.roll();
                     path = readOperation();
-                    break;
-                default:
+                } else {
                     continue;
+                }
             }
 
             if (path == null) {
@@ -147,8 +170,8 @@ public final class DefaultTemplateReader implements TemplateReader {
             int value = reader.read();
             if (value == -1) return null;
 
-            if (value == '^') {
-                if (reader.read() == '^')
+            if (value == valueEnd) {
+                if (reader.read() == value)
                     break;
                 else
                     reader.roll();
@@ -283,7 +306,7 @@ public final class DefaultTemplateReader implements TemplateReader {
     }
 
     private Token readToken(DataReader in) {
-        if (in.read() != '<' || in.read() != '*') { // <*
+        if (in.read() != methodBegin || in.read() != methodMarker) { // <*
             return null;
         }
 
@@ -293,7 +316,7 @@ public final class DefaultTemplateReader implements TemplateReader {
         int start = in.position();
 
         for (; ; ) {
-            if (!in.move('*')) {
+            if (!in.move(methodMarker)) {
                 throw new TemplateException("Not found closing for token");
             }
 
@@ -301,7 +324,7 @@ public final class DefaultTemplateReader implements TemplateReader {
 
             int ch = in.readNonWhitespace();
             if (ch == -1) return null;
-            if (ch == '>') break;
+            if (ch == methodEnd) break;
         }
 
         int end = in.position() - 2; // *>
