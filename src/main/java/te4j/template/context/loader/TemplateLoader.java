@@ -17,7 +17,6 @@
 package te4j.template.context.loader;
 
 import lombok.NonNull;
-import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.util.type.ref.TypeReference;
 
@@ -36,7 +35,7 @@ public interface TemplateLoader<T> {
      */
     boolean isAutoReloadingEnabled();
 
-    @NonNull TemplateLoader<T> withAutoReloadingEnabled(ModifyWatcherManager modifyWatcherManager, boolean value);
+    @NonNull TemplateLoader<T> withDisabledAutoReloading();
 
     /**
      * Compile new template from bytes

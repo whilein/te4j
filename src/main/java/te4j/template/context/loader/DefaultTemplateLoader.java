@@ -17,6 +17,7 @@
 package te4j.template.context.loader;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
@@ -31,12 +32,12 @@ import te4j.util.type.ref.TypeReference;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
  * @author lero4ka16
  */
+@RequiredArgsConstructor
 public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
 
     private final TemplateContext ctx;
@@ -45,34 +46,9 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
     private final boolean useResources;
     private final boolean enableAutoReloading;
 
-    private DefaultTemplateLoader(
-            TemplateContext ctx,
-            TypeReference<T> type,
-            ModifyWatcherManager modifyWatcherManager,
-            boolean useResources,
-            boolean enableAutoReloading
-    ) {
-        this.ctx = ctx;
-        this.type = type;
-        this.modifyWatcherManager = modifyWatcherManager;
-        this.useResources = useResources;
-        this.enableAutoReloading = enableAutoReloading;
-    }
-
     @Override
-    public @NonNull TemplateLoader<T> withAutoReloadingEnabled(
-            ModifyWatcherManager modifyWatcherManager,
-            boolean value
-    ) {
-        if (value == enableAutoReloading) {
-            return this;
-        }
-
-        if (value) {
-            Objects.requireNonNull(modifyWatcherManager, "modifyWatcherManager");
-        }
-
-        return new DefaultTemplateLoader<>(ctx, type, modifyWatcherManager, useResources, value);
+    public @NonNull TemplateLoader<T> withDisabledAutoReloading() {
+        return new DefaultTemplateLoader<>(ctx, type, null, useResources, false);
     }
 
     @Override
@@ -103,9 +79,6 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
             boolean useResources,
             boolean enableAutoReloading
     ) {
-        Objects.requireNonNull(ctx);
-        Objects.requireNonNull(type);
-
         return new DefaultTemplateLoader<>(ctx, type, modifyWatcherManager, useResources,
                 modifyWatcherManager != null && enableAutoReloading);
     }

@@ -47,7 +47,7 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
             @NonNull ModifyWatcherManager modifyWatcherManager
     ) {
         AutoReloadingTemplate<T> template = new AutoReloadingTemplate<>(
-                handle, loader.withAutoReloadingEnabled(null, false), src
+                handle, loader.withDisabledAutoReloading(), src
         );
 
         modifyWatcherManager.register(template);
