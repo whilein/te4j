@@ -38,7 +38,7 @@ public class NumberUtils {
 
             if (lastChar == 'f' || lastChar == 'F') {
                 return Float.valueOf(value.substring(0, lastCharIndex));
-            } else if (lastChar == 'd' || lastChar == 'D') {
+            } else if (lastChar == 'd' || lastChar == 'D' || value.indexOf('.') != -1) {
                 return Double.valueOf(value.substring(0, lastCharIndex));
             }
         }
@@ -64,7 +64,7 @@ public class NumberUtils {
                 return parseNumber(value.substring(2), 16); // hex
             } else if (radix == 'b') {
                 return parseNumber(value.substring(2), 2); // binary
-            } else {
+            } else if (radix != '.') {
                 return parseNumber(value.substring(1), 8); // octal
             }
         }
