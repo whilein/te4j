@@ -78,16 +78,25 @@ publishing {
     }
 
     repositories {
+        // github packages
         maven {
-            if (project.version.endsWith("-SNAPSHOT")) {
-                url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
-            } else {
-                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-            }
+            url = "https://maven.pkg.github.com/OWNER/REPOSITORY"
 
             credentials {
-                username = findProperty('sonatype.user')
-                password = findProperty('sonatype.password')
+                username = findProperty('gpr.user')
+                password = findProperty('gpr.password')
+            }
+        }
+
+        // maven central
+        if (!project.version.endsWith("-SNAPSHOT")) {
+            maven {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+
+                credentials {
+                    username = findProperty('sonatype.user')
+                    password = findProperty('sonatype.password')
+                }
             }
         }
     }
