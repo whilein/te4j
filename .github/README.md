@@ -65,7 +65,7 @@ class Pojo {
 
 Pojo pojo = new Pojo();
 
-Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
+Template<Pojo> template = Te4j.load(Pojo.class).from("index.html");
 String result = template.renderAsString(pojo);
 // result = <p>Message: Hello world!</p>
 ```
@@ -73,9 +73,9 @@ String result = template.renderAsString(pojo);
 Also, you are able to create custom template context
 
 ```java
-TemplateContext ctx=Te4j.custom()
+TemplateContext ctx = Te4j.custom()
         // deletes repeating spaces, tabs, cr and lf from output
-        .minify(Minify.DEL_LF,Minify.DEL_LF,Minify.DEL_TABS,Minify.DEL_REPEATING_SPACES)
+        .minify(Minify.DEL_LF, Minify.DEL_LF, Minify.DEL_TABS, Minify.DEL_REPEATING_SPACES)
         // .minify(Minify.getValues())
         // .minifyAll()
 
@@ -83,7 +83,7 @@ TemplateContext ctx=Te4j.custom()
         //
         // BYTES - renderAsBytes and renderTo will be optimized
         // STRING - renderAsString will be optimized
-        .output(Output.BYTES,Output.STRING)
+        .output(Output.BYTES, Output.STRING)
         // .output(Output.getValues())
         // .outputAll()
 
@@ -95,7 +95,7 @@ TemplateContext ctx=Te4j.custom()
         .enableAutoReloading()
         .build();
 
-        Template<Pojo> template=ctx.load(Pojo.class).from("index.html");
+Template<Pojo> template = ctx.load(Pojo.class).from("index.html");
 ```
 
 More examples in docs
