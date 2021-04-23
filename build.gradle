@@ -80,7 +80,7 @@ publishing {
     repositories {
         // github packages
         maven {
-            url = "https://maven.pkg.github.com/OWNER/REPOSITORY"
+            url = "https://maven.pkg.github.com/lero4ka16/te4j"
 
             credentials {
                 username = findProperty('gpr.user')
