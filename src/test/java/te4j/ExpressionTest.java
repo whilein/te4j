@@ -81,6 +81,10 @@ public class ExpressionTest {
         ExpNumber exp = (ExpNumber) parser.parse("0x64");
         Number number = exp.getNumber();
         assertEquals(100, number);
+
+        exp = (ExpNumber) parser.parse("0");
+        number = exp.getNumber();
+        assertEquals(0, number);
     }
 
     @Test

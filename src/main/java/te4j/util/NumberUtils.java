@@ -54,6 +54,10 @@ public class NumberUtils {
         char ch = value.charAt(0);
 
         if (ch == '0') {
+            if (value.length() == 1) {
+                return 0;
+            }
+
             char radix = value.charAt(1);
 
             if (radix == 'x') {
