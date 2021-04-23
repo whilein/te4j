@@ -1,0 +1,69 @@
+/*
+ *    Copyright 2021 Lero4ka16
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package te4j.template;
+
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import te4j.util.lazy.Lazy;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+
+/**
+ * @author lero4ka16
+ */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PlainTemplate<T> implements Template<T> {
+
+    byte[] value;
+
+    int offset;
+    int length;
+
+    Lazy<String> chars;
+
+    String[] includes = new String[0];
+
+    public static @NonNull <T> Template<T> create(@NonNull byte[] value, int offset, int length) {
+        return new PlainTemplate<>(value, offset, length, Lazy.threadsafe(() -> new String(value, offset, length)));
+    }
+
+    @Override
+    public @NonNull String[] getIncludes() {
+        return includes;
+    }
+
+    @Override
+    public @NonNull String renderAsString(@NonNull T object) {
+        return chars.get();
+    }
+
+    @Override
+    public @NonNull byte[] renderAsBytes(@NonNull T object) {
+        return Arrays.copyOfRange(value, offset, offset + length);
+    }
+
+    @Override
+    public void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException {
+        os.write(value, offset, offset + length);
+    }
+
+}

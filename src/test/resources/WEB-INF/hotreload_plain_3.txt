@@ -1,2 +1,0 @@
-<* include hotreload_plain_1.txt *>
-<* include hotreload_plain_2.txt *>

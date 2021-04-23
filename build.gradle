@@ -15,7 +15,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:20.1.0'
+    compileOnly 'org.immutables:value:2.8.2'
+    annotationProcessor 'org.immutables:value:2.8.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -71,16 +78,25 @@ publishing {
     }
 
     repositories {
+        // github packages
         maven {
-            if (project.version.endsWith("-SNAPSHOT")) {
-                url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
-            } else {
-                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-            }
+            url = "https://maven.pkg.github.com/lero4ka16/te4j"
 
             credentials {
-                username = findProperty('sonatype.user')
-                password = findProperty('sonatype.password')
+                username = findProperty('gpr.user')
+                password = findProperty('gpr.password')
+            }
+        }
+
+        // maven central
+        if (project.version.matches("\\d+\\.\\d+\\.\\d+")) {
+            maven {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+
+                credentials {
+                    username = findProperty('sonatype.user')
+                    password = findProperty('sonatype.password')
+                }
             }
         }
     }

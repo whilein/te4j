@@ -1,6 +1,7 @@
 <* for element : elements *>
 <a>^^ loop.index ^^: ^^ element ^^</a>
 <* endfor *>
+
 <* for element : elements *>
-<a>^^ element ^^</a>
+<a>[^^ loop.first^^/^^ loop.last ^^]: ^^ element ^^</a>
 <* endfor *>

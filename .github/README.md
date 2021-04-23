@@ -1,4 +1,4 @@
-<!-- @formatter:on  -->
+<!-- @formatter:off  -->
 
 # Te4j
 
@@ -65,7 +65,7 @@ class Pojo {
 
 Pojo pojo = new Pojo();
 
-Template<Pojo> template = Te4j.load(Pojo.class, "index.html");
+Template<Pojo> template = Te4j.load(Pojo.class).from("index.html");
 String result = template.renderAsString(pojo);
 // result = <p>Message: Hello world!</p>
 ```
@@ -75,24 +75,27 @@ Also, you are able to create custom template context
 ```java
 TemplateContext ctx = Te4j.custom()
         // deletes repeating spaces, tabs, cr and lf from output
-        .replace(Te4j.DEL_ALL)
+        .minify(Minify.DEL_LF, Minify.DEL_LF, Minify.DEL_TABS, Minify.DEL_REPEATING_SPACES)
+        // .minify(Minify.getValues())
+        // .minifyAll()
+
         // you can choose which output type will be used
-        // 
-        // if you want to choose multiple output types,
-        // you can use | operator
         //
         // BYTES - renderAsBytes and renderTo will be optimized
         // STRING - renderAsString will be optimized
-        .outputTypes(Te4j.BYTES | Te4j.STRING)
+        .output(Output.BYTES, Output.STRING)
+        // .output(Output.getValues())
+        // .outputAll()
+
         // btw you can enable hot reloading
         //
         // it does not impact performance,
         // but I recommend disabling it in production
         // for max. performance
-        .enableHotReloading()
+        .enableAutoReloading()
         .build();
 
-Template<Pojo> template = ctx.load(Pojo.class, "index.html");
+Template<Pojo> template = ctx.load(Pojo.class).from("index.html");
 ```
 
 More examples in docs
@@ -142,4 +145,4 @@ dependencies {
 
 I will be very glad if someone can help me with development.
 
-<!-- @formatter:off  -->
+<!-- @formatter:on  -->
