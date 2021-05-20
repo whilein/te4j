@@ -86,7 +86,7 @@ publishing {
         }
 
         // maven central
-        if (project.version.matches("\\d+\\.\\d+\\.\\d+")) {
+        if (project.version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
             maven {
                 url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
 
