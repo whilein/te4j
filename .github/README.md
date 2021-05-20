@@ -74,8 +74,8 @@ Also, you are able to create custom template context
 
 ```java
 TemplateContext ctx = Te4j.custom()
-        // deletes repeating spaces, tabs, cr and lf from output
-        .minify(Minify.DEL_LF, Minify.DEL_LF, Minify.DEL_TABS, Minify.DEL_REPEATING_SPACES)
+        // deletes repeating spaces, tabs, crlf from output
+        .minify(Minify.DEL_CF, Minify.DEL_LF, Minify.DEL_TABS, Minify.DEL_REPEATING_SPACES)
         // .minify(Minify.getValues())
         // .minifyAll()
 
