@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,11 +35,7 @@ import te4j.template.environment.LoopEnvironment;
 import te4j.template.environment.PrimaryEnvironment;
 import te4j.template.exception.TemplateException;
 import te4j.template.method.TemplateMethodType;
-import te4j.template.method.impl.ConditionMethod;
-import te4j.template.method.impl.ForeachMethod;
-import te4j.template.method.impl.IncludeMethod;
-import te4j.template.method.impl.SwitchCaseMethod;
-import te4j.template.method.impl.ValueMethod;
+import te4j.template.method.impl.*;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
 import te4j.template.output.TemplateOutput;
@@ -60,17 +56,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 public final class TemplateCompileProcess<T> {
 

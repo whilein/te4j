@@ -3,28 +3,28 @@
 # Te4j
 
 <div align="center">
-  <a href="https://github.com/lero4ka16/te4j/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/lero4ka16/te4j">
+  <a href="https://github.com/whilein/te4j/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/whilein/te4j">
   </a>
 
   <a href="https://discord.gg/ANEHruraCc">
     <img src="https://img.shields.io/discord/819859288049844224?logo=discord">
   </a>
 
-  <a href="https://github.com/lero4ka16/te4j/issues">
-    <img src="https://img.shields.io/github/issues/lero4ka16/te4j">
+  <a href="https://github.com/whilein/te4j/issues">
+    <img src="https://img.shields.io/github/issues/whilein/te4j">
   </a>
 
-  <a href="https://github.com/lero4ka16/te4j/pulls">
-    <img src="https://img.shields.io/github/issues-pr/lero4ka16/te4j">
+  <a href="https://github.com/whilein/te4j/pulls">
+    <img src="https://img.shields.io/github/issues-pr/whilein/te4j">
   </a>
 
-  <a href="https://search.maven.org/artifact/com.github.lero4ka16/te4j">
-    <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
+  <a href="https://search.maven.org/artifact/com.github.whilein/te4j">
+    <img src="https://img.shields.io/maven-central/v/com.github.whilein/te4j">
   </a>
 
-  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/lero4ka16/te4j">
-    <img src="https://img.shields.io/nexus/s/com.github.lero4ka16/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/whilein/te4j">
+    <img src="https://img.shields.io/nexus/s/io.github.whilein/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
   </a> -->
 </div>
 
@@ -46,9 +46,9 @@ Te4j (Template Engine For Java) - Fastest and easy template engine
 
 ## Benchmarks
 
-![](https://github.com/lero4ka16/template-benchmark/raw/master/results.png)
+![](https://github.com/whilein/template-benchmark/raw/master/results.png)
 
-[Click me](https://github.com/lero4ka16/template-benchmark)
+[Click me](https://github.com/whilein/template-benchmark)
 
 ## Example
 
@@ -100,16 +100,18 @@ Template<Pojo> template = ctx.load(Pojo.class).from("index.html");
 
 More examples in docs
 ## Full Docs
-[Click me](https://github.com/lero4ka16/te4j/wiki)
+
+[Click me](https://github.com/whilein/te4j/wiki)
 
 ## Add as dependency
+
 <div>
-  <a href="https://search.maven.org/artifact/com.github.lero4ka16/te4j">
-    <img src="https://img.shields.io/maven-central/v/com.github.lero4ka16/te4j">
+  <a href="https://search.maven.org/artifact/com.github.whilein/te4j">
+    <img src="https://img.shields.io/maven-central/v/com.github.whilein/te4j">
   </a>
 
-  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/lero4ka16/te4j">
-    <img src="https://img.shields.io/nexus/s/com.github.lero4ka16/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/whilein/te4j">
+    <img src="https://img.shields.io/nexus/s/com.github.whilein/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
   </a> -->
 </div>
 
@@ -117,9 +119,9 @@ More examples in docs
 ```xml
 <dependencies>
     <dependency>
-        <groupId>com.github.lero4ka16</groupId>
+        <groupId>io.github.whilein</groupId>
         <artifactId>te4j</artifactId>
-        <version>2.0.0</version>
+        <version>1.0</version>
     </dependency>
 </dependencies>
 ```
@@ -127,7 +129,7 @@ More examples in docs
 ### Gradle
 ```groovy
 dependencies {
-    implementation 'com.github.lero4ka16:te4j:2.0.0'
+    implementation 'io.github.whilein:te4j:1.0'
 }
 ```
 
@@ -139,7 +141,7 @@ dependencies {
 ## Contact
 
 [Vkontakte](https://vk.com/id623151994),
-[Telegram](https://t.me/lero4ka85)
+[Telegram](https://t.me/whilein)
 
 ### Post Scriptum
 

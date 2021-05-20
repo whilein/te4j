@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Помечает метод, что он вернёт ArrayList. Нужно для оптимизации
  * итерации по этому самому списку
  *
- * @author lero4ka16
+ * @author whilein
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import lombok.NonNull;
 import java.util.Iterator;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 public interface TemplatePathIterator extends Iterator<String> {
 

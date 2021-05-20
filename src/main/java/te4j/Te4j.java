@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import te4j.template.context.parser.TemplateParser;
 import te4j.util.type.ref.TypeReference;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 @UtilityClass
 public class Te4j {

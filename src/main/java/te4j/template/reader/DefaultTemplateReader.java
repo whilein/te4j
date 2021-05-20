@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,11 +25,7 @@ import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
 import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
-import te4j.template.method.impl.ConditionMethod;
-import te4j.template.method.impl.ForeachMethod;
-import te4j.template.method.impl.IncludeMethod;
-import te4j.template.method.impl.SwitchCaseMethod;
-import te4j.template.method.impl.ValueMethod;
+import te4j.template.method.impl.*;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.style.StyleAspect;
 import te4j.template.option.style.TemplateStyle;
@@ -37,11 +33,7 @@ import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.parser.PlainParsedTemplate;
 import te4j.template.parser.StandardParsedTemplate;
-import te4j.template.parser.token.ImmutableToken;
-import te4j.template.parser.token.ImmutableTokenizedTemplate;
-import te4j.template.parser.token.Token;
-import te4j.template.parser.token.TokenType;
-import te4j.template.parser.token.TokenizedTemplate;
+import te4j.template.parser.token.*;
 import te4j.template.path.DefaultTemplatePath;
 import te4j.template.path.TemplatePath;
 import te4j.util.formatter.TextFormatter;

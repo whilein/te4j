@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Max implements Filter {

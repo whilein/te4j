@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,25 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import te4j.filter.impl.Average;
-import te4j.filter.impl.Capitalize;
-import te4j.filter.impl.Cast;
-import te4j.filter.impl.Ceil;
-import te4j.filter.impl.EscapeTags;
-import te4j.filter.impl.Floor;
-import te4j.filter.impl.Hex;
-import te4j.filter.impl.Lower;
-import te4j.filter.impl.Max;
-import te4j.filter.impl.Min;
-import te4j.filter.impl.Round;
-import te4j.filter.impl.Shuffle;
-import te4j.filter.impl.Sort;
-import te4j.filter.impl.StripTags;
-import te4j.filter.impl.Sum;
-import te4j.filter.impl.ToString;
-import te4j.filter.impl.Trim;
-import te4j.filter.impl.Upper;
-import te4j.filter.impl.Wrap;
+import te4j.filter.impl.*;
 
 import java.util.Map;
 import java.util.Optional;

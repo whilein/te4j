@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import lombok.experimental.FieldDefaults;
 import te4j.template.compiler.exp.Exp;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

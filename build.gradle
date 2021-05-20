@@ -5,7 +5,7 @@ plugins {
     id 'signing'
 }
 
-group 'com.github.lero4ka16'
+group 'io.github.whilein'
 description 'Fast, lightweight and easy template engine'
 version findProperty('github.tag') ?: ''
 archivesBaseName = 'te4j'
@@ -15,9 +15,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.immutables:value:2.8.2'
-    annotationProcessor 'org.immutables:value:2.8.2'
-
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
@@ -35,16 +32,16 @@ publishing {
                 name = project.name
                 description = project.description
 
-                url = 'https://github.com/lero4ka16/te4j'
+                url = 'https://github.com/whilein/te4j'
 
                 organization {
-                    name = 'com.github.lero4ka16'
-                    url = 'https://github.com/lero4ka16'
+                    name = 'io.github.whilein'
+                    url = 'https://github.com/whilein'
                 }
 
                 issueManagement {
                     system = 'GitHub'
-                    url = 'https://github.com/lero4ka16/te4j/issues'
+                    url = 'https://github.com/whilein/te4j/issues'
                 }
 
                 licenses {
@@ -55,16 +52,16 @@ publishing {
                 }
 
                 scm {
-                    url = 'https://github.com/lero4ka16/te4j'
-                    connection = 'scm:https://github.com/lero4ka16/te4j.git'
-                    developerConnection = 'scm:git://github.com/lero4ka16/te4j.git'
+                    url = 'https://github.com/whilein/te4j'
+                    connection = 'scm:https://github.com/whilein/te4j.git'
+                    developerConnection = 'scm:git://github.com/whilein/te4j.git'
                 }
 
                 developers {
                     developer {
-                        id = 'lero4ka16'
-                        name = 'Lero4ka16'
-                        email = 'lero4ka6916@gmail.com'
+                        id = 'whilein'
+                        name = 'whilein'
+                        email = 'whilein.1@gmail.com'
                     }
                 }
             }
@@ -80,7 +77,7 @@ publishing {
     repositories {
         // github packages
         maven {
-            url = "https://maven.pkg.github.com/lero4ka16/te4j"
+            url = "https://maven.pkg.github.com/whilein/te4j"
 
             credentials {
                 username = findProperty('gpr.user')

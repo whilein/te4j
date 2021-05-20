@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,14 +18,7 @@ package te4j;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import te4j.filter.impl.Average;
-import te4j.filter.impl.Capitalize;
-import te4j.filter.impl.EscapeTags;
-import te4j.filter.impl.Max;
-import te4j.filter.impl.Min;
-import te4j.filter.impl.Shuffle;
-import te4j.filter.impl.Sort;
-import te4j.filter.impl.Sum;
+import te4j.filter.impl.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -33,13 +26,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 public class FiltersTest {
 

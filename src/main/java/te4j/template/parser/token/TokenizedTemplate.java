@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 Lero4ka16
+ *    Copyright 2021 Whilein
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.immutables.value.Value;
 import te4j.template.parser.ParsedTemplate;
 
 /**
- * @author lero4ka16
+ * @author whilein
  */
 @Value.Immutable
 public interface TokenizedTemplate {
