@@ -16,14 +16,30 @@
 
 package te4j.template.parser.token;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import te4j.template.exception.TemplateUnexpectedTokenException;
 import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author whilein
  */
-public interface TokenizedTemplate {
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ImmutableTokenizedTemplate implements TokenizedTemplate {
 
-    Token getToken();
-    ParsedTemplate getTemplate();
+    Token token;
+    ParsedTemplate template;
+
+    public static TokenizedTemplate create(
+            final @NonNull Token token,
+            final @NonNull ParsedTemplate template
+    ) {
+        return new ImmutableTokenizedTemplate(token, template);
+    }
 
 }

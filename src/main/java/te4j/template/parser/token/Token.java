@@ -16,27 +16,16 @@
 
 package te4j.template.parser.token;
 
-import org.immutables.value.Value;
-import te4j.template.exception.TemplateUnexpectedTokenException;
-
 /**
  * @author whilein
  */
-@Value.Immutable
-public abstract class Token {
+public interface Token {
 
-    public abstract String getMethod();
+    String getMethod();
+    String getPath();
 
-    public abstract String getPath();
+    TokenType getType();
 
-    public abstract TokenType getType();
-
-    public void expect(int position, TokenType... types) throws TemplateUnexpectedTokenException {
-        for (TokenType expectType : types) {
-            if (expectType == getType()) return;
-        }
-
-        throw new TemplateUnexpectedTokenException(types, this, position);
-    }
+    void expect(int position, TokenType... types);
 
 }

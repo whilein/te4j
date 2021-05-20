@@ -205,10 +205,7 @@ public final class DefaultTemplateReader implements TemplateReader {
             token.expect(blockEnd, types);
         }
 
-        return ImmutableTokenizedTemplate.builder()
-                .template(newTemplate(innerPaths, blockBegin, blockEnd, true))
-                .token(token)
-                .build();
+        return ImmutableTokenizedTemplate.create(token, newTemplate(innerPaths, blockBegin, blockEnd, true));
     }
 
     private TemplatePath readOperation() throws TemplateUnexpectedTokenException {
@@ -338,11 +335,7 @@ public final class DefaultTemplateReader implements TemplateReader {
             path = fullPath.substring(separator + 1);
         }
 
-        return ImmutableToken.builder()
-                .method(method)
-                .path(path)
-                .type(TokenType.getType(method))
-                .build();
+        return ImmutableToken.create(method, path, TokenType.getType(method));
     }
 
 }
