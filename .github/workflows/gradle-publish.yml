@@ -26,7 +26,7 @@ jobs:
         id: github_tag
         run: echo ::set-output name=RESULT::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: Publish with Gradle
-        run: ./gradlew test publish --no-parallel --no-daemon --build-cache -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Pgpr.user=lero4ka16 -Pgpr.password=${{secrets.GITHUB_TOKEN}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
+        run: ./gradlew test publish --no-parallel --no-daemon --build-cache -Pgithub.tag=${{ steps.github_tag.outputs.RESULT }} -Psigning.secretKeyRingFile=secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psonatype.user=${{secrets.SONATYPE_USERNAME}} -Pgpr.user=whilein -Pgpr.password=${{secrets.GITHUB_TOKEN}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psonatype.password=${{secrets.SONATYPE_PASSWORD}}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
