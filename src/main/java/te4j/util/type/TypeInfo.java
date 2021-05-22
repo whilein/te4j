@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
 public interface TypeInfo {
 
     boolean isArray();
-    boolean isArrayList();
+    boolean isRandomAccess();
 
     Annotation[] getAnnotations();
 

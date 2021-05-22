@@ -32,7 +32,7 @@ public final class NullTypeInfo implements TypeInfo {
     }
 
     @Override
-    public boolean isArrayList() {
+    public boolean isRandomAccess() {
         return false;
     }
 

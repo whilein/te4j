@@ -334,7 +334,7 @@ public final class TemplateCompileProcess<T> {
 
                 IterationCode iterationCode = new IterationCode(
                         id, listType.getName(), path.getAccessorValue(), counter, length,
-                        template, loop, returnType.isArrayList(), returnType.isArray(),
+                        template, loop, returnType.isRandomAccess(), returnType.isArray(),
                         !List.class.isAssignableFrom(returnType.getRawType())
                 );
 

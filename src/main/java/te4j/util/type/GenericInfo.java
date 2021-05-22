@@ -16,13 +16,12 @@
 
 package te4j.util.type;
 
-import te4j.annotation.ReturnsArrayList;
+import te4j.annotation.RandomAccess;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
 
 /**
  * @author whilein
@@ -85,8 +84,8 @@ public final class GenericInfo implements TypeInfo {
     }
 
     @Override
-    public boolean isArrayList() {
-        return ArrayList.class.isAssignableFrom(rawType) || isAnnotationPresent(ReturnsArrayList.class);
+    public boolean isRandomAccess() {
+        return java.util.RandomAccess.class.isAssignableFrom(rawType) || isAnnotationPresent(RandomAccess.class);
     }
 
     @Override

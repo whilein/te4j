@@ -16,47 +16,34 @@
 
 package te4j.template.compiler.code;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import te4j.template.environment.LoopEnvironment;
 import te4j.template.parser.ParsedTemplate;
 
 /**
  * @author whilein
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public final class IterationCode {
 
     private final String namespace;
-    private final String counterFieldName;
-    private final String lengthFieldName;
-    
-    private final LoopEnvironment loop;
-    
     private final String elementType;
     private final String from;
+
+    private final String counterFieldName;
+    private final String lengthFieldName;
+
     private final ParsedTemplate content;
-    
-    private final boolean arrayList;
+    private final LoopEnvironment loop;
+
+    private final boolean randomAccessList;
     private final boolean array;
 
-    private final boolean castArrayList;
+    private final boolean castToList;
 
-    public IterationCode(String namespace, String elementType, String from,
-                         String counterFieldName, String lengthFieldName,
-                         ParsedTemplate content, LoopEnvironment loop,
-                         boolean arrayList, boolean array, boolean castArrayList) {
-        this.namespace = namespace;
-        this.elementType = elementType;
-        this.from = from;
-        this.content = content;
-        this.loop = loop;
-        this.arrayList = arrayList;
-        this.array = array;
-        this.castArrayList = castArrayList;
-
-        this.counterFieldName = counterFieldName;
-        this.lengthFieldName = lengthFieldName;
-
-    }
-    
     public String getElementFieldName() {
         return "__element_" + namespace;
     }
@@ -66,12 +53,12 @@ public final class IterationCode {
     }
     
     public void write(RenderCode out) {
-        boolean arrayOrArrayList = arrayList || array;
+        boolean arrayOrRandomAccessList = randomAccessList || array;
 
         int counterPosition;
 
-        if (arrayOrArrayList) {
-            if (arrayList) {
+        if (arrayOrRandomAccessList) {
+            if (randomAccessList) {
                 out.append("java.util.List<").append(elementType).append("> ");
             } else {
                 out.append(elementType).append("[] ");
@@ -79,7 +66,7 @@ public final class IterationCode {
 
             out.append(getArrayFieldName()).append("=");
 
-            if (!array && castArrayList) {
+            if (!array && castToList) {
                 out.append("(java.util.List<").append(elementType).append(">) ");
             }
 
@@ -87,7 +74,7 @@ public final class IterationCode {
 
             out.append("int ").append(lengthFieldName).append("=").append(getArrayFieldName());
 
-            if (arrayList) {
+            if (randomAccessList) {
                 out.append(".size();");
             } else {
                 out.append(".length;");
@@ -104,9 +91,9 @@ public final class IterationCode {
             out.append(elementType).append(" ").append(getElementFieldName()).append("=");
 
             out.append(getArrayFieldName())
-                    .append(arrayList ? ".get(" : "[")
+                    .append(randomAccessList ? ".get(" : "[")
                     .append(counterFieldName)
-                    .append(arrayList ? ");" : "];");
+                    .append(randomAccessList ? ");" : "];");
         } else {
             out.append("java.util.Collection<").append(elementType).append(">").append(getArrayFieldName()).append("=").append(from).append(";");
             counterPosition = out.position();
@@ -117,7 +104,7 @@ public final class IterationCode {
 
         out.appendTemplate(content);
 
-        if (!arrayOrArrayList) {
+        if (!arrayOrRandomAccessList) {
             if (loop.hasCounter()) {
                 out.setPosition(counterPosition);
                 out.append("int ").append(counterFieldName).append("=0;");

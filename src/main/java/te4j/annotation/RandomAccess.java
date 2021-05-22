@@ -22,12 +22,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Помечает метод, что он вернёт ArrayList. Нужно для оптимизации
- * итерации по этому самому списку
+ * If mark a method with that annotation, the template compiler will optimize
+ * iteration over method's result.
  *
+ * E.g. iteration over ArrayList is faster when using that statement:
+ * <pre>
+ *     for (int i=0, n=list.size(); i &lt; n; i++)
+ *         list.get(i);
+ * </pre>
+ * instead of that:
+ * <pre>
+ *     for (Iterator i=list.iterator(); i.hasNext(); )
+ *         i.next();
+ * </pre>
+ *
+ * @see java.util.RandomAccess
  * @author whilein
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ReturnsArrayList {
+public @interface RandomAccess {
 }
