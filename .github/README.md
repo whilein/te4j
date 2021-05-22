@@ -40,8 +40,7 @@ Te4j (Template Engine For Java) - Fastest and easy template engine
 ### Cons (`temporary`)
 
 - No community :(
-- Sometimes really bad code
-- No javadocs
+- Sometimes awful code
 - Poor documentation
 
 ## Benchmarks
@@ -127,7 +126,7 @@ More examples in docs
     <dependency>
         <groupId>io.github.whilein</groupId>
         <artifactId>te4j</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
 </dependencies>
 ```
@@ -135,7 +134,7 @@ More examples in docs
 ### Gradle
 ```groovy
 dependencies {
-    implementation 'io.github.whilein:te4j:1.0'
+    implementation 'io.github.whilein:te4j:1.1'
 }
 ```
 
