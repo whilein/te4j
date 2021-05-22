@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.impl.*;
 
 import java.util.Map;
@@ -30,47 +31,42 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MapBasedFilters implements Filters {
 
-    Map<String, Filter> filters;
+    @NotNull Map<@NotNull String, @NotNull Filter> filters;
 
-    public static @NonNull Filters create(@NonNull Map<String, Filter> filters) {
+    public static @NotNull Filters create(final @NonNull Map<@NotNull String, @NotNull Filter> filters) {
         return new MapBasedFilters(filters);
     }
 
-    public static @NonNull Filters createDefaults() {
+    public static @NotNull Filters createDefaults() {
         Filters filters = create(new ConcurrentHashMap<>());
-        filters.addDefaults();
+        filters.add(Upper.create());
+        filters.add(Lower.create());
+        filters.add(Capitalize.create());
+        filters.add(StripTags.create());
+        filters.add(Trim.create());
+        filters.add(Sort.create());
+        filters.add(Shuffle.create());
+        filters.add(Cast.create(byte.class));
+        filters.add(Cast.create(boolean.class));
+        filters.add(Cast.create(short.class));
+        filters.add(Cast.create(char.class));
+        filters.add(Cast.create(int.class));
+        filters.add(Cast.create(long.class));
+        filters.add(Cast.create(double.class));
+        filters.add(Cast.create(float.class));
+        filters.add(Wrap.create());
+        filters.add(Floor.create());
+        filters.add(Ceil.create());
+        filters.add(Round.create());
+        filters.add(Sum.create());
+        filters.add(Max.create());
+        filters.add(Min.create());
+        filters.add(Average.create());
+        filters.add(Hex.create());
+        filters.add(EscapeTags.create());
+        filters.add(ToString.create());
 
         return filters;
-    }
-
-    @Override
-    public void addDefaults() {
-        add(Upper.create());
-        add(Lower.create());
-        add(Capitalize.create());
-        add(StripTags.create());
-        add(Trim.create());
-        add(Sort.create());
-        add(Shuffle.create());
-        add(Cast.create(byte.class));
-        add(Cast.create(boolean.class));
-        add(Cast.create(short.class));
-        add(Cast.create(char.class));
-        add(Cast.create(int.class));
-        add(Cast.create(long.class));
-        add(Cast.create(double.class));
-        add(Cast.create(float.class));
-        add(Wrap.create());
-        add(Floor.create());
-        add(Ceil.create());
-        add(Round.create());
-        add(Sum.create());
-        add(Max.create());
-        add(Min.create());
-        add(Average.create());
-        add(Hex.create());
-        add(EscapeTags.create());
-        add(ToString.create());
     }
 
     @Override

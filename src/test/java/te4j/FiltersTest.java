@@ -102,97 +102,97 @@ public class FiltersTest {
 
     @Test
     public void hexTemplate() {
-        testInTemplate(new StringPojo("Hello"), StringPojo.class, "^^ text:hex ^^",
+        testInTemplate(new StringPojo("Hello"), StringPojo.class, "{{ text:hex }}",
                 "48656C6C6F", false);
     }
 
     @Test
     public void upperTemplate() {
-        testInTemplate(new StringPojo("Hello"), StringPojo.class, "^^ text:upper ^^",
+        testInTemplate(new StringPojo("Hello"), StringPojo.class, "{{ text:upper }}",
                 "HELLO", false);
     }
 
     @Test
     public void lowerTemplate() {
-        testInTemplate(new StringPojo("Hello"), StringPojo.class, "^^ text:lower ^^",
+        testInTemplate(new StringPojo("Hello"), StringPojo.class, "{{ text:lower }}",
                 "hello", false);
     }
 
     @Test
     public void capitalizeTemplate() {
-        testInTemplate(new StringPojo("not capitalized"), StringPojo.class, "^^ text:capitalize ^^",
+        testInTemplate(new StringPojo("not capitalized"), StringPojo.class, "{{ text:capitalize }}",
                 "Not capitalized", false);
     }
 
     @Test
     public void trimTemplate() {
-        testInTemplate(new StringPojo("  12345  "), StringPojo.class, "^^ text:trim ^^",
+        testInTemplate(new StringPojo("  12345  "), StringPojo.class, "{{ text:trim }}",
                 "12345", false);
     }
 
     @Test
     public void maxTemplate() {
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:max ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "{{ array:max }}",
                 "5", false);
     }
 
     @Test
     public void striptagsTemplate() {
-        testInTemplate(new StringPojo("<a>Message</a>"), StringPojo.class, "^^ text:striptags ^^",
+        testInTemplate(new StringPojo("<a>Message</a>"), StringPojo.class, "{{ text:striptags }}",
                 "Message", false);
     }
 
     @Test
     public void escapetagsTemplate() {
-        testInTemplate(new StringPojo("<a>Message</a>"), StringPojo.class, "^^ text:escapetags ^^",
+        testInTemplate(new StringPojo("<a>Message</a>"), StringPojo.class, "{{ text:escapetags }}",
                 "&#60;a&#62;Message&#60;/a&#62;", false);
     }
 
     @Test
     public void sumTemplate() {
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:sum ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "{{ array:sum }}",
                 "15", false);
     }
 
     @Test
     public void averageTemplate() {
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:average:int ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "{{ array:average:int }}",
                 "3", false);
     }
 
     @Test
     public void minTemplate() {
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:min ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "{{ array:min }}",
                 "1", false);
     }
 
     @Test
     public void floorTemplate() {
-        testInTemplate(new NumberPojo(5), NumberPojo.class, "^^ number:floor ^^",
+        testInTemplate(new NumberPojo(5), NumberPojo.class, "{{ number:floor }}",
                 "5.0", false);
-        testInTemplate(new NumberPojo(5.01), NumberPojo.class, "^^ number:floor ^^",
+        testInTemplate(new NumberPojo(5.01), NumberPojo.class, "{{ number:floor }}",
                 "5.0", false);
     }
 
     @Test
     public void ceilTemplate() {
-        testInTemplate(new NumberPojo(5), NumberPojo.class, "^^ number:ceil ^^",
+        testInTemplate(new NumberPojo(5), NumberPojo.class, "{{ number:ceil }}",
                 "5.0", false);
-        testInTemplate(new NumberPojo(5.01), NumberPojo.class, "^^ number:ceil ^^",
+        testInTemplate(new NumberPojo(5.01), NumberPojo.class, "{{ number:ceil }}",
                 "6.0", false);
     }
 
     @Test
     public void roundTemplate() {
-        testInTemplate(new NumberPojo(5.1), NumberPojo.class, "^^ number:round ^^",
+        testInTemplate(new NumberPojo(5.1), NumberPojo.class, "{{ number:round }}",
                 "5", false);
-        testInTemplate(new NumberPojo(5.5), NumberPojo.class, "^^ number:round ^^",
+        testInTemplate(new NumberPojo(5.5), NumberPojo.class, "{{ number:round }}",
                 "6", false);
     }
 
     @Test
     public void sortTemplate() {
-        testInTemplate(new ArrayPojo(SHUFFLED_INT_ARRAY), ArrayPojo.class, "^^ array:sorted:tostr ^^",
+        testInTemplate(new ArrayPojo(SHUFFLED_INT_ARRAY), ArrayPojo.class, "{{ array:sorted:tostr }}",
                 "[1, 2, 3, 4, 5]", false);
     }
 
@@ -212,7 +212,7 @@ public class FiltersTest {
             // if test fails just rerun it
         }
 
-        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "^^ array:shuffle:tostr ^^",
+        testInTemplate(new ArrayPojo(SORTED_INT_ARRAY), ArrayPojo.class, "{{ array:shuffle:tostr }}",
                 "[1, 2, 3, 4, 5]", true);
     }
 

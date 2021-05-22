@@ -19,19 +19,23 @@ package te4j.util.hash;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 /**
  * @author whilein
  */
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ByteArrayHash implements Hash {
 
-    private final int hash;
-    private final byte[] value;
+    int hash;
+    byte @NotNull [] value;
 
-    public static Hash create(@NonNull byte[] value) {
+    public static @NotNull Hash of(final byte @NonNull [] value) {
         return new ByteArrayHash(Arrays.hashCode(value), value);
     }
 
@@ -45,7 +49,7 @@ public final class ByteArrayHash implements Hash {
         if (this == obj) return true;
         if (!(obj instanceof ByteArrayHash)) return false;
 
-        ByteArrayHash that = (ByteArrayHash) obj;
+        val that = (ByteArrayHash) obj;
         return Arrays.equals(value, that.value);
     }
 

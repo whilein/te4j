@@ -18,12 +18,14 @@ package te4j.util;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * @author whilein
@@ -33,31 +35,28 @@ public class IOUtils {
 
     private static final byte[] EMPTY_BYTES = new byte[0];
 
-    public byte[] read(String name, boolean resource) throws IOException {
-        if (resource) {
-            try (InputStream is = ClassLoader.getSystemResourceAsStream(name)) {
-                if (is == null) {
-                    throw new FileNotFoundException("Resource not found: " + name);
-                }
-
-                return IOUtils.readBytes(is);
-            }
-        } else {
-            return Files.readAllBytes(Paths.get(name));
-        }
-    }
-
     public byte[] readFile(File file) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             return readBytes(is, (int) file.length());
         }
     }
 
+    public static @NotNull Optional<@NotNull String> getParentFile(final @NonNull String file) {
+        for (int i = file.length() - 1; i >= 0; i--) {
+            val ch = file.charAt(i);
+
+            if (ch == '/' || ch == '\\')
+                return Optional.of(file.substring(0, i));
+        }
+
+        return Optional.empty();
+    }
+
     public byte[] readBytes(InputStream is) throws IOException {
-        byte[] result = new byte[1024];
+        val result = new byte[1024];
         int n;
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        val baos = new ByteArrayOutputStream();
 
         while ((n = is.read(result)) != -1) {
             baos.write(result, 0, n);

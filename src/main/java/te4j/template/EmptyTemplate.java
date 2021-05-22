@@ -17,8 +17,9 @@
 package te4j.template;
 
 import lombok.AccessLevel;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
 
@@ -26,37 +27,38 @@ import java.io.OutputStream;
  * @author whilein
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EmptyTemplate<T> implements Template<T> {
 
-    byte[] content = new byte[0];
-    String[] includes = new String[0];
+    byte[] content;
+    String[] includes;
 
     private static class Singleton {
         @SuppressWarnings("rawtypes")
-        private static final Template INSTANCE = new EmptyTemplate();
+        private static final Template INSTANCE = new EmptyTemplate(new byte[0], new String[0]);
     }
 
     @SuppressWarnings("unchecked")
-    public static @NonNull <T> Template<T> getInstance() {
+    public static @NotNull <T> Template<T> getInstance() {
         return Singleton.INSTANCE;
     }
 
     @Override
-    public @NonNull String[] getIncludes() {
+    public @NotNull String @NotNull [] getIncludes() {
         return includes;
     }
 
     @Override
-    public @NonNull String renderAsString(@NonNull Object object) {
+    public @NotNull String renderAsString(final @NotNull Object object) {
         return "";
     }
 
     @Override
-    public byte @NonNull [] renderAsBytes(@NonNull Object object) {
+    public byte @NotNull [] renderAsBytes(final @NotNull Object object) {
         return content;
     }
 
     @Override
-    public void renderTo(@NonNull Object object, @NonNull OutputStream os) {
+    public void renderTo(final @NotNull Object object, final @NotNull OutputStream os) {
     }
 }

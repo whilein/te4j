@@ -16,7 +16,8 @@
 
 package te4j.modifiable;
 
-import java.nio.file.Path;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public interface Modifiable {
 
-    List<Path> getFiles();
+    @NotNull List<@NotNull String> getFiles();
 
     void handleModify();
 

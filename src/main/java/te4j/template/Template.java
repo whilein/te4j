@@ -16,7 +16,7 @@
 
 package te4j.template;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.template.output.TemplateOutput;
 import te4j.template.output.TemplateOutputBuffer;
 
@@ -34,12 +34,12 @@ public interface Template<T> {
     ThreadLocal<StringBuilder> stringOptimized
             = ThreadLocal.withInitial(StringBuilder::new);
 
-    @NonNull String[] getIncludes();
+    @NotNull String @NotNull [] getIncludes();
 
-    @NonNull String renderAsString(@NonNull T object);
+    @NotNull String renderAsString(@NotNull T object);
 
-    byte @NonNull [] renderAsBytes(@NonNull T object);
+    byte @NotNull [] renderAsBytes(@NotNull T object);
 
-    void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException;
+    void renderTo(@NotNull T object, @NotNull OutputStream os) throws IOException;
 
 }

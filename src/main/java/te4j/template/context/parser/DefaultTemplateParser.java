@@ -18,12 +18,13 @@ package te4j.template.context.parser;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import te4j.template.exception.TemplateLoadException;
 import te4j.template.option.minify.Minify;
-import te4j.template.option.style.TemplateStyle;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.reader.DefaultTemplateReader;
+import te4j.template.resolver.TemplateResolver;
 import te4j.util.IOUtils;
 
 import java.io.File;
@@ -39,16 +40,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class DefaultTemplateParser implements TemplateParser {
 
-    private final TemplateStyle style;
-    private final boolean useResources;
+    private final TemplateResolver resolver;
     private final Set<Minify> minifyOptions;
 
     public static @NonNull TemplateParser create(
-            @NonNull TemplateStyle style,
-            boolean useResources,
-            @NonNull Set<Minify> minifyOptions
+            final @NonNull TemplateResolver resolver,
+            final @NonNull Set<Minify> minifyOptions
     ) {
-        return new DefaultTemplateParser(style, useResources, minifyOptions);
+        return new DefaultTemplateParser(resolver, minifyOptions);
     }
 
     @Override
@@ -57,7 +56,7 @@ public final class DefaultTemplateParser implements TemplateParser {
             return EmptyParsedTemplate.getInstance();
         }
 
-        return DefaultTemplateReader.create(style, binary, minifyOptions).readTemplate();
+        return DefaultTemplateReader.create(binary, minifyOptions).readTemplate();
     }
 
     @Override
@@ -71,8 +70,8 @@ public final class DefaultTemplateParser implements TemplateParser {
 
     @Override
     public @NonNull ParsedTemplate from(@NonNull String name) {
-        try {
-            return fromBytes(IOUtils.read(name, useResources));
+        try (val input = resolver.resolve(name)) {
+            return fromBytes(IOUtils.readBytes(input));
         } catch (IOException e) {
             return EmptyParsedTemplate.getInstance();
         }

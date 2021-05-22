@@ -1,3 +1,0 @@
-<* case check.name : ["condition", "foreach", "greeting"] *>
-<* include [$].txt *>
-<* endcase *>

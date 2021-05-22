@@ -1,6 +1,0 @@
-Inline if:<* if condition *> Yes<* else *> No<* endif *>
-
-Multiline list:
-<* for element : list *>
-  - ^^^ element ^^
-<* endfor *>

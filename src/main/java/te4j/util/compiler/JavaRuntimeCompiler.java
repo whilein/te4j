@@ -16,9 +16,9 @@
 
 package te4j.util.compiler;
 
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.util.IOUtils;
 
 import javax.tools.JavaCompiler;
@@ -30,57 +30,34 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author whilein
  */
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JavaRuntimeCompiler implements RuntimeCompiler {
 
-    private final String className;
-    private final StringBuilder content;
+    final String className;
+    final StringBuilder content;
 
-    private Collection<String> interfaces;
-    private String superclass;
+    @NotNull Collection<@NotNull String> interfaces;
+    String superclass;
 
-    public static @NonNull RuntimeCompiler create(@NonNull String className, @NonNull StringBuilder content) {
-        return new JavaRuntimeCompiler(className, content);
+    public static @NotNull RuntimeCompiler create(
+            final @NonNull String className,
+            final @NonNull StringBuilder content
+    ) {
+        return new JavaRuntimeCompiler(className, content, Collections.emptyList());
     }
 
     @Override
-    public @NonNull String getClassName() {
-        return className;
-    }
-
-    @Override
-    public String getSuperclass() {
-        return superclass;
-    }
-
-    @Override
-    public void setSuperclass(String superclass) {
-        this.superclass = superclass;
-    }
-
-    @Override
-    public Collection<String> getInterfaces() {
-        return interfaces;
-    }
-
-    @Override
-    public void setInterfaces(Collection<String> interfaces) {
-        this.interfaces = interfaces;
-    }
-
-    @Override
-    public @NonNull StringBuilder getContent() {
-        return content;
-    }
-
-    @Override
-    public Class<?> compile() throws IOException {
+    public @NotNull Class<?> compile() throws IOException {
         Path tmp = Files.createTempDirectory("te4j");
 
         try {
@@ -93,7 +70,7 @@ public final class JavaRuntimeCompiler implements RuntimeCompiler {
                     writer.write(" extends ");
                     writer.write(superclass);
                 }
-                if (interfaces != null && !interfaces.isEmpty()) {
+                if (!interfaces.isEmpty()) {
                     writer.write(" implements ");
                     writer.write(String.join(",", interfaces));
                 }

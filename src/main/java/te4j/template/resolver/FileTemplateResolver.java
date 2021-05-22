@@ -14,15 +14,28 @@
  *    limitations under the License.
  */
 
-package te4j.template.option.style;
+package te4j.template.resolver;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author whilein
  */
-public interface TemplateStyle {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class FileTemplateResolver implements TemplateResolver {
 
-    char style(@NonNull StyleAspect aspect);
+    public static final TemplateResolver INSTANCE = new FileTemplateResolver();
+
+    @Override
+    public @NotNull InputStream resolve(final @NonNull String name) throws IOException {
+        return new FileInputStream(name);
+    }
 
 }

@@ -1,2 +1,0 @@
-<* include autoreload_plain_1.txt *>
-<* include autoreload_plain_2.txt *>

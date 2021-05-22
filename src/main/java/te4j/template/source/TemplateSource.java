@@ -16,11 +16,10 @@
 
 package te4j.template.source;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -28,8 +27,7 @@ import java.util.Optional;
  */
 public interface TemplateSource {
 
-    @NonNull Optional<Path> getPath();
-
-    @NonNull <T> Template<T> load(@NonNull TemplateLoader<T> loader);
+    @NotNull Optional<@NotNull String> getFile();
+    @NotNull <T> Template<T> load(@NotNull TemplateLoader<T> loader);
 
 }

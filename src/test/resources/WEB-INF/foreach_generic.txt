@@ -1,3 +1,0 @@
-<* for element : this *>
-<a>^^ loop.index ^^: ^^ element ^^</a>
-<* endfor *>

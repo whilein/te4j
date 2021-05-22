@@ -20,6 +20,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.DefaultTemplateLoader;
@@ -28,7 +31,7 @@ import te4j.template.context.parser.DefaultTemplateParser;
 import te4j.template.context.parser.TemplateParser;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.TemplateStyle;
+import te4j.template.resolver.TemplateResolver;
 import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeReference;
 
@@ -38,58 +41,47 @@ import java.util.Set;
  * @author whilein
  */
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateContext implements TemplateContext {
 
-    private final TemplateStyle style;
-    private final Filters filters;
+    @NotNull Filters filters;
 
-    private final boolean useResources;
-    private final ModifyWatcherManager modifyWatcherManager;
+    @NotNull TemplateResolver resolver;
+    @Nullable ModifyWatcherManager modifyWatcherManager;
 
-    private final Set<Output> outputTypes;
-    private final Set<Minify> minifyOptions;
+    @NotNull Set<@NotNull Output> outputTypes;
+    @NotNull Set<@NotNull Minify> minifyOptions;
 
-    public static @NonNull TemplateContextBuilder builder() {
-        return new DefaultTemplateContextBuilder();
+    public static @NotNull TemplateContextBuilder builder() {
+        return DefaultTemplateContextBuilder.create();
     }
 
-    public static @NonNull TemplateContext create(
-            @NonNull TemplateStyle style,
-            @NonNull Filters filters,
-            boolean useResources,
-            ModifyWatcherManager modifyWatcherManager,
-            @NonNull Set<Output> outputTypes,
-            @NonNull Set<Minify> minifyOptions
+    public static @NotNull TemplateContext create(
+            final @NonNull Filters filters,
+            final @NonNull TemplateResolver resolver,
+            final @Nullable ModifyWatcherManager modifyWatcherManager,
+            final @NonNull Set<Output> outputTypes,
+            final @NonNull Set<Minify> minifyOptions
     ) {
         return new DefaultTemplateContext(
-                style, filters, useResources, modifyWatcherManager, outputTypes, minifyOptions
+                filters, resolver, modifyWatcherManager, outputTypes, minifyOptions
         );
     }
 
     @Override
-    public @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type) {
-        return load(type, true);
+    public @NotNull <T> TemplateLoader<T> load(final @NonNull TypeReference<T> type) {
+        return DefaultTemplateLoader.create(this, type, modifyWatcherManager);
     }
 
     @Override
-    public @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls) {
-        return load(cls, true);
+    public @NotNull <T> TemplateLoader<T> load(final @NonNull Class<T> cls) {
+        return load(ClassReference.create(cls));
     }
 
     @Override
-    public @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type, boolean enableAutoReloading) {
-        return DefaultTemplateLoader.create(this, type, modifyWatcherManager, useResources, enableAutoReloading);
-    }
-
-    @Override
-    public @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls, boolean enableAutoReloading) {
-        return load(ClassReference.create(cls), enableAutoReloading);
-    }
-
-    @Override
-    public @NonNull TemplateParser parse() {
-        return DefaultTemplateParser.create(style, useResources, minifyOptions);
+    public @NotNull TemplateParser parse() {
+        return DefaultTemplateParser.create(resolver, minifyOptions);
     }
 
 }

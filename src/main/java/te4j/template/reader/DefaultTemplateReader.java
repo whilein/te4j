@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import te4j.include.DefaultIncludePath;
 import te4j.template.exception.TemplateException;
 import te4j.template.exception.TemplateUnexpectedTokenException;
@@ -27,8 +29,6 @@ import te4j.template.method.TemplateMethod;
 import te4j.template.method.TemplateMethodType;
 import te4j.template.method.impl.*;
 import te4j.template.option.minify.Minify;
-import te4j.template.option.style.StyleAspect;
-import te4j.template.option.style.TemplateStyle;
 import te4j.template.parser.EmptyParsedTemplate;
 import te4j.template.parser.ParsedTemplate;
 import te4j.template.parser.PlainParsedTemplate;
@@ -48,54 +48,38 @@ import java.util.Set;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateReader implements TemplateReader {
 
-    Set<Minify> minifyOptions;
+    @NotNull Set<@NotNull Minify> minifyOptions;
 
-    byte[] value;
-    DataReader reader;
-
-    char methodBegin;
-    char methodEnd;
-    char methodMarker;
-    char valueBegin;
-    char valueEnd;
+    byte @NotNull [] value;
+    @NotNull DataReader reader;
 
     public static TemplateReader create(
-            final @NonNull TemplateStyle style,
-            final @NonNull byte[] value,
-            final @NonNull Set<Minify> minifyOptions) {
-        return new DefaultTemplateReader(
-                minifyOptions, value, new BytesReader(value),
-                style.style(StyleAspect.BEGIN_METHOD),
-                style.style(StyleAspect.END_METHOD),
-                style.style(StyleAspect.METHOD_MARKER),
-                style.style(StyleAspect.BEGIN_VALUE),
-                style.style(StyleAspect.END_VALUE)
-        );
+            final byte @NonNull [] value,
+            final @NonNull Set<@NotNull Minify> minifyOptions
+    ) {
+        return new DefaultTemplateReader(minifyOptions, value, new BytesReader(value));
     }
 
-    private ParsedTemplate newTemplate(List<TemplatePath> paths, int begin, int end, boolean inner) {
-        ParsedTemplate template;
-
+    private ParsedTemplate newTemplate(
+            final @NotNull List<TemplatePath> paths,
+            final int begin, final int end, final boolean inner
+    ) {
         if (paths.isEmpty()) {
             if (!inner) {
-                byte[] processed = new TextFormatter(value, begin, end - begin)
+                val processed = new TextFormatter(value, begin, end - begin)
                         .disableEscaping()
                         .minify(minifyOptions)
                         .formatAsBytes();
 
-                if (processed.length == 0) {
-                    template = EmptyParsedTemplate.getInstance();
-                } else {
-                    template = PlainParsedTemplate.create(processed, 0, processed.length);
-                }
+                return processed.length == 0
+                        ? EmptyParsedTemplate.getInstance()
+                        : PlainParsedTemplate.create(processed, 0, processed.length);
             } else {
-                template = PlainParsedTemplate.create(value, begin, end - begin);
+                return PlainParsedTemplate.create(value, begin, end - begin);
             }
         } else {
-            template = StandardParsedTemplate.create(paths, value, begin, end - begin);
+            return StandardParsedTemplate.create(paths, value, begin, end - begin);
         }
-
-        return template;
     }
 
     @Override
@@ -117,29 +101,16 @@ public final class DefaultTemplateReader implements TemplateReader {
             int position = reader.position();
             TemplatePath path;
 
-            if (valueBegin == methodBegin) { // custom style
-                if (value == valueBegin) {
-                    reader.roll();
-                    path = readValue();
+            if (value == '{') {
+                reader.roll();
+                path = readValue();
 
-                    if (path == null) {
-                        reader.position(position - 1);
-                        path = readOperation();
-                        System.out.println(path);
-                    }
-                } else {
-                    continue;
+                if (path == null) {
+                    reader.position(position - 1);
+                    path = readOperation();
                 }
             } else {
-                if (value == valueBegin) { // possible value begin
-                    reader.roll();
-                    path = readValue();
-                } else if (value == methodBegin) { // possible operation begin
-                    reader.roll();
-                    path = readOperation();
-                } else {
-                    continue;
-                }
+                continue;
             }
 
             if (path == null) {
@@ -152,10 +123,9 @@ public final class DefaultTemplateReader implements TemplateReader {
 
     private TemplatePath readValue() {
         int pathBegin = reader.position();
+
         int startA = reader.read();
         int startB = reader.read();
-
-        // должно быть ^^, без пробелов и других знаков
         if (startA != startB) return null;
 
         int valueBegin = reader.position();
@@ -164,16 +134,18 @@ public final class DefaultTemplateReader implements TemplateReader {
             int value = reader.read();
             if (value == -1) return null;
 
-            if (value == valueEnd) {
-                if (reader.read() == value)
-                    break;
-                else
-                    reader.roll();
-
+            if (value == '{') {
                 if (valueBegin + 1 == reader.position()) {
                     valueBegin++;
                     pathBegin++;
                 }
+            }
+
+            if (value == '}') {
+                if (reader.read() == value)
+                    break;
+                else
+                    reader.roll();
             }
         }
 
@@ -297,7 +269,7 @@ public final class DefaultTemplateReader implements TemplateReader {
     }
 
     private Token readToken(DataReader in) {
-        if (in.read() != methodBegin || in.read() != methodMarker) { // <*
+        if (in.read() != '{' || in.read() != '%') { // <*
             return null;
         }
 
@@ -307,7 +279,7 @@ public final class DefaultTemplateReader implements TemplateReader {
         int start = in.position();
 
         for (; ; ) {
-            if (!in.move(methodMarker)) {
+            if (!in.move('%')) {
                 throw new TemplateException("Not found closing for token");
             }
 
@@ -315,7 +287,7 @@ public final class DefaultTemplateReader implements TemplateReader {
 
             int ch = in.readNonWhitespace();
             if (ch == -1) return null;
-            if (ch == methodEnd) break;
+            if (ch == '}') break;
         }
 
         int end = in.position() - 2; // *>

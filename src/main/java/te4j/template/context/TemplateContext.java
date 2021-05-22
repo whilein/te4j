@@ -16,14 +16,15 @@
 
 package te4j.template.context;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.context.parser.TemplateParser;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.TemplateStyle;
+import te4j.template.resolver.TemplateResolver;
 import te4j.util.type.ref.TypeReference;
 
 import java.util.Set;
@@ -33,27 +34,21 @@ import java.util.Set;
  */
 public interface TemplateContext {
 
-    @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type);
+    @NotNull <T> TemplateLoader<T> load(@NotNull TypeReference<T> type);
 
-    @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls);
+    @NotNull <T> TemplateLoader<T> load(@NotNull Class<T> cls);
 
-    @NonNull <T> TemplateLoader<T> load(@NonNull TypeReference<T> type, boolean enableAutoReloading);
+    @NotNull TemplateParser parse();
 
-    @NonNull <T> TemplateLoader<T> load(@NonNull Class<T> cls, boolean enableAutoReloading);
+    @NotNull Filters getFilters();
 
-    @NonNull TemplateParser parse();
+    @NotNull TemplateResolver getResolver();
 
-    @NonNull Filters getFilters();
+    @Nullable ModifyWatcherManager getModifyWatcherManager();
 
-    @NonNull TemplateStyle getStyle();
+    @NotNull Set<@NotNull Output> getOutputTypes();
 
-    boolean isUseResources();
-
-    ModifyWatcherManager getModifyWatcherManager();
-
-    @NonNull Set<Output> getOutputTypes();
-
-    @NonNull Set<Minify> getMinifyOptions();
+    @NotNull Set<@NotNull Minify> getMinifyOptions();
 
 
 }

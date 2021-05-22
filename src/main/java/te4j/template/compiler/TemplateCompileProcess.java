@@ -380,7 +380,7 @@ public final class TemplateCompileProcess<T> {
 
     public void addBytes(Integer field, byte[] bytes) {
         String fieldName = outputType.getPrefix() + field;
-        String prevFieldName = byteValues.put(ByteArrayHash.create(bytes), fieldName);
+        String prevFieldName = byteValues.put(ByteArrayHash.of(bytes), fieldName);
 
         switch (outputType) {
             case STRING:

@@ -34,11 +34,6 @@ public interface Filters {
     void add(@NonNull Filter filter);
 
     /**
-     * Add default filters
-     */
-    void addDefaults();
-
-    /**
      * Get filter by name (case sensitive)
      *
      * @param name Filter's name

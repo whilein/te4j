@@ -14,32 +14,34 @@
  *    limitations under the License.
  */
 
-package te4j.util.compiler;
+package te4j.template.resolver;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
+import java.io.InputStream;
 
 /**
  * @author whilein
  */
-public interface RuntimeCompiler {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ResourceTemplateResolver implements TemplateResolver {
 
-    @NonNull String getClassName();
+    public static final TemplateResolver INSTANCE = new ResourceTemplateResolver();
 
-    @Nullable String getSuperclass();
+    @Override
+    public @NotNull InputStream resolve(final @NonNull String name) throws IOException {
+        val is = getClass().getClassLoader().getResourceAsStream(name);
 
-    void setSuperclass(@Nullable String superclass);
+        if (is == null) {
+            throw new FileNotFoundException(name);
+        }
 
-    @NotNull Collection<@NotNull String> getInterfaces();
-
-    void setInterfaces(@NotNull Collection<@NotNull String> interfaces);
-
-    @NotNull StringBuilder getContent();
-
-    @NotNull Class<?> compile() throws IOException;
-
+        return is;
+    }
 }

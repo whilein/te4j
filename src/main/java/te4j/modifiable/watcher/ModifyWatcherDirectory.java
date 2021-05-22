@@ -16,52 +16,23 @@
 
 package te4j.modifiable.watcher;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 import te4j.modifiable.ModifiableReference;
 
-import java.nio.file.Path;
-import java.nio.file.WatchKey;
-import java.util.*;
+import java.io.Closeable;
+import java.util.Collection;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequiredArgsConstructor
-final class ModifyWatcherDirectory {
+/**
+ * @author whilein
+ */
+public interface ModifyWatcherDirectory extends Closeable {
 
-    WatchKey key;
+    boolean hasEntries();
 
-    Map<Path, Set<ModifiableReference>> files
-            = new HashMap<>();
+    void addEntry(@NotNull String name, @NotNull ModifiableReference reference);
+    void removeEntry(@NotNull String name, @NotNull ModifiableReference reference);
 
-    public synchronized boolean hasFiles() {
-        return !files.isEmpty();
-    }
-
-    public synchronized void removeFile(Path path, ModifiableReference reference) {
-        Set<ModifiableReference> references = files.get(path);
-
-        if (references == null) {
-            return;
-        }
-
-        references.remove(reference);
-
-        if (references.isEmpty()) {
-            files.remove(path);
-        }
-    }
-
-    public void remove() {
-        key.reset();
-    }
-
-    public synchronized Collection<ModifiableReference> getFiles(Path path) {
-        return new ArrayList<>(files.getOrDefault(path, Collections.emptySet()));
-    }
-
-    public synchronized void addFile(Path path, ModifiableReference reference) {
-        files.computeIfAbsent(path, x -> new HashSet<>()).add(reference);
-    }
-
+    @UnmodifiableView @NotNull Collection<@NotNull ModifiableReference> getEntries(@NotNull String name);
+    @Override void close();
 }

@@ -16,12 +16,12 @@
 
 package te4j.template.context;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.option.minify.Minify;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.TemplateStyle;
+import te4j.template.resolver.TemplateResolver;
 
 import java.util.Collection;
 
@@ -30,30 +30,30 @@ import java.util.Collection;
  */
 public interface TemplateContextBuilder {
 
-    @NonNull TemplateContextBuilder filters(Filters filters);
+    @NotNull TemplateContextBuilder filters(@NotNull Filters filters);
 
-    @NonNull TemplateContextBuilder style(TemplateStyle style);
+    @NotNull TemplateContextBuilder resolver(@NotNull TemplateResolver resolver);
 
-    TemplateContextBuilder output(Output... types);
+    @NotNull TemplateContextBuilder output(@NotNull Output @NotNull ... types);
 
-    TemplateContextBuilder output(Collection<Output> types);
+    @NotNull TemplateContextBuilder output(@NotNull Collection<@NotNull Output> types);
 
-    TemplateContextBuilder outputAll();
+    @NotNull TemplateContextBuilder outputAll();
 
-    TemplateContextBuilder disableAutoReloading();
+    @NotNull TemplateContextBuilder disableAutoReloading();
 
-    TemplateContextBuilder enableAutoReloading(ModifyWatcherManager modifyWatcherManager);
+    @NotNull TemplateContextBuilder enableAutoReloading(@NotNull ModifyWatcherManager modifyWatcherManager);
 
-    TemplateContextBuilder enableAutoReloading();
+    @NotNull TemplateContextBuilder enableAutoReloading();
 
-    TemplateContextBuilder useResources();
+    @NotNull TemplateContextBuilder useResources();
 
-    TemplateContextBuilder minify(Minify... options);
+    @NotNull TemplateContextBuilder minify(@NotNull Minify @NotNull ... options);
 
-    TemplateContextBuilder minify(Collection<Minify> options);
+    @NotNull TemplateContextBuilder minify(@NotNull Collection<@NotNull Minify> options);
 
-    TemplateContextBuilder minifyAll();
+    @NotNull TemplateContextBuilder minifyAll();
 
-    TemplateContext build();
+    @NotNull TemplateContext build();
 
 }

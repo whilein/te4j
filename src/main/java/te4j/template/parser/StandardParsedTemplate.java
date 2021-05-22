@@ -16,7 +16,13 @@
 
 package te4j.template.parser;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.AutoReloadingTemplate;
@@ -36,20 +42,26 @@ import java.util.Set;
 /**
  * @author whilein
  */
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class StandardParsedTemplate extends AbstractParsedTemplate {
 
     private final List<TemplatePath> paths;
 
-    private StandardParsedTemplate(List<TemplatePath> paths,
-                                   byte[] content, int offset, int length) {
+    private StandardParsedTemplate(
+            final @NotNull List<@NotNull TemplatePath> paths,
+            final byte @NotNull [] content,
+            final int offset,
+            final int length
+    ) {
         super(content, offset, length);
 
         this.paths = paths;
     }
 
     public static ParsedTemplate create(
-            @NonNull List<TemplatePath> paths,
-            @NonNull byte[] content,
+            @NonNull List<@NotNull TemplatePath> paths,
+            byte @NonNull [] content,
             int offset,
             int length
     ) {
@@ -59,7 +71,7 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
             throw new IllegalArgumentException("paths is empty");
         }
 
-        int trimmedBytes = trim(content, offset, length);
+        val trimmedBytes = trim(content, offset, length);
 
         return new StandardParsedTemplate(
                 paths,
@@ -70,20 +82,15 @@ public final class StandardParsedTemplate extends AbstractParsedTemplate {
     }
 
     @Override
-    public List<TemplatePath> getPaths() {
-        return paths;
-    }
-
-    @Override
-    public <T> Template<T> compile(
-            @NonNull Filters filters,
-            ModifyWatcherManager modifyWatcherManager,
-            @NonNull TemplateParser parser,
-            @NonNull Set<Output> outputTypes,
-            @NonNull Set<Minify> minifyOptions,
-            @NonNull String parentFile,
-            @NonNull TemplateSource src,
-            @NonNull TemplateLoader<T> loader
+    public <T> @NotNull Template<T> compile(
+            final @NonNull Filters filters,
+            final @Nullable ModifyWatcherManager modifyWatcherManager,
+            final @NonNull TemplateParser parser,
+            final @NonNull Set<Output> outputTypes,
+            final @NonNull Set<Minify> minifyOptions,
+            final @NonNull String parentFile,
+            final @NonNull TemplateSource src,
+            final @NonNull TemplateLoader<T> loader
     ) {
         try {
             Template<T> result = new TemplateCompileProcess<>(

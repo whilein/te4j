@@ -52,23 +52,29 @@ Te4j (Template Engine For Java) - Fastest and easy template engine
 
 ## Example
 
-```html
-<p>Message: ^^ message ^^</p>
-```
+> index.html
+> ```html
+> <p>Message: {{ message }}</p>
+> ```
 
-```java
-class Pojo {
-    String getMessage() {
-        return "Hello world!";
-    }
-}
-
-Pojo pojo = new Pojo();
-
-Template<Pojo> template = Te4j.load(Pojo.class).from("index.html");
-String result = template.renderAsString(pojo);
-// result = <p>Message: Hello world!</p>
-```
+> Main.java
+> ```java
+> public class Main {
+>     public static void main(String[] args) {
+>          Pojo pojo = new Pojo();
+>
+>          Template<Pojo> template = Te4j.load(Pojo.class).from("index.html");
+>          String result = template.renderAsString(pojo);
+>          System.out.println(result); // <p>Message: Hello world!</p>
+>     }
+> 
+>     public static class Pojo {
+>         public String getMessage() {
+>             return "Hello world!";
+>         }
+>     }
+> }
+>```
 
 Also, you are able to create custom template context
 

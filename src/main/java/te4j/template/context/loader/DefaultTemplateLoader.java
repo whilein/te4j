@@ -16,8 +16,13 @@
 
 package te4j.template.context.loader;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.Template;
 import te4j.template.context.TemplateContext;
@@ -37,28 +42,21 @@ import java.util.function.Function;
 /**
  * @author whilein
  */
-@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
 
-    private final TemplateContext ctx;
-    private final TypeReference<T> type;
-    private final ModifyWatcherManager modifyWatcherManager;
-    private final boolean useResources;
-    private final boolean enableAutoReloading;
+    @NotNull TemplateContext ctx;
+
+    @Getter
+    @NotNull TypeReference<T> type;
+
+    @Getter
+    @Nullable ModifyWatcherManager modifyWatcherManager;
 
     @Override
     public @NonNull TemplateLoader<T> withDisabledAutoReloading() {
-        return new DefaultTemplateLoader<>(ctx, type, null, useResources, false);
-    }
-
-    @Override
-    public TypeReference<T> getType() {
-        return type;
-    }
-
-    @Override
-    public boolean isAutoReloadingEnabled() {
-        return enableAutoReloading;
+        return new DefaultTemplateLoader<>(ctx, type, null);
     }
 
     /**
@@ -67,20 +65,15 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
      * @param ctx                  Template context
      * @param type                 Reference to type of future template
      * @param modifyWatcherManager If not null enables auto reloading
-     * @param useResources         If true files will be supplied from resources
-     * @param enableAutoReloading  If true template will be automatically recompiled once file is modified
      * @param <T>                  Type of future template
      * @return Template loader
      */
     public static <T> TemplateLoader<T> create(
-            @NonNull TemplateContext ctx,
-            @NonNull TypeReference<T> type,
-            ModifyWatcherManager modifyWatcherManager,
-            boolean useResources,
-            boolean enableAutoReloading
+            final @NonNull TemplateContext ctx,
+            final @NonNull TypeReference<T> type,
+            final @Nullable ModifyWatcherManager modifyWatcherManager
     ) {
-        return new DefaultTemplateLoader<>(ctx, type, modifyWatcherManager, useResources,
-                modifyWatcherManager != null && enableAutoReloading);
+        return new DefaultTemplateLoader<>(ctx, type, modifyWatcherManager);
     }
 
     private Template<T> compile(
@@ -104,39 +97,37 @@ public final class DefaultTemplateLoader<T> implements TemplateLoader<T> {
      * @param binary Bytes
      * @return New compiled template
      */
-    public @NonNull Template<T> fromBytes(byte @NonNull [] binary) {
+    public @NotNull Template<T> fromBytes(final byte @NonNull [] binary) {
         return compile(
-                parser -> parser.fromBytes(binary),
-                !enableAutoReloading || useResources ? null : modifyWatcherManager,
+                parser -> parser.fromBytes(binary), modifyWatcherManager,
                 ".", BytesSource.create(binary)
         );
     }
 
-    public @NonNull Template<T> fromString(@NonNull String text) {
+    public @NotNull Template<T> fromString(final @NonNull String text) {
         return fromBytes(text.getBytes(StandardCharsets.UTF_8));
     }
 
-    public @NonNull Template<T> from(@NonNull String name) {
+    public @NotNull Template<T> from(final @NonNull String name) {
         return compile(
-                parser -> parser.from(name),
-                !enableAutoReloading || useResources ? null : modifyWatcherManager,
+                parser -> parser.from(name), modifyWatcherManager,
                 getParent(name), NameSource.create(name)
         );
     }
 
-    public @NonNull Template<T> fromFile(@NonNull File file) {
+    public @NotNull Template<T> fromFile(final @NonNull File file) {
         return compile(
                 parser -> parser.fromFile(file),
-                !enableAutoReloading ? null : modifyWatcherManager,
+                modifyWatcherManager,
                 file.getAbsoluteFile().getParent(),
                 PathSource.create(file.getAbsoluteFile().toPath())
         );
     }
 
-    public @NonNull Template<T> fromFile(@NonNull Path path) {
+    public @NotNull Template<T> fromFile(final @NonNull Path path) {
         return compile(
                 parser -> parser.fromFile(path),
-                !enableAutoReloading ? null : modifyWatcherManager,
+                modifyWatcherManager,
                 path.toAbsolutePath().getParent().toString(),
                 PathSource.create(path.toAbsolutePath())
         );

@@ -17,6 +17,7 @@
 package te4j.template.parser;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -31,8 +32,8 @@ public abstract class AbstractParsedTemplate implements ParsedTemplate {
 
     protected final byte[] content;
 
-    protected final int offset;
-    protected final int length;
+    @Getter
+    protected final int offset, length;
 
     private byte[] _content;
 
@@ -92,16 +93,6 @@ public abstract class AbstractParsedTemplate implements ParsedTemplate {
         }
 
         return n;
-    }
-
-    @Override
-    public int getOffset() {
-        return offset;
-    }
-
-    @Override
-    public int getLength() {
-        return length;
     }
 
     @Override

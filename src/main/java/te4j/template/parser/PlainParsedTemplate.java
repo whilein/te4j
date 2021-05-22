@@ -17,6 +17,8 @@
 package te4j.template.parser;
 
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.AutoReloadingTemplate;
@@ -56,15 +58,15 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
     }
 
     @Override
-    public <T> Template<T> compile(
-            @NonNull Filters filters,
-            ModifyWatcherManager modifyWatcherManager,
-            @NonNull TemplateParser parser,
-            @NonNull Set<Output> outputTypes,
-            @NonNull Set<Minify> minifyOptions,
-            @NonNull String parentFile,
-            @NonNull TemplateSource src,
-            @NonNull TemplateLoader<T> loader
+    public <T> @NotNull Template<T> compile(
+            final @NonNull Filters filters,
+            final @Nullable ModifyWatcherManager modifyWatcherManager,
+            final @NonNull TemplateParser parser,
+            final @NonNull Set<Output> outputTypes,
+            final @NonNull Set<Minify> minifyOptions,
+            final @NonNull String parentFile,
+            final @NonNull TemplateSource src,
+            final @NonNull TemplateLoader<T> loader
     ) {
         Template<T> result = PlainTemplate.create(content, offset, length);
 
@@ -81,12 +83,12 @@ public final class PlainParsedTemplate extends AbstractParsedTemplate {
     }
 
     @Override
-    public List<TemplatePath> getPaths() {
+    public @NotNull List<@NotNull TemplatePath> getPaths() {
         return Collections.emptyList();
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Template.Plain[" + new String(content, offset, length, StandardCharsets.UTF_8) + "]";
     }
 }

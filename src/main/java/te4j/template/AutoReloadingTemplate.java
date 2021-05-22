@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import te4j.modifiable.Modifiable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
@@ -28,28 +30,26 @@ import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
 
-    Lazy<Template<T>> handle;
-    TemplateSource source;
+    @NotNull Lazy<@NotNull Template<T>> handle;
+    @NotNull TemplateSource source;
 
-    public static @NonNull <T> Template<T> create(
+    public static @NotNull <T> Template<T> create(
             final @NonNull Template<T> handle,
             final @NonNull TemplateLoader<T> loader,
             final @NonNull TemplateSource src,
             final @NonNull ModifyWatcherManager modifyWatcherManager
     ) {
-        TemplateLoader<T> disabledAutoReloading = loader.withDisabledAutoReloading();
+        val disabledAutoReloading = loader.withDisabledAutoReloading();
 
-        AutoReloadingTemplate<T> template = new AutoReloadingTemplate<>(
+        val template = new AutoReloadingTemplate<>(
                 Lazy.threadsafe(handle, () -> src.load(disabledAutoReloading)),
                 src
         );
@@ -59,47 +59,37 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
         return template;
     }
 
-    private Template<T> getHandle() {
-        return handle.get();
-    }
-
     @Override
     public void handleModify() {
         handle.clear();
     }
 
     @Override
-    public @NonNull List<Path> getFiles() {
-        String[] includes = getIncludes();
+    public @NotNull List<@NotNull String> getFiles() {
+        val files = new ArrayList<>(Arrays.asList(getIncludes()));
+        source.getFile().ifPresent(files::add);
 
-        List<Path> result = Arrays.stream(includes)
-                .map(Paths::get)
-                .map(Path::toAbsolutePath)
-                .collect(Collectors.toList());
-
-        source.getPath().ifPresent(result::add);
-
-        return result;
+        return files;
     }
 
     @Override
-    public @NonNull String[] getIncludes() {
-        return getHandle().getIncludes();
+    public @NotNull String @NotNull [] getIncludes() {
+        return handle.get().getIncludes();
     }
 
     @Override
-    public @NonNull String renderAsString(final @NonNull T object) {
-        return getHandle().renderAsString(object);
+    public @NotNull String renderAsString(final @NotNull T object) {
+        return handle.get().renderAsString(object);
     }
 
     @Override
-    public byte @NonNull [] renderAsBytes(final @NonNull T object) {
-        return getHandle().renderAsBytes(object);
+    public byte @NotNull [] renderAsBytes(final @NotNull T object) {
+        return handle.get().renderAsBytes(object);
     }
 
     @Override
-    public void renderTo(final @NonNull T object, final @NonNull OutputStream os) throws IOException {
-        getHandle().renderTo(object, os);
+    public void renderTo(final @NotNull T object, final @NotNull OutputStream os) throws IOException {
+        handle.get().renderTo(object, os);
     }
 
 

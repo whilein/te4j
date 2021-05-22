@@ -20,11 +20,10 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -34,19 +33,19 @@ import java.util.Optional;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NameSource implements TemplateSource {
 
-    String name;
+    @NotNull String name;
 
     public static @NonNull TemplateSource create(@NonNull String name) {
         return new NameSource(name);
     }
 
     @Override
-    public Optional<Path> getPath() {
-        return Optional.of(Paths.get(name).toAbsolutePath());
+    public @NotNull Optional<@NotNull String> getFile() {
+        return Optional.of(name);
     }
 
     @Override
-    public <T> Template<T> load(TemplateLoader<T> loader) {
+    public <T> @NotNull Template<T> load(final @NonNull TemplateLoader<T> loader) {
         return loader.from(name);
     }
 

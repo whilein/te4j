@@ -17,30 +17,23 @@
 package te4j;
 
 import lombok.Data;
+import lombok.NonNull;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import te4j.modifiable.watcher.ModifyWatcherManager;
-import te4j.template.Template;
 import te4j.template.context.TemplateContext;
 import te4j.template.option.output.Output;
-import te4j.template.option.style.ImmutableTemplateStyle;
-import te4j.template.option.style.StyleAspect;
-import te4j.util.IOUtils;
-import te4j.util.type.ref.ClassReference;
 import te4j.util.type.ref.TypeRef;
-import te4j.util.type.ref.TypeReference;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,380 +43,296 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author whilein
  */
 public class TemplateTest {
+
+    private static final String TRIM_INPUT
+            = "Inline if:{% if condition %} Yes{% else %} No{% endif %}\n\nMultiline list:\n{% for element : list %}\n  - {{{ element }}}\n{% endfor %}";
+
+    private static final String TRIM_EXPECT
+            = "Inline if: Yes\n\nMultiline list:\n  - {Hi}\n  - {Hello}\n  - {Bye}\n  - {Goodbye}\n";
+
+    private static final String NAME_INPUT = "Hello   {{ name }}!";
+    private static final String NAME_EXPECT = "Hello my friend!";
+
+    private static final String CONDITION_INPUT
+            = "{% if condition %}\n<a>Result is true</a>\n{% elif another_condition %}\n<a>Another result is true</a>\n{% else %}\n<a>Result is false</a>\n{% endif %}";
+
+    private static final String CONDITION_EXPECT_FALSE_FALSE = "<a>Result is false</a>";
+    private static final String CONDITION_EXPECT_FALSE_TRUE = "<a>Another result is true</a>";
+    private static final String CONDITION_EXPECT_TRUE = "<a>Result is true</a>";
+
+    private static final String FOREACH_INPUT
+            = "{% for element : elements %}\n<a>{{ loop.index }}: {{ element }}</a>\n{% endfor %}\n" +
+            "\n{% for element : elements %}\n<a>[{{ loop.first }}/{{ loop.last }}]: {{ element }}</a>\n{% endfor %}";
+
+    private static final String FOREACH_GENERIC_INPUT
+            = "{% for element : this %}\n<a>{{ loop.index }}: {{ element }}</a>\n{% endfor %}";
+
+    private static final String FOREACH_EXPECT_10_20_30
+            = "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>[true/false]: 10</a><a>[false/false]: 20</a><a>[false/true]: 30</a>";
+
+    private static final String FOREACH_GENERIC_EXPECT_15_25_35
+            = "<a>0: 15</a><a>1: 25</a><a>2: 35</a>";
+
+    private static final String FOREACH_EXPECT_10_50_100
+            = "<a>0: 10</a><a>1: 50</a><a>2: 100</a><a>[true/false]: 10</a><a>[false/false]: 50</a><a>[false/true]: 100</a>";
+
+
+    private static final String SWITCHCASE_INPUT
+            = "{% case check.name : [\"condition\", \"foreach\", \"name\"] %}\n{% include [$] %}\n{% endcase %}";
+
+    private static final String SWITCHCASE_EXPECT_NAME
+            = "Hello you!";
+
     private Object dummy;
 
     private TemplateContext context;
     private TemplateContext trimContext;
     private TemplateContext autoReloadContext;
-    private TemplateContext customStyleContext;
 
     private ModifyWatcherManager modifyManager;
 
-    private File tests;
+    private Map<String, byte[]> files;
 
-    @AfterEach
-    public void clean() {
-        IOUtils.deleteDirectory(tests);
+    private void putTemplate(final @NotNull String file, final @NotNull String content) {
+        files.put(file, content.getBytes(StandardCharsets.UTF_8));
     }
 
     @BeforeEach
     public void init() {
         dummy = new Object();
 
-        modifyManager = new ModifyWatcherManager();
+        files = new HashMap<>();
+
+        modifyManager = FakeModifyWatcherManager.create();
+
+        val resolver = FakeTemplateResolver.create(files);
 
         context = Te4j.custom()
-                .useResources()
+                .resolver(resolver)
                 .minifyAll()
                 .output(Output.STRING)
                 .build();
 
-        customStyleContext = Te4j.custom()
-                .style(
-                        ImmutableTemplateStyle.builder()
-                                .style(StyleAspect.BEGIN_METHOD, '{')
-                                .style(StyleAspect.END_METHOD, '}')
-                                .style(StyleAspect.METHOD_MARKER, '%')
-                                .style(StyleAspect.BEGIN_VALUE, '{')
-                                .style(StyleAspect.END_VALUE, '}')
-                                .build()
-                )
-                .useResources()
-                .minifyAll()
-                .build();
-
         trimContext = Te4j.custom()
-                .useResources()
+                .resolver(resolver)
                 .build();
 
         autoReloadContext = Te4j.custom()
+                .resolver(resolver)
                 .minifyAll()
                 .enableAutoReloading(modifyManager)
                 .build();
-
-        tests = new File("tests");
-        tests.mkdirs();
     }
 
     @AfterEach
-    public void finish() {
-        modifyManager.terminate();
-    }
-
-    @Data
-    public static class Pojo_If {
-        private final int number;
-    }
-
-    @Test
-    public void testStyle() {
-        Template<Pojo_1> template = customStyleContext.load(Pojo_1.class)
-                .fromString("{% if name == \"Lera\" %}True{% else %}{{ name }}{% endif %}");
-
-        assertEquals("True", template.renderAsString(new Pojo_1("Lera")));
-        assertEquals("Ne Lera", template.renderAsString(new Pojo_1("Ne Lera")));
-    }
-
-    @Test
-    public void testIf() {
-        Template<Pojo_If> template = context.load(Pojo_If.class)
-                .fromString("<* if (number + \"ABC\"):lower == \"123abc\" *>True<* else *>False<* endif *>");
-
-        assertEquals("True", template.renderAsString(new Pojo_If(123)));
-        assertEquals("False", template.renderAsString(new Pojo_If(321)));
+    public void finish() throws IOException {
+        modifyManager.close();
     }
 
     @Test
     public void testTrim() {
-        String expect;
+        val template = trimContext.load(Trim.class)
+                .fromString(TRIM_INPUT);
 
-        if (System.getProperty("os.name").contains("Windows")) {
-            expect = "Inline if: Yes\r\n\r\nMultiline list:\r\n  - ^Hi\r\n  - ^Hello\r\n  - ^Bye\r\n  - ^Goodbye\r\n";
-        } else {
-            expect = "Inline if: Yes\n\nMultiline list:\n  - ^Hi\n  - ^Hello\n  - ^Bye\n  - ^Goodbye\n";
-        }
-
-        testTemplate(trimContext,
-                "WEB-INF/trim.txt", expect,
-                new Pojo_6(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye")), ClassReference.create(Pojo_6.class));
+        assertEquals(TRIM_EXPECT, template.renderAsString(
+                new Trim(true, Arrays.asList("Hi", "Hello", "Bye", "Goodbye"))));
     }
 
     @Test
-    public void testAutoReload() throws InterruptedException {
-        Path plain1 = Paths.get("tests/autoreload_plain_1.txt");
-        Path plain2 = Paths.get("tests/autoreload_plain_2.txt");
-        Path plain3 = Paths.get("tests/autoreload_plain_3.txt");
-        Path plain4 = Paths.get("tests/autoreload_plain_4.txt");
+    public void testAutoReload() {
+        putTemplate("test", "Hi {{ name }}!");
 
-        copyResource("WEB-INF/autoreload_plain_1.txt", plain1);
-        copyResource("WEB-INF/autoreload_plain_1.txt", plain2);
-        copyResource("WEB-INF/autoreload_plain_3.txt", plain3);
-        copyResource("WEB-INF/autoreload_plain_1.txt", plain4);
+        val template = autoReloadContext.load(Name.class)
+                .from("test");
 
-        Thread.sleep(1000);
+        assertEquals("Hi Lera!", template.renderAsString(new Name("Lera")));
 
-        Template<Object> template1 = autoReloadContext.load(Object.class).fromFile(plain1);
-        Template<Object> template2 = autoReloadContext.load(Object.class).fromFile(plain2);
-        Template<Object> template3 = autoReloadContext.load(Object.class).fromFile(plain3);
+        putTemplate("test", "Goodbye {{ name }}!");
+        modifyManager.handle("test");
 
-        Template<Object> template4 = autoReloadContext
-                .load(Object.class)
-                .fromString("<* include tests/autoreload_plain_1.txt *>");
-
-        assertEquals("Before auto reload", template1.renderAsString(dummy));
-        assertEquals("Before auto reload", template2.renderAsString(dummy));
-        assertEquals("Before auto reloadBefore auto reload", template3.renderAsString(dummy));
-        assertEquals("Before auto reload", template4.renderAsString(dummy));
-
-        copyResource("WEB-INF/autoreload_plain_2.txt", plain1);
-        copyResource("WEB-INF/autoreload_plain_2.txt", plain2);
-        copyResource("WEB-INF/autoreload_plain_2.txt", plain4);
-        copyResource("WEB-INF/autoreload_plain_4.txt", plain3);
-
-        // Слушание событий происходит в отдельном потоке
-        // ждём немного, перед тем, чтобы сделать проверку
-        Thread.sleep(1000);
-        assertEquals("After auto reload", template1.renderAsString(dummy));
-        assertEquals("After auto reload", template2.renderAsString(dummy));
-        assertEquals("After auto reload", template3.renderAsString(dummy));
-        assertEquals("After auto reload", template4.renderAsString(dummy));
+        assertEquals("Goodbye John!", template.renderAsString(new Name("John")));
     }
 
     @Test
     public void testPlain() {
-        testTemplate(context,
-                "WEB-INF/plain.txt", "Hello world!Привет мир!",
-                dummy, ClassReference.create(Object.class));
+        val input = "Hello   world!\n\nПривет мир!";
+        val expect = "Hello world!Привет мир!";
+
+        val template = context.load(Object.class)
+                .fromString(input);
+
+        assertEquals(expect, template.renderAsString(dummy));
     }
 
     @Test
     public void testValue() {
-        testTemplate(context,
-                "WEB-INF/greeting.txt", "Hello my friend!",
-                new Pojo_1("my friend"), ClassReference.create(Pojo_1.class));
+        val template = context.load(NameCheck.class)
+                .fromString(NAME_INPUT);
+
+        assertEquals(NAME_EXPECT, template.renderAsString(new Name("my friend")));
     }
 
     @Test
     public void testForeach() {
-        testTemplate(context,
-                "WEB-INF/foreach.txt", "<a>0: 10</a><a>1: 20</a><a>2: 30</a><a>[true/false]: 10</a><a>[false/false]: 20</a><a>[false/true]: 30</a>",
-                new Pojo_2(10, 20, 30), ClassReference.create(Pojo_2.class));
+        val template = context.load(ForeachCheck.class)
+                .fromString(FOREACH_INPUT);
+
+        assertEquals(FOREACH_EXPECT_10_20_30, template.renderAsString(Foreach.of(10, 20, 30)));
     }
 
     @Test
     public void testForeachCollection() {
-        testTemplate(context,
-                "WEB-INF/foreach.txt", "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>[true/false]: 15</a><a>[false/false]: 25</a><a>[false/true]: 35</a>",
-                new Pojo_5(15, 25, 35), ClassReference.create(Pojo_5.class));
+        val expect = "<a>0: 15</a><a>1: 25</a><a>2: 35</a><a>[true/false]: 15</a><a>[false/false]: 25</a><a>[false/true]: 35</a>";
+
+        val template = context.load(ForeachCollectionCheck.class)
+                .fromString(FOREACH_INPUT);
+
+        assertEquals(expect, template.renderAsString(ForeachCollection.of(15, 25, 35)));
     }
 
     @Test
     public void testForeachGeneric() {
-        testTemplate(context,
-                "WEB-INF/foreach_generic.txt", "<a>0: 50</a><a>1: 100</a><a>2: 200</a>",
-                Arrays.asList(50, 100, 200), new TypeRef<List<Integer>>() {
-                });
+        val template = context.load(new TypeRef<List<Integer>>() {})
+                .fromString(FOREACH_GENERIC_INPUT);
+
+        assertEquals(FOREACH_GENERIC_EXPECT_15_25_35, template.renderAsString(Arrays.asList(15, 25, 35)));
     }
 
     @Test
-    public void testConditionFalseFalse() {
-        testTemplate(context,
-                "WEB-INF/condition.txt", "<a>Result is false</a>",
-                new Pojo_3("Hello world", false, false), ClassReference.create(Pojo_3.class));
+    public void testCondition() {
+        val template = context.load(ConditionCheck.class)
+                .fromString(CONDITION_INPUT);
+
+        assertEquals(CONDITION_EXPECT_FALSE_FALSE, template.renderAsString(
+                new Condition(false, false)));
+
+        assertEquals(CONDITION_EXPECT_FALSE_TRUE, template.renderAsString(
+                new Condition(false, true)));
+
+        assertEquals(CONDITION_EXPECT_TRUE, template.renderAsString(
+                new Condition(true, false)));
     }
 
     @Test
-    public void testConditionFalseTrue() {
-        testTemplate(context,
-                "WEB-INF/condition.txt", "<a>Another condition</a>",
-                new Pojo_3("Hello world", false, true), ClassReference.create(Pojo_3.class));
+    public void testSwitchCase() {
+        putTemplate("condition", CONDITION_INPUT);
+        putTemplate("foreach", FOREACH_INPUT);
+        putTemplate("name", NAME_INPUT);
+
+        val template = context.load(SwitchCase.class)
+                .fromString(SWITCHCASE_INPUT);
+
+        assertEquals(SWITCHCASE_EXPECT_NAME,
+                template.renderAsString(SwitchCase.create("you")));
+
+        assertEquals(CONDITION_EXPECT_TRUE,
+                template.renderAsString(SwitchCase.create(true, false)));
+
+        assertEquals(FOREACH_EXPECT_10_50_100,
+                template.renderAsString(SwitchCase.create(10, 50, 100)));
     }
 
-    @Test
-    public void testConditionTrue() {
-        testTemplate(context,
-                "WEB-INF/condition.txt", "<a>Hello world</a>",
-                new Pojo_3("Hello world", true, false), ClassReference.create(Pojo_3.class));
+    public interface Check {
+        @NotNull CheckType getCheck();
     }
 
-    @Test
-    public void testSwitchCase_Condition() {
-        testTemplate(context,
-                "WEB-INF/switchcase.txt", "<a>Goodbye my friend</a>",
-                new Pojo_4("Goodbye my friend", true), ClassReference.create(Pojo_4.class));
+    public interface NameCheck extends Check {
+        @NotNull String getName();
     }
 
-    @Test
-    public void testSwitchCase_Foreach() {
-        testTemplate(context,
-                "WEB-INF/switchcase.txt", "<a>0: 5</a><a>1: 10</a><a>2: 15</a><a>[true/false]: 5</a><a>[false/false]: 10</a><a>[false/true]: 15</a>",
-                new Pojo_4(new int[]{5, 10, 15}), ClassReference.create(Pojo_4.class));
+    public interface ForeachCheck extends Check {
+        int @NotNull [] getElements();
     }
 
-    @Test
-    public void testSwitchCase_Value() {
-        testTemplate(context,
-                "WEB-INF/switchcase.txt", "Hello you!",
-                new Pojo_4("you"), ClassReference.create(Pojo_4.class));
+    public interface ForeachCollectionCheck extends Check {
+        @NotNull List<@NotNull Integer> getElements();
     }
 
-    private void copyResource(String resource, Path to) {
-        try (InputStream is = ClassLoader.getSystemResourceAsStream(resource);
-             OutputStream os = Files.newOutputStream(to)) {
-            assert is != null;
-
-            byte[] buf = new byte[1024];
-            int n;
-
-            while ((n = is.read(buf)) != -1) {
-                os.write(buf, 0, n);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public interface ConditionCheck extends Check {
+        boolean isCondition();
+        boolean isAnotherCondition();
     }
 
-    private <T> void testTemplate(TemplateContext context, String resource, String expectText,
-                                  T object, TypeReference<T> type) {
-        String result = context.load(type).from(resource).renderAsString(object);
-        assertEquals(expectText, result);
-    }
-
-    public static class Pojo_1 {
+    @Data
+    public static class SwitchCase implements NameCheck, ForeachCheck, ConditionCheck {
+        private final CheckType check;
         private final String name;
-
-        public Pojo_1(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public static class Pojo_2 {
         private final int[] elements;
-
-        public Pojo_2(int... elements) {
-            this.elements = elements;
-        }
-
-        public int[] getElements() {
-            return elements;
-        }
-    }
-
-    public static class Pojo_3 {
-        private final String message;
         private final boolean condition;
         private final boolean anotherCondition;
 
-        public Pojo_3(String message, boolean condition, boolean anotherCondition) {
-            this.message = message;
-            this.condition = condition;
-            this.anotherCondition = anotherCondition;
+        public static SwitchCase create(final @NonNull String name) {
+            return new SwitchCase(CheckType.NAME, name, null, false, false);
         }
 
-        public String getMessage() {
-            return message;
+        public static SwitchCase create(final int @NonNull ... elements) {
+            return new SwitchCase(CheckType.FOREACH, null, elements, false, false);
         }
 
-        public boolean getCondition() {
-            return condition;
-        }
-
-        public boolean getAnotherCondition() {
-            return anotherCondition;
+        public static SwitchCase create(final boolean condition, final boolean anotherCondition) {
+            return new SwitchCase(CheckType.CONDITION, null, null, condition, anotherCondition);
         }
     }
 
-    public static class Pojo_4 {
-        private final Check check;
-
+    @Data
+    public static class Name implements NameCheck {
         private final String name;
-        private final int[] elements;
-        private final String message;
-        private final boolean condition;
 
-        public Pojo_4(Check check, String name, int[] elements, String message, boolean condition) {
-            this.check = check;
-            this.name = name;
-            this.elements = elements;
-            this.message = message;
-            this.condition = condition;
+        @Override
+        public @NotNull CheckType getCheck() {
+            return CheckType.NAME;
         }
-
-        public Pojo_4(String name) {
-            this(Check.GREETING, name, null, null, false);
-        }
-
-        public Pojo_4(int[] elements) {
-            this(Check.FOREACH, null, elements, null, false);
-        }
-
-        public Pojo_4(String message, boolean condition) {
-            this(Check.CONDITION, null, null, message, condition);
-        }
-
-        public Check getCheck() {
-            return check;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int[] getElements() {
-            return elements;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public boolean getCondition() {
-            return condition;
-        }
-
-        public boolean getAnotherCondition() {
-            return false;
-        }
-
     }
 
-    public static class Pojo_5 {
+    @Data
+    public static class Foreach implements ForeachCheck {
+        private final int[] elements;
+
+        public static Foreach of(int... elements) {
+            return new Foreach(elements);
+        }
+
+        @Override
+        public @NotNull CheckType getCheck() {
+            return CheckType.FOREACH;
+        }
+    }
+
+    @Data
+    public static class ForeachCollection implements ForeachCollectionCheck {
         private final List<Integer> elements;
 
-        public Pojo_5(int... elements) {
-            this.elements = IntStream.of(elements).boxed().collect(Collectors.toList());
+        public static ForeachCollection of(int... elements) {
+            return new ForeachCollection(IntStream.of(elements).boxed().collect(Collectors.toList()));
         }
 
-        public Collection<Integer> getElements() {
-            return elements;
+        @Override
+        public @NotNull CheckType getCheck() {
+            return CheckType.NAME;
+        }
+
+    }
+
+    @Data
+    public static class Condition implements ConditionCheck {
+        private final boolean condition;
+        private final boolean anotherCondition;
+
+        @Override
+        public @NotNull CheckType getCheck() {
+            return CheckType.CONDITION;
         }
     }
 
-    public static class Pojo_6 {
+    @Data
+    public static class Trim {
         private final boolean condition;
         private final List<String> list;
-
-        public Pojo_6(boolean condition, List<String> list) {
-            this.condition = condition;
-            this.list = list;
-        }
-
-        public boolean isCondition() {
-            return condition;
-        }
-
-        public List<String> getList() {
-            return list;
-        }
     }
 
-    public enum Check {
+    public enum CheckType {
 
-        CONDITION, FOREACH, GREETING;
+        CONDITION, FOREACH, NAME;
 
         public String getName() {
             return name().toLowerCase();

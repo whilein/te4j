@@ -16,7 +16,8 @@
 
 package te4j.template.parser;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.EmptyTemplate;
@@ -43,7 +44,7 @@ public final class EmptyParsedTemplate implements ParsedTemplate {
         private static final ParsedTemplate INSTANCE = new EmptyParsedTemplate();
     }
 
-    public static ParsedTemplate getInstance() {
+    public static @NotNull ParsedTemplate getInstance() {
         return Singleton.INSTANCE;
     }
 
@@ -58,25 +59,25 @@ public final class EmptyParsedTemplate implements ParsedTemplate {
     }
 
     @Override
-    public byte @NonNull [] getRawContent() {
+    public byte @NotNull [] getRawContent() {
         return content;
     }
 
     @Override
-    public byte @NonNull [] getContent() {
+    public byte @NotNull [] getContent() {
         return content;
     }
 
     @Override
-    public <T> Template<T> compile(
-            @NonNull Filters filters,
-            ModifyWatcherManager modifyWatcherManager,
-            @NonNull TemplateParser parser,
-            @NonNull Set<Output> outputTypes,
-            @NonNull Set<Minify> minifyOptions,
-            @NonNull String parentFile,
-            @NonNull TemplateSource src,
-            @NonNull TemplateLoader<T> loader
+    public <T> @NotNull Template<T> compile(
+            final @NotNull Filters filters,
+            final @Nullable ModifyWatcherManager modifyWatcherManager,
+            final @NotNull TemplateParser parser,
+            final @NotNull Set<Output> outputTypes,
+            final @NotNull Set<Minify> minifyOptions,
+            final @NotNull String parentFile,
+            final @NotNull TemplateSource src,
+            final @NotNull TemplateLoader<T> loader
     ) {
         return EmptyTemplate.getInstance();
     }
@@ -87,7 +88,7 @@ public final class EmptyParsedTemplate implements ParsedTemplate {
     }
 
     @Override
-    public List<TemplatePath> getPaths() {
+    public @NotNull List<@NotNull TemplatePath> getPaths() {
         return Collections.emptyList();
     }
 }

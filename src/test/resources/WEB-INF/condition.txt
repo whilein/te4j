@@ -1,7 +1,0 @@
-<* if condition *>
-<a>^^ message ^^</a>
-<* elif another_condition *>
-<a>Another condition</a>
-<* else *>
-<a>Result is false</a>
-<* endif *>

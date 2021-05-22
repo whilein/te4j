@@ -14,18 +14,18 @@
  *    limitations under the License.
  */
 
-package te4j.template.option.style;
+package te4j.template.resolver;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author whilein
  */
-public enum StyleAspect {
+public interface TemplateResolver {
 
-    BEGIN_VALUE, END_VALUE,
-    BEGIN_METHOD, END_METHOD,
-    METHOD_MARKER;
-
-    public static final StyleAspect[] VALUES = values();
-    public static final int LENGTH = VALUES.length;
+    @NotNull InputStream resolve(final @NotNull String name) throws IOException;
 
 }

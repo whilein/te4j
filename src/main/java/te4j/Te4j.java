@@ -21,6 +21,7 @@ import lombok.experimental.UtilityClass;
 import te4j.filter.Filters;
 import te4j.filter.MapBasedFilters;
 import te4j.modifiable.watcher.ModifyWatcherManager;
+import te4j.modifiable.watcher.SimpleModifyWatcherManager;
 import te4j.template.context.DefaultTemplateContext;
 import te4j.template.context.TemplateContext;
 import te4j.template.context.TemplateContextBuilder;
@@ -38,7 +39,7 @@ public class Te4j {
             = MapBasedFilters.createDefaults();
 
     private final ModifyWatcherManager DEFAULT_MODIFY_WATCHER
-            = new ModifyWatcherManager();
+            = SimpleModifyWatcherManager.create();
 
     private final TemplateContext DEFAULTS = custom()
             .minifyAll()

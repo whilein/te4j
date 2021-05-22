@@ -18,7 +18,6 @@ package te4j.modifiable;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ import java.util.List;
  */
 public final class ModifiableReference extends WeakReference<Modifiable> {
 
-    private volatile List<Path> files;
+    private volatile List<String> files;
 
     public ModifiableReference(Modifiable referent, ReferenceQueue<Modifiable> queue) {
         super(referent, queue);
@@ -48,7 +47,7 @@ public final class ModifiableReference extends WeakReference<Modifiable> {
         return false;
     }
 
-    public synchronized List<Path> getFiles() {
+    public synchronized List<String> getFiles() {
         return files;
     }
 }

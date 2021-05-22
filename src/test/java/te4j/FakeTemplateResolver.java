@@ -14,44 +14,43 @@
  *    limitations under the License.
  */
 
-package te4j.template.source;
+package te4j;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import te4j.template.Template;
-import te4j.template.context.loader.TemplateLoader;
+import te4j.template.resolver.TemplateResolver;
 
-import java.nio.file.Path;
-import java.util.Optional;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author whilein
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PathSource implements TemplateSource {
+public final class FakeTemplateResolver implements TemplateResolver {
 
-    @NotNull Path path;
+    @NotNull Map<@NotNull String, byte @NotNull []> files;
 
-    public static @NotNull TemplateSource create(final @NonNull Path path) {
-        return new PathSource(path.toAbsolutePath());
+    public static @NonNull TemplateResolver create(final @NotNull Map<@NotNull String, byte @NotNull []> files) {
+        return new FakeTemplateResolver(files);
     }
 
     @Override
-    public @NotNull Optional<@NotNull String> getFile() {
-        return Optional.of(path.toString());
-    }
+    public @NotNull InputStream resolve(final @NotNull String name) throws IOException {
+        val bytes = files.get(name);
 
-    @Override
-    public <T> @NotNull Template<T> load(final @NonNull TemplateLoader<T> loader) {
-        return loader.fromFile(path);
-    }
+        if (bytes == null) {
+            throw new FileNotFoundException(name);
+        }
 
-    @Override
-    public String toString() {
-        return "Source[path=" + path + "]";
+        return new ByteArrayInputStream(bytes);
     }
 }

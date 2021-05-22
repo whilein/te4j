@@ -20,10 +20,10 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.template.Template;
 import te4j.template.context.loader.TemplateLoader;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -33,19 +33,19 @@ import java.util.Optional;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BytesSource implements TemplateSource {
 
-    byte[] bytes;
+    byte @NotNull [] bytes;
 
-    public static @NonNull TemplateSource create(@NonNull byte[] bytes) {
+    public static @NotNull TemplateSource create(final byte @NonNull [] bytes) {
         return new BytesSource(bytes);
     }
 
     @Override
-    public Optional<Path> getPath() {
+    public @NotNull Optional<@NotNull String> getFile() {
         return Optional.empty();
     }
 
     @Override
-    public <T> Template<T> load(TemplateLoader<T> loader) {
+    public <T> @NotNull Template<T> load(final @NonNull TemplateLoader<T> loader) {
         return loader.fromBytes(bytes);
     }
 

@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
@@ -33,36 +34,43 @@ import java.util.Arrays;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PlainTemplate<T> implements Template<T> {
 
-    byte[] value;
+    byte @NotNull [] value;
 
     int offset;
     int length;
 
-    Lazy<String> chars;
+    @NotNull Lazy<@NotNull String> chars;
+    @NotNull String @NotNull [] includes;
 
-    String[] includes = new String[0];
-
-    public static @NonNull <T> Template<T> create(@NonNull byte[] value, int offset, int length) {
-        return new PlainTemplate<>(value, offset, length, Lazy.threadsafe(() -> new String(value, offset, length)));
+    public static @NonNull <T> Template<T> create(
+            final byte @NonNull [] value,
+            final int offset,
+            final int length
+    ) {
+        return new PlainTemplate<>(
+                value, offset, length,
+                Lazy.threadsafe(() -> new String(value, offset, length)),
+                new String[0]
+        );
     }
 
     @Override
-    public @NonNull String[] getIncludes() {
+    public @NotNull String @NotNull [] getIncludes() {
         return includes;
     }
 
     @Override
-    public @NonNull String renderAsString(@NonNull T object) {
+    public @NotNull String renderAsString(final @NonNull T object) {
         return chars.get();
     }
 
     @Override
-    public @NonNull byte[] renderAsBytes(@NonNull T object) {
+    public byte @NotNull [] renderAsBytes(final @NotNull T object) {
         return Arrays.copyOfRange(value, offset, offset + length);
     }
 
     @Override
-    public void renderTo(@NonNull T object, @NonNull OutputStream os) throws IOException {
+    public void renderTo(final @NonNull T object, final @NonNull OutputStream os) throws IOException {
         os.write(value, offset, offset + length);
     }
 
