@@ -19,11 +19,11 @@
     <img src="https://img.shields.io/github/issues-pr/whilein/te4j">
   </a>
 
-  <a href="https://search.maven.org/artifact/com.github.whilein/te4j">
-    <img src="https://img.shields.io/maven-central/v/com.github.whilein/te4j">
+  <a href="https://search.maven.org/artifact/io.github.whilein/te4j">
+    <img src="https://img.shields.io/maven-central/v/io.github.whilein/te4j">
   </a>
 
-  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/whilein/te4j">
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/whilein/te4j">
     <img src="https://img.shields.io/nexus/s/io.github.whilein/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
   </a> -->
 </div>
@@ -112,12 +112,12 @@ More examples in docs
 ## Add as dependency
 
 <div>
-  <a href="https://search.maven.org/artifact/com.github.whilein/te4j">
-    <img src="https://img.shields.io/maven-central/v/com.github.whilein/te4j">
+  <a href="https://search.maven.org/artifact/io.github.whilein/te4j">
+    <img src="https://img.shields.io/maven-central/v/io.github.whilein/te4j">
   </a>
 
-  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/whilein/te4j">
-    <img src="https://img.shields.io/nexus/s/com.github.whilein/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
+  <!-- <a href="https://s01.oss.sonatype.org/content/repositories/snapshots/io/github/whilein/te4j">
+    <img src="https://img.shields.io/nexus/s/io.github.whilein/te4j?server=https%3A%2F%2Fs01.oss.sonatype.org">
   </a> -->
 </div>
 
