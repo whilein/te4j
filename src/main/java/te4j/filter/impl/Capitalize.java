@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 
 import java.lang.reflect.Type;
@@ -34,7 +35,7 @@ public final class Capitalize implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "capitalize";
     }
 

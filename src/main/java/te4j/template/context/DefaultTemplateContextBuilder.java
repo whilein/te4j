@@ -84,7 +84,7 @@ public final class DefaultTemplateContextBuilder implements TemplateContextBuild
 
     @Override
     public @NotNull TemplateContextBuilder outputAll() {
-        return output(Output.getValues());
+        return output(Output.getVALUES());
     }
 
     @Override

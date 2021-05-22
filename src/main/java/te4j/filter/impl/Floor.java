@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -35,7 +36,7 @@ public final class Floor implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "floor";
     }
 
@@ -47,7 +48,7 @@ public final class Floor implements Filter {
     }
 
     @Override
-    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+    public @NonNull @NotNull String apply(@NonNull String value, @NonNull Type type) {
         return "Math.floor(" + value + ")";
     }
 }

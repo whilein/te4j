@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -36,7 +37,7 @@ public final class Wrap implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "wrap";
     }
 
@@ -46,7 +47,7 @@ public final class Wrap implements Filter {
     }
 
     @Override
-    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+    public @NonNull @NotNull String apply(@NonNull String value, @NonNull Type type) {
         return Objects.requireNonNull(TypeUtils.getWrapper((Class<?>) type)).getName() + ".valueOf(" + value + ")";
     }
 }

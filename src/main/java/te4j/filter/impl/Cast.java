@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -44,7 +45,7 @@ public final class Cast implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
@@ -54,7 +55,7 @@ public final class Cast implements Filter {
     }
 
     @Override
-    public String apply(@NonNull String value, @NonNull Type type) {
+    public @NotNull String apply(@NonNull String value, @NonNull Type type) {
         return "(" + TypeUtils.getCanonicalName(to) + ") (" + value + ")";
     }
 

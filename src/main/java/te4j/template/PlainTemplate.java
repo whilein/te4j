@@ -21,6 +21,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
+import te4j.util.lazy.ConcurrentLazy;
 import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public final class PlainTemplate<T> implements Template<T> {
     ) {
         return new PlainTemplate<>(
                 value, offset, length,
-                Lazy.threadsafe(() -> new String(value, offset, length)),
+                ConcurrentLazy.from(() -> new String(value, offset, length)),
                 new String[0]
         );
     }

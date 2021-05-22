@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 
 import java.lang.reflect.Type;
@@ -34,7 +35,7 @@ public final class Upper implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "upper";
     }
 
@@ -44,7 +45,7 @@ public final class Upper implements Filter {
     }
 
     @Override
-    public @NonNull String apply(@NonNull String value, @NonNull Type type) {
+    public @NonNull @NotNull String apply(@NonNull String value, @NonNull Type type) {
         return "(" + value + ").toUpperCase()";
     }
 }

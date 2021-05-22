@@ -26,6 +26,7 @@ import te4j.modifiable.Modifiable;
 import te4j.modifiable.watcher.ModifyWatcherManager;
 import te4j.template.context.loader.TemplateLoader;
 import te4j.template.source.TemplateSource;
+import te4j.util.lazy.ConcurrentLazy;
 import te4j.util.lazy.Lazy;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public final class AutoReloadingTemplate<T> implements Template<T>, Modifiable {
         val disabledAutoReloading = loader.withDisabledAutoReloading();
 
         val template = new AutoReloadingTemplate<>(
-                Lazy.threadsafe(handle, () -> src.load(disabledAutoReloading)),
+                ConcurrentLazy.from(handle, () -> src.load(disabledAutoReloading)),
                 src
         );
 

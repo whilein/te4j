@@ -97,6 +97,10 @@ public class TemplateTest {
         files.put(file, content.getBytes(StandardCharsets.UTF_8));
     }
 
+    private void removeTemplate(final @NotNull String file) {
+        files.remove(file);
+    }
+
     @BeforeEach
     public void init() {
         dummy = new Object();
@@ -151,6 +155,11 @@ public class TemplateTest {
         modifyManager.handle("test");
 
         assertEquals("Goodbye John!", template.renderAsString(new Name("John")));
+
+        removeTemplate("test");
+        modifyManager.handle("test");
+
+        assertEquals("", template.renderAsString(new Name("Empty")));
     }
 
     @Test

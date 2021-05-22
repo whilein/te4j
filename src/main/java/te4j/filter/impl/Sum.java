@@ -19,6 +19,7 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -35,7 +36,7 @@ public final class Sum implements Filter {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "sum";
     }
 

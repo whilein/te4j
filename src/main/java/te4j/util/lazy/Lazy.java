@@ -16,83 +16,12 @@
 
 package te4j.util.lazy;
 
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
 import java.util.function.Supplier;
 
 /**
  * @author whilein
  */
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class Lazy<T> implements Supplier<T> {
-
-    Supplier<@NonNull T> initializer;
-
-    public static <T> @NonNull Lazy<T> threadsafe(
-            final @NonNull Supplier<T> initializer
-    ) {
-        return new Threadsafe<>(null, initializer);
-    }
-
-    public static <T> @NonNull Lazy<T> threadsafe(
-            final T initial,
-            final @NonNull Supplier<T> initializer
-    ) {
-        return new Threadsafe<>(initial, initializer);
-    }
-
-    public abstract boolean isInitialized();
-
-    public abstract void clear();
-
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    private static final class Threadsafe<T> extends Lazy<T> {
-
-        private static final Object EMPTY = new Object();
-
-        @SuppressWarnings("unchecked")
-        final T empty = (T) EMPTY;
-
-        volatile T value = empty;
-
-        private Threadsafe(final T initial, final Supplier<T> initializer) {
-            super(initializer);
-
-            if (initial != null) {
-                value = initial;
-            }
-        }
-
-        @Override
-        public T get() {
-            T result = value;
-
-            if (result == EMPTY) {
-                synchronized (this) {
-                    result = value;
-
-                    if (result == EMPTY) {
-                        result = value = initializer.get();
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        @Override
-        public synchronized boolean isInitialized() {
-            return value != empty;
-        }
-
-        @Override
-        public synchronized void clear() {
-            value = empty;
-        }
-    }
-
+public interface Lazy<T> extends Supplier<T> {
+    boolean isInitialized();
+    void clear();
 }

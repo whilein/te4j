@@ -19,6 +19,8 @@ package te4j.filter.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import te4j.filter.Filter;
 import te4j.util.TypeUtils;
 
@@ -31,17 +33,17 @@ import java.util.Collection;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Average implements Filter {
 
-    public static @NonNull Filter create() {
+    public static @NotNull Filter create() {
         return new Average();
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "average";
     }
 
     @Override
-    public Type getWrappedType(@NonNull Type type) {
+    public @Nullable Type getWrappedType(final @NonNull Type type) {
         Type component = TypeUtils.getComponentType(type);
 
         if (component instanceof Class<?>) {

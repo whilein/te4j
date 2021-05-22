@@ -17,6 +17,8 @@
 package te4j.filter;
 
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.function.BiFunction;
@@ -26,7 +28,7 @@ import java.util.function.BiFunction;
  */
 public interface Filter extends BiFunction<String, Type, String> {
 
-    @NonNull String getName();
+    @NotNull String getName();
 
     /**
      * Get new type of object according to it type,
@@ -35,9 +37,9 @@ public interface Filter extends BiFunction<String, Type, String> {
      * @param type Old type
      * @return New Type
      */
-    Type getWrappedType(@NonNull Type type);
+    @Nullable Type getWrappedType(@NotNull Type type);
 
-    default @NonNull String apply(@NonNull String value, @NonNull Type type) {
+    default @NotNull String apply(final @NonNull String value, final @NonNull Type type) {
         return getClass().getName() + ".process(" + value + ")";
     }
 
